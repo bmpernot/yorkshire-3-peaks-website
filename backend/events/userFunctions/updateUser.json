@@ -1,0 +1,14 @@
+{
+  "httpMethod": "PUT",
+  "pathParameters": {
+    "id": "1"
+  },
+  "body": {
+    "firstName": "Bruce",
+    "lastName": "Wayne",
+    "email": "bruce.wayne@waynecorp.com",
+    "number": "01234567890",
+    "iceNumber": "01234567891",
+    "role": "user"
+  }
+}

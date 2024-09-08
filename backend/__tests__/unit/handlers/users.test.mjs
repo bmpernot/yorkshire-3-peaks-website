@@ -322,7 +322,7 @@ describe("User functions", function () {
     it("Should return a list of ids", async () => {
       ddbMock.on(DeleteCommand).resolves({});
 
-      const id = 12345678;
+      const id = "12345678";
 
       const event = {
         httpMethod: "DELETE",
@@ -340,7 +340,7 @@ describe("User functions", function () {
       const rejectedValue = new Error("Generic error");
       ddbMock.on(DeleteCommand).rejects(rejectedValue);
 
-      const id = 12345678;
+      const id = "12345678";
 
       const event = {
         httpMethod: "DELETE",

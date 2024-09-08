@@ -1,0 +1,12 @@
+{
+  "httpMethod": "POST",
+  "body": {
+    "id": "1",
+    "firstName": "Bruce",
+    "lastName": "Wayne",
+    "email": "bruce.wayne@waynecorp.com",
+    "number": "01234567890",
+    "iceNumber": "01234567891",
+    "role": "user"
+  }
+}
