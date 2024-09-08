@@ -126,7 +126,6 @@ Resources:
   UserTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
-      TableName: USERS
       PrimaryKey:
         Name: id
         Type: String

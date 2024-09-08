@@ -24,7 +24,7 @@ async function generateTables(tableDocuments) {
 
 const tableDocuments = [
   {
-    TableName: "USERS",
+    TableName: "UserTable",
     KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
     AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
     ProvisionedThroughput: {
