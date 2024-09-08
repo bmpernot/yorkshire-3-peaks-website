@@ -12,7 +12,9 @@
     "jest": "^29.2.1"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "local": "docker compose -f ./docker.compose.yaml up -d && sam local start-api --docker-network backend_sam-local-network",
+    "local-clean-up": "docker compose -f ./docker.compose.yaml down --volumes"
   },
   "jest": {
     "testMatch": [
