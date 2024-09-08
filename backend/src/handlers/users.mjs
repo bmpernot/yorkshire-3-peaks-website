@@ -118,13 +118,28 @@ const addUser = async (event) => {
 
   console.info("Received: ", event);
 
-  const body = event.body;
-  const id = body.id;
-  const name = body.name;
+  const userObject = event.body;
+
+  if (!isValidUserObject(userObject)) {
+    const response = {
+      statusCode: 400,
+      body: new Error(`addUser only accepts the certain data`),
+    };
+
+    return response;
+  }
 
   const params = {
     TableName: tableName,
-    Item: { id: id, name: name },
+    Item: {
+      id: userObject.id,
+      firstName: userObject.firstName,
+      lastName: userObject.lastName,
+      email: userObject.email,
+      number: userObject.number,
+      iceNumber: userObject.iceNumber,
+      role: "USER",
+    },
   };
 
   try {
@@ -289,3 +304,26 @@ const deleteUser = async (event) => {
 };
 
 export { addUser, getUserById, getAllUsers, updateUser, deleteUser };
+
+function isValidUserObject(userObject) {
+  if (!userObject.id) {
+    return false;
+  }
+  if (!userObject.firstName) {
+    return false;
+  }
+  if (!userObject.lastName) {
+    return false;
+  }
+  if (!userObject.email) {
+    return false;
+  }
+  if (!userObject.number) {
+    return false;
+  }
+  if (!userObject.iceNumber) {
+    return false;
+  }
+
+  return true;
+}

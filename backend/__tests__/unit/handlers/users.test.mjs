@@ -25,16 +25,22 @@ describe("User functions", function () {
   });
 
   describe("Test addUser", function () {
-    it("Should be able to add a user to the user table", async () => {
-      const item = { id: "id1", name: "name1" };
+    it("Should not be able to add a user if the user object is not complete", async () => {
+      const userObject = {
+        id: "1",
+        firstName: "Bruce",
+        lastName: "Wayne",
+        email: "bruce.wayne@waynecorp.com",
+        number: "01234567890",
+        iceNumber: "01234567891",
+        role: "user",
+      };
 
-      ddbMock.on(PutCommand).resolves({
-        returnedItem: item,
-      });
+      ddbMock.on(PutCommand).resolves({});
 
       const event = {
         httpMethod: "POST",
-        body: { id: "id1", name: "name1" },
+        body: userObject,
       };
 
       const response = await addUser(event);
@@ -42,13 +48,37 @@ describe("User functions", function () {
       expect(response.statusCode).toEqual(201);
     });
 
+    it("Should not be able to add a user if the user object is not complete", async () => {
+      const event = {
+        httpMethod: "POST",
+        body: { id: "id1", name: "name1" },
+      };
+
+      const response = await addUser(event);
+
+      expect(response.statusCode).toEqual(400);
+      expect(response.body).toEqual(
+        new Error(`addUser only accepts the certain data`)
+      );
+    });
+
     it("Should be able to handle errors", async () => {
+      const userObject = {
+        id: "1",
+        firstName: "Bruce",
+        lastName: "Wayne",
+        email: "bruce.wayne@waynecorp.com",
+        number: "01234567890",
+        iceNumber: "01234567891",
+        role: "user",
+      };
+
       const rejectedValue = new Error("Generic error");
       ddbMock.on(PutCommand).rejects(rejectedValue);
 
       const event = {
         httpMethod: "POST",
-        body: { id: "id1", name: "name1" },
+        body: userObject,
       };
 
       const response = await addUser(event);
@@ -189,7 +219,7 @@ describe("User functions", function () {
   describe("Test updateUser", () => {
     it("Should modify the user", async () => {
       const userObject = {
-        id: 1,
+        id: "1",
         firstName: "Bruce",
         lastName: "Wayne",
         email: "bruce.wayne@waynecorp.com",

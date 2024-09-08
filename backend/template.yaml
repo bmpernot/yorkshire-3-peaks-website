@@ -129,7 +129,7 @@ Resources:
       TableName: USERS
       PrimaryKey:
         Name: id
-        Type: Number
+        Type: String
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
