@@ -4,11 +4,10 @@
     "id": "1"
   },
   "body": {
-    "firstName": "Bruce",
-    "lastName": "Wayne",
-    "email": "bruce.wayne@waynecorp.com",
-    "number": "01234567890",
-    "iceNumber": "01234567891",
-    "role": "user"
+    "firstName": "Clark",
+    "lastName": "Kent",
+    "email": "clark.kent@superman.com",
+    "number": "98765432102",
+    "iceNumber": "98765432101"
   }
 }

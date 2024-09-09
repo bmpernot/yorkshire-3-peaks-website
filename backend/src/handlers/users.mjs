@@ -126,7 +126,7 @@ const addUser = async (event) => {
 
   console.info("Received: ", event);
 
-  const userObject = event.body;
+  const userObject = JSON.parse(event.body);
 
   if (!isValidUserObject(userObject)) {
     const response = {
@@ -191,28 +191,37 @@ const updateUser = async (event) => {
 
   console.info("Received: ", event);
 
-  const newData = event.body;
+  const newUserData = JSON.parse(event.body);
   const id = event.pathParameters.id;
 
   let updateExpression = "set";
+  const ExpressionAttributeNames = {};
+  const ExpressionAttributeValues = {};
 
-  if (newData.firstName) {
-    updateExpression += " firstName = firstName,";
+  if (newUserData.firstName) {
+    updateExpression += " firstName = :firstName,";
+    ExpressionAttributeValues[":firstName"] = newUserData.firstName;
   }
-  if (newData.lastName) {
-    updateExpression += " lastName = lastName,";
+  if (newUserData.lastName) {
+    updateExpression += " lastName = :lastName,";
+    ExpressionAttributeValues[":lastName"] = newUserData.lastName;
   }
-  if (newData.email) {
-    updateExpression += " email = email,";
+  if (newUserData.email) {
+    updateExpression += " email = :email,";
+    ExpressionAttributeValues[":email"] = newUserData.email;
   }
-  if (newData.number) {
-    updateExpression += " number = number,";
+  if (newUserData.number) {
+    updateExpression += " #numberAttribute = :number,";
+    ExpressionAttributeNames["#numberAttribute"] = "number";
+    ExpressionAttributeValues[":number"] = newUserData.number;
   }
-  if (newData.iceNumber) {
-    updateExpression += " iceNumber = iceNumber,";
+  if (newUserData.iceNumber) {
+    updateExpression += " iceNumber = :iceNumber,";
+    ExpressionAttributeValues[":iceNumber"] = newUserData.iceNumber;
   }
-  if (newData.role) {
-    updateExpression += " role = role,";
+  if (newUserData.role) {
+    updateExpression += " role = :role,";
+    ExpressionAttributeValues[":role"] = newUserData.role;
   }
 
   if (updateExpression.slice(-1) === ",") {
@@ -232,7 +241,8 @@ const updateUser = async (event) => {
     TableName: tableName,
     Key: { id: id },
     UpdateExpression: updateExpression,
-    ExpressionAttributeValues: newData,
+    ExpressionAttributeNames: ExpressionAttributeNames,
+    ExpressionAttributeValues: ExpressionAttributeValues,
     ReturnValues: "ALL_NEW",
   };
 
