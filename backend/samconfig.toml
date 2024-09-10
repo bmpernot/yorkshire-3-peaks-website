@@ -29,3 +29,12 @@ warm_containers = "EAGER"
 
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"
+
+[prod.deploy.parameters]
+stack_name = "yorkshire-3-peaks-backend"
+resolve_s3 = true
+s3_prefix = "yorkshire-3-peaks-backend"
+region = "eu-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
