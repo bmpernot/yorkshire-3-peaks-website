@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import { ThemeProvider, createTheme, Container } from "@mui/material";
 import { globalThemeOptions } from "../styles/globalThemeOptions.mjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import App from "./page.js";
 
 import Navbar from "../utils/Navbar.mjs";
@@ -24,6 +24,10 @@ export default function RootLayout() {
     iceNumber: "01234567891",
     role: "admin",
   });
+
+  useEffect(() => {
+    globalThis.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pageView]);
 
   return (
     <html lang="en">

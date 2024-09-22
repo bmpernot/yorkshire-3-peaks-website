@@ -33,7 +33,11 @@ function App({ user, setUser, pageView }) {
   let pageComponent = pageViews.find(
     (page) => page.view === pageView
   ).component;
-  return <main className={styles.main}>{pageComponent}</main>;
+  return (
+    <main data-cy="body" className={styles.main}>
+      {pageComponent}
+    </main>
+  );
 }
 
 export default App;
