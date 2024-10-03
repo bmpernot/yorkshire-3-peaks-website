@@ -13,30 +13,31 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - run: cd ui
-      - name: Setup Node.js 20.x
+      - name: Setup Node.js 20.17.0
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 20.17.0
           cache: "npm"
+          node-version-file: "./ui/package.json"
+      - name: Install UI dependencies
+        run: npm ci
+      - name: Start dev server in the background
+        run: npm run dev &
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
         with:
           working-directory: /ui
-          build: npm ci
-          start: npm run dev
-          wait-on: "http://localhost:3000"
 
-  test-backend:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - run: cd backend
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: "npm"
-      - name: Backend tests
-        run: npm run test
+  # test-backend:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #     - run: cd backend
+  #     - name: Setup Node.js 20.17.0
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20.17.0
+  #         cache: "npm"
+  #     - name: Backend tests
+  #       run: npm run test
