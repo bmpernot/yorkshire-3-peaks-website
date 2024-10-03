@@ -1,20 +1,15 @@
 name: Y3P CI/CD test pipeline
 
 on:
-  push:
-    branches:
-      - "**"
   pull_request:
     branches:
       - main
 
-# TODO - make the repo public
 # TODO - setup protected branch so that the pipeline runs and pass before we are allowed to merge into main and need to make it so that main has to be pulled into the branch before it is allowed to be merged in
 
 jobs:
   test-ui:
     runs-on: self-hosted
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.base_ref == 'main')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,7 +28,6 @@ jobs:
 
   test-backend:
     runs-on: self-hosted
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.base_ref == 'main')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
