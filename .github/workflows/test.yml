@@ -29,7 +29,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           start: next dev --port 5000
-          build: npm ci && npx cypress install
+          build: npm run runner-install-dependencies
           working-directory: ui
           wait-on: "http://localhost:5000"
 
