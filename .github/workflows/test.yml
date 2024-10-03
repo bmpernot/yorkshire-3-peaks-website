@@ -22,6 +22,7 @@ jobs:
           node-version: 20.17.0
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
+      - run: pwd
       - name: Install UI dependencies
         run: npm ci
       - name: Start dev server in the background
