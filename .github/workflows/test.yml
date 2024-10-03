@@ -1,0 +1,43 @@
+name: Y3P CI/CD test pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+# TODO - setup protected branch so that the pipeline runs and pass before we are allowed to merge into main and need to make it so that main has to be pulled into the branch before it is allowed to be merged in
+
+jobs:
+  test-ui:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js 20.17.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.17.0
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+      - name: Install UI dependencies
+        run: npm ci
+        working-directory: "ui"
+      - name: Start dev server in the background
+        run: npm run dev &
+        working-directory: "ui"
+      - name: Runs cypress tests
+        uses: cypress-io/github-action@v6
+
+  # test-backend:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #     - run: cd backend
+  #     - name: Setup Node.js 20.17.0
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20.17.0
+  #         cache: "npm"
+  #     - name: Backend tests
+  #       run: npm run test

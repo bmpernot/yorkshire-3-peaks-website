@@ -1,0 +1,30 @@
+name: Y3P CI/CD deploy pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: cd /backend
+      - name: Set up AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup up AWS SAM CLI credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+      - run: sam build --use-container
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
