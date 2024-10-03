@@ -10,9 +10,6 @@ on:
 jobs:
   test-ui:
     runs-on: self-hosted
-    defaults:
-      run:
-        working-directory: "ui"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,11 +19,12 @@ jobs:
           node-version: 20.17.0
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-      - run: pwd
       - name: Install UI dependencies
         run: npm ci
+        working-directory: "ui"
       - name: Start dev server in the background
         run: npm run dev &
+        working-directory: "ui"
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
 
