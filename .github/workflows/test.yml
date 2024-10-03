@@ -19,25 +19,34 @@ jobs:
           node-version: 20.17.0
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-      - name: Install UI dependencies
-        run: npm ci
-        working-directory: "ui"
-      - name: Start dev server in the background
-        run: npm run dev &
-        working-directory: "ui"
+      # - name: Install UI dependencies
+      #   run: npm ci
+      #   working-directory: "ui"
+      # - name: Start dev server in the background
+      #   run: npm run dev &
+      #   working-directory: "ui"
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
+        with:
+          start: next dev --port 5000
+          build: npm ci
+          working-directory: ui
+          wait-on: "http://localhost:5000"
 
   test-backend:
     runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - run: cd backend
       - name: Setup Node.js 20.17.0
         uses: actions/setup-node@v4
         with:
           node-version: 20.17.0
           cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+      - name: Install UI dependencies
+        run: npm ci
+        working-directory: "backend"
       - name: Backend tests
         run: npm run test
+        working-directory: "backend"
