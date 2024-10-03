@@ -28,16 +28,16 @@ jobs:
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
 
-  # test-backend:
-  #   runs-on: self-hosted
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - run: cd backend
-  #     - name: Setup Node.js 20.17.0
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20.17.0
-  #         cache: "npm"
-  #     - name: Backend tests
-  #       run: npm run test
+  test-backend:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: cd backend
+      - name: Setup Node.js 20.17.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.17.0
+          cache: "npm"
+      - name: Backend tests
+        run: npm run test
