@@ -1,20 +1,20 @@
 {
   "folders": [
     {
-      "path": "."
+      "path": ".",
     },
     {
-      "path": "ui"
+      "path": "ui",
     },
     {
-      "path": "backend"
-    }
+      "path": "backend",
+    },
   ],
   "settings": {
     "files.exclude": {
       "ui": true,
       "backend": true,
     },
-    "prettier.printWidth": 120
-  }
+    "prettier.printWidth": 120,
+  },
 }
