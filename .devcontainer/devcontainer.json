@@ -1,0 +1,45 @@
+{
+  "name": "Y3P",
+  "runArgs": [
+    "--name",
+    "Y3P"
+  ],
+  "dockerFile": "Dockerfile",
+  "features": {
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/goldsam/dev-container-features/aws-sam-cli:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "forwardPorts": [
+    3000
+  ],
+  "onCreateCommand": "/workspaces/yorkshire-3-peaks-website/.devcontainer/on_create.sh",
+  "postCreateCommand": "/workspaces/yorkshire-3-peaks-website/.devcontainer/post_create.sh",
+  "remoteUser": "root",
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  },
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+    "source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket,type=bind",
+    "source=projectname-bashhistory,target=/commandhistory,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.vscode-github-actions",
+        "redhat.vscode-yaml",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "streetsidesoftware.code-spell-checker",
+        "Orta.vscode-jest",
+        "amazonwebservices.aws-toolkit-vscode",
+        "Gruntfuggly.todo-tree",
+        "ms-azuretools.vscode-docker",
+        "streetsidesoftware.code-spell-checker-british-english",
+        "ms-vsliveshare.vsliveshare"
+      ]
+    }
+  }
+}
