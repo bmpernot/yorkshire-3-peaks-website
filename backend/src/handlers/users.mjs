@@ -20,13 +20,12 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 
 const tableName = process.env.USER_TABLE;
 
-const getAllUsers = async (event) => {
+const getAllUsers = async (stringifyJsonEvent) => {
+  const event = JSON.parse(stringifyJsonEvent);
   if (event.httpMethod !== "GET") {
     const response = {
       statusCode: 405,
-      body: new Error(
-        `getAllUsers only accepts GET method, you tried: ${event.httpMethod}`
-      ),
+      body: new Error(`getAllUsers only accepts GET method, you tried: ${event.httpMethod}`),
     };
 
     return response;
@@ -64,13 +63,12 @@ const getAllUsers = async (event) => {
   }
 };
 
-const getUserById = async (event) => {
+const getUserById = async (stringifyJsonEvent) => {
+  const event = JSON.parse(stringifyJsonEvent);
   if (event.httpMethod !== "GET") {
     const response = {
       statusCode: 405,
-      body: new Error(
-        `getUserById only accepts GET method, you tried: ${event.httpMethod}`
-      ),
+      body: new Error(`getUserById only accepts GET method, you tried: ${event.httpMethod}`),
     };
 
     return response;
@@ -102,23 +100,19 @@ const getUserById = async (event) => {
 
     const response = {
       statusCode: 500,
-      body: new Error(
-        `An error occurred when tring to get the user with the id of: ${id}`,
-        { cause: error }
-      ),
+      body: new Error(`An error occurred when tring to get the user with the id of: ${id}`, { cause: error }),
     };
 
     return response;
   }
 };
 
-const addUser = async (event) => {
+const addUser = async (stringifyJsonEvent) => {
+  const event = JSON.parse(stringifyJsonEvent);
   if (event.httpMethod !== "POST") {
     const response = {
       statusCode: 405,
-      body: new Error(
-        `addUser only accepts POST method, you tried: ${event.httpMethod}`
-      ),
+      body: new Error(`addUser only accepts POST method, you tried: ${event.httpMethod}`),
     };
 
     return response;
@@ -126,7 +120,7 @@ const addUser = async (event) => {
 
   console.info("Received: ", event);
 
-  const userObject = JSON.parse(event.body);
+  const userObject = event.body;
 
   if (!isValidUserObject(userObject)) {
     const response = {
@@ -153,9 +147,7 @@ const addUser = async (event) => {
   try {
     const data = await ddbDocClient.send(new PutCommand(params));
 
-    console.info(
-      `Response from: ${event.path}, Success - user added", ${data}`
-    );
+    console.info(`Response from: ${event.path}, Success - user added", ${data}`);
 
     const response = {
       statusCode: 201,
@@ -167,23 +159,19 @@ const addUser = async (event) => {
 
     const response = {
       statusCode: 500,
-      body: new Error(
-        `An error occurred when tring to add a user in ${tableName}`,
-        { cause: error }
-      ),
+      body: new Error(`An error occurred when tring to add a user in ${tableName}`, { cause: error }),
     };
 
     return response;
   }
 };
 
-const updateUser = async (event) => {
+const updateUser = async (stringifyJsonEvent) => {
+  const event = JSON.parse(stringifyJsonEvent);
   if (event.httpMethod !== "PUT") {
     const response = {
       statusCode: 405,
-      body: new Error(
-        `updateUser only accepts PUT method, you tried: ${event.httpMethod}`
-      ),
+      body: new Error(`updateUser only accepts PUT method, you tried: ${event.httpMethod}`),
     };
 
     return response;
@@ -191,7 +179,7 @@ const updateUser = async (event) => {
 
   console.info("Received: ", event);
 
-  const newUserData = JSON.parse(event.body);
+  const newUserData = event.body;
   const id = event.pathParameters.id;
 
   let updateExpression = "set";
@@ -229,9 +217,7 @@ const updateUser = async (event) => {
   } else {
     const response = {
       statusCode: 400,
-      body: new Error(
-        `updateUser needs acceptable data for it to update the user`
-      ),
+      body: new Error(`updateUser needs acceptable data for it to update the user`),
     };
 
     return response;
@@ -249,9 +235,7 @@ const updateUser = async (event) => {
   try {
     const data = await ddbDocClient.send(new UpdateCommand(params));
 
-    console.info(
-      `Response from: ${event.path}, Success - user updated, ${data.Attributes}`
-    );
+    console.info(`Response from: ${event.path}, Success - user updated, ${data.Attributes}`);
 
     const response = {
       statusCode: 200,
@@ -264,23 +248,19 @@ const updateUser = async (event) => {
 
     const response = {
       statusCode: 500,
-      body: new Error(
-        `An error occurred when tring to update a user in ${tableName}`,
-        { cause: error }
-      ),
+      body: new Error(`An error occurred when tring to update a user in ${tableName}`, { cause: error }),
     };
 
     return response;
   }
 };
 
-const deleteUser = async (event) => {
+const deleteUser = async (stringifyJsonEvent) => {
+  const event = JSON.parse(stringifyJsonEvent);
   if (event.httpMethod !== "DELETE") {
     const response = {
       statusCode: 405,
-      body: new Error(
-        `deleteUser only accepts DELETE method, you tried: ${event.httpMethod}`
-      ),
+      body: new Error(`deleteUser only accepts DELETE method, you tried: ${event.httpMethod}`),
     };
 
     return response;
@@ -309,12 +289,9 @@ const deleteUser = async (event) => {
 
     const response = {
       statusCode: 500,
-      body: new Error(
-        `An error occurred when tring delete user with id: ${id}`,
-        {
-          cause: error,
-        }
-      ),
+      body: new Error(`An error occurred when tring delete user with id: ${id}`, {
+        cause: error,
+      }),
     };
 
     return response;

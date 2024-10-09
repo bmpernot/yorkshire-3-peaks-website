@@ -1,0 +1,23 @@
+{
+  "name": "yorkshire-3-peaks-website",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.25.7",
+    "@babel/preset-react": "^7.25.7",
+    "@next/eslint-plugin-next": "^14.2.15",
+    "concurrently": "^9.0.1",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-cypress": "^3.5.0",
+    "eslint-plugin-jest": "^28.8.3",
+    "eslint-plugin-no-only-tests": "^3.3.0",
+    "eslint-plugin-react": "^7.37.1",
+    "prettier": "^3.3.3"
+  },
+  "scripts": {
+    "format": "prettier --config ./.prettierrc.json --ignore-path ./.prettierignore --write .$DIRECTORY/",
+    "format:check": "prettier --config ./.prettierrc.json --ignore-path ./.prettierignore --check .$DIRECTORY/",
+    "install:all": "concurrently -m 3 --names \"yorkshire-3-peaks-website,ui,backend\" \"npm install\" \"npm --prefix ui install\" \"npm --prefix backend install\" || echo \"npm install failed, check above for which one\"",
+    "lint": "eslint .$DIRECTORY/",
+    "lint:fix": "npm run lint -- --fix"
+  }
+}

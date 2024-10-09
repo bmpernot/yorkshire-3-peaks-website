@@ -12,7 +12,7 @@ describe("Footer", () => {
       it("Should show all pieces of information in the footer", () => {
         homePage.open().verifyFooter();
       });
-    }
+    },
   );
 
   describe(
@@ -25,6 +25,6 @@ describe("Footer", () => {
       it("Should show all pieces of information in the footer", () => {
         homePage.open().verifyFooter();
       });
-    }
+    },
   );
 });

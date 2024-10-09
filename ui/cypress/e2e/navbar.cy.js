@@ -40,7 +40,7 @@ describe("NavBar", () => {
           .goToPage("Home")
           .verifyPage("Home");
       });
-    }
+    },
   );
 
   describe(
@@ -81,6 +81,6 @@ describe("NavBar", () => {
           .goToPage("Home")
           .verifyPage("Home");
       });
-    }
+    },
   );
 });

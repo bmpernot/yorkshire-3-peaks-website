@@ -30,9 +30,8 @@ function App({ user, setUser, pageView }) {
     { view: "rules", component: <Rules user={user} /> },
   ];
 
-  let pageComponent = pageViews.find(
-    (page) => page.view === pageView
-  ).component;
+  const pageComponent = pageViews.find((page) => page.view === pageView).component;
+
   return (
     <main data-cy="body" className={styles.main}>
       {pageComponent}

@@ -13,16 +13,7 @@ const pages = [
   "admin",
 ];
 
-const navMenu = [
-  "home",
-  "route",
-  "rules",
-  "current event",
-  "promotion",
-  "results",
-  "organisers",
-  "admin",
-];
+const navMenu = ["home", "route", "rules", "current event", "promotion", "results", "organisers", "admin"];
 
 export default class homePage {
   open() {
@@ -32,31 +23,22 @@ export default class homePage {
 
   verifyFooter() {
     cy.get("[data-cy=footer]").should("be.visible");
-    cy.get("[data-cy=footer] [data-cy=title]").should(
-      "contain",
-      "Yorkshire 3 Peaks"
-    );
+    cy.get("[data-cy=footer] [data-cy=title]").should("contain", "Yorkshire 3 Peaks");
     cy.get("[data-cy=footer] [data-cy=description]")
       .should(
         "contain",
-        "Yorkshire 3 Peaks is a charity event run by volunteers and is always welcoming of new helpers."
+        "Yorkshire 3 Peaks is a charity event run by volunteers and is always welcoming of new helpers.",
       )
+      .and("contain", "If you are interested in helping out contact us using the email below.")
       .and(
         "contain",
-        "If you are interested in helping out contact us using the email below."
-      )
-      .and(
-        "contain",
-        "Feel free to pass this website on to anyone you think would be interested. The more the merrier."
+        "Feel free to pass this website on to anyone you think would be interested. The more the merrier.",
       );
     cy.get("[data-cy=footer] [data-cy=copyright]").should(
       "contain",
-      `Copyright © ${new Date().getFullYear()} Ben Pernot`
+      `Copyright © ${new Date().getFullYear()} Ben Pernot`,
     );
-    cy.get("[data-cy=footer] [data-cy=contact-info]").should(
-      "contain",
-      "yorkshirepeaks@gmail.com"
-    );
+    cy.get("[data-cy=footer] [data-cy=contact-info]").should("contain", "yorkshirepeaks@gmail.com");
     return this;
   }
 
@@ -75,14 +57,9 @@ export default class homePage {
 
     pages.forEach((page) => {
       if (typeof page === "object") {
-        cy.get(`@nav-menu`)
-          .find(`[data-cy=${page.label}] [data-cy=button]`)
-          .should("be.visible")
-          .click();
+        cy.get(`@nav-menu`).find(`[data-cy=${page.label}] [data-cy=button]`).should("be.visible").click();
         page.links.forEach((link) => {
-          cy.get(`[data-cy=${page.label}-dropdown-${link}]`).should(
-            "be.visible"
-          );
+          cy.get(`[data-cy=${page.label}-dropdown-${link}]`).should("be.visible");
         });
 
         // close the drop down
@@ -105,9 +82,7 @@ export default class homePage {
     cy.get("[data-cy=user-settings]").should("be.visible");
     cy.get("[data-cy=user-settings] [data-cy=button]").click();
     settings.forEach((setting) => {
-      cy.get(`[data-cy=user-settings-dropdown-${setting}]`).should(
-        "be.visible"
-      );
+      cy.get(`[data-cy=user-settings-dropdown-${setting}]`).should("be.visible");
     });
 
     return this;
