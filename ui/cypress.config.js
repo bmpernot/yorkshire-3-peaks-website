@@ -1,6 +1,6 @@
-const { defineConfig } = require("cypress");
+import { defineConfig } from "cypress";
 
-module.exports = defineConfig({
+export default defineConfig({
   env: {
     ui_base_url: "http://localhost:3000",
     largeViewportWidth: 1600,
@@ -19,8 +19,8 @@ module.exports = defineConfig({
   },
 
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
+    // setupNodeEvents(on, config) {
+    //   // implement node event listeners here
+    // },
   },
 });
