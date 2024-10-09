@@ -39,6 +39,7 @@ jobs:
           start: next dev --port 5000
           working-directory: ui
           wait-on: "http://localhost:5000"
+          env: ui_base_url=http://localhost:5000
 
   test-backend:
     runs-on: self-hosted

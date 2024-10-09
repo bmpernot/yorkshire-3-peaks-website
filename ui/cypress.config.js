@@ -1,6 +1,6 @@
-import { defineConfig } from "cypress";
+const { defineConfig } = require("cypress");
 
-export default defineConfig({
+module.exports = defineConfig({
   env: {
     ui_base_url: "http://localhost:3000",
     largeViewportWidth: 1600,
