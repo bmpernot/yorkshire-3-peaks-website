@@ -5,11 +5,23 @@ on:
     branches:
       - main
 
-# TODO - setup protected branch so that the pipeline runs and pass before we are allowed to merge into main and need to make it so that main has to be pulled into the branch before it is allowed to be merged in
-
 jobs:
+  format-and-validate-checks:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Format check
+        run: npm run format:check
+      - name: Lint check
+        run: npm run lint
+
   test-ui:
     runs-on: self-hosted
+    needs:
+      - format-and-validate-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,6 +31,8 @@ jobs:
           node-version: 20.17.0
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
+      - name: Install cypress binaries
+        run: npx cypress install
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
         with:
@@ -28,6 +42,8 @@ jobs:
 
   test-backend:
     runs-on: self-hosted
+    needs:
+      - format-and-validate-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,7 +53,7 @@ jobs:
           node-version: 20.17.0
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-      - name: Install UI dependencies
+      - name: Install backend dependencies
         run: npm ci
         working-directory: "backend"
       - name: Backend tests
