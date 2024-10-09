@@ -33,6 +33,7 @@ jobs:
           cache-dependency-path: "**/package-lock.json"
       - name: Install cypress binaries
         run: npx cypress install
+        working-directory: ui
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
         with:
