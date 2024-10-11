@@ -8,7 +8,7 @@
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
-  "forwardPorts": [3000],
+  "forwardPorts": [3000, 3001],
   "onCreateCommand": "/workspaces/yorkshire-3-peaks-website/.devcontainer/on_create.sh",
   "postCreateCommand": "/workspaces/yorkshire-3-peaks-website/.devcontainer/post_create.sh",
   "remoteUser": "root",
@@ -18,7 +18,8 @@
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
     "source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket,type=bind",
-    "source=projectname-bashhistory,target=/commandhistory,type=volume"
+    "source=projectname-bashhistory,target=/commandhistory,type=volume",
+    "source=${env:HOME}${env:USERPROFILE}/.aws,target=/root/.aws,type=bind"
   ],
   "customizations": {
     "vscode": {
