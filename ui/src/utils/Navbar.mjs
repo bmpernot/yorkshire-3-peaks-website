@@ -121,12 +121,7 @@ function HideOnScroll({ children, window }) {
   );
 }
 
-const UserMenu = memo(function UserMenu({
-  user,
-  anchorElUser,
-  setAnchorElUser,
-  setPageView,
-}) {
+const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, setPageView }) {
   return (
     <Box data-cy="user-settings" sx={styles.userMenu.dropDown.wrapper}>
       <Tooltip title="Open settings">
@@ -166,9 +161,7 @@ const UserMenu = memo(function UserMenu({
             }}
           >
             <ListItemIcon>{setting.icon}</ListItemIcon>
-            <Typography sx={styles.userMenu.dropDown.items}>
-              {setting.label}
-            </Typography>
+            <Typography sx={styles.userMenu.dropDown.items}>{setting.label}</Typography>
           </MenuItem>
         ))}
       </Menu>
@@ -290,9 +283,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                   setPageView(page.link);
                 }}
               >
-                <Typography sx={styles.navMenu.dropDown.items}>
-                  {page.label}
-                </Typography>
+                <Typography sx={styles.navMenu.dropDown.items}>{page.label}</Typography>
               </MenuItem>
             );
           } else if (page.links && shouldUserViewPage(user.role, page.role)) {
@@ -305,17 +296,11 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                 <IconButton
                   data-cy={`button`}
                   onClick={(event) =>
-                    handleOpenInternalNavMenu(
-                      event,
-                      page.label.toLowerCase(),
-                      setAnchorElInternalNavMenu
-                    )
+                    handleOpenInternalNavMenu(event, page.label.toLowerCase(), setAnchorElInternalNavMenu)
                   }
                   sx={styles.navMenu.dropDown.button}
                 >
-                  <Typography sx={styles.navMenu.dropDown.items}>
-                    {page.label}
-                  </Typography>
+                  <Typography sx={styles.navMenu.dropDown.items}>{page.label}</Typography>
                   <ArrowDropDownIcon />
                 </IconButton>
                 <Menu
@@ -331,9 +316,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                     vertical: "top",
                     horizontal: "left",
                   }}
-                  open={
-                    anchorElInternalNavMenu?.button === page.label.toLowerCase()
-                  }
+                  open={anchorElInternalNavMenu?.button === page.label.toLowerCase()}
                   onClose={() => {
                     setAnchorElInternalNavMenu(null);
                     setAnchorElNavMenu(null);
@@ -342,9 +325,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                 >
                   {page.links.map((link) => (
                     <MenuItem
-                      data-cy={`${page.label.toLowerCase()}-dropdown-${
-                        link.link
-                      }`}
+                      data-cy={`${page.label.toLowerCase()}-dropdown-${link.link}`}
                       key={link.link}
                       onClick={() => {
                         setAnchorElInternalNavMenu(null);
@@ -352,9 +333,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                         setPageView(link.link);
                       }}
                     >
-                      <Typography sx={styles.navMenu.dropDown.items}>
-                        {link.label}
-                      </Typography>
+                      <Typography sx={styles.navMenu.dropDown.items}>{link.label}</Typography>
                     </MenuItem>
                   ))}
                 </Menu>
@@ -389,33 +368,22 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
           );
         } else if (page.links) {
           return (
-            <span
-              key={page.label.toLowerCase()}
-              data-cy={`${page.label.toLowerCase()}`}
-            >
+            <span key={page.label.toLowerCase()} data-cy={`${page.label.toLowerCase()}`}>
               <IconButton
                 size="large"
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={(event) =>
-                  handleOpenInternalNavMenu(
-                    event,
-                    page.label.toLowerCase(),
-                    setAnchorElInternalNavMenu
-                  )
+                  handleOpenInternalNavMenu(event, page.label.toLowerCase(), setAnchorElInternalNavMenu)
                 }
                 color="inherit"
                 data-cy="button"
               >
-                <Typography
-                  sx={{ ...styles.navMenu.itemList.button, fontSize: 14 }}
-                >
+                <Typography sx={{ ...styles.navMenu.itemList.button, fontSize: 14 }}>
                   {page.label.toUpperCase()}
                 </Typography>
-                <ArrowDropDownIcon
-                  sx={{ ...styles.navMenu.itemList.button, mr: -1.5 }}
-                />
+                <ArrowDropDownIcon sx={{ ...styles.navMenu.itemList.button, mr: -1.5 }} />
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -429,9 +397,7 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
                   vertical: "top",
                   horizontal: "left",
                 }}
-                open={
-                  anchorElInternalNavMenu?.button === page.label.toLowerCase()
-                }
+                open={anchorElInternalNavMenu?.button === page.label.toLowerCase()}
                 onClose={() => setAnchorElInternalNavMenu(null)}
                 sx={{ ...styles.navMenu.dropDown.list, mt: -2, ml: 1 }}
                 data-cy={`${page.label.toLowerCase()}-dropdown`}
@@ -441,17 +407,13 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
                     return (
                       <MenuItem
                         key={link.link}
-                        data-cy={`${page.label.toLowerCase()}-dropdown-${
-                          link.link
-                        }`}
+                        data-cy={`${page.label.toLowerCase()}-dropdown-${link.link}`}
                         onClick={() => {
                           setAnchorElInternalNavMenu(null);
                           setPageView(link.link);
                         }}
                       >
-                        <Typography sx={styles.navMenu.dropDown.items}>
-                          {link.label}
-                        </Typography>
+                        <Typography sx={styles.navMenu.dropDown.items}>{link.label}</Typography>
                       </MenuItem>
                     );
                   }
@@ -469,11 +431,7 @@ const handleOpenMenu = (event, setter) => {
   setter(event.currentTarget);
 };
 
-const handleOpenInternalNavMenu = (
-  event,
-  button,
-  setAnchorElInternalNavMenu
-) => {
+const handleOpenInternalNavMenu = (event, button, setAnchorElInternalNavMenu) => {
   setAnchorElInternalNavMenu({
     event: event.currentTarget,
     button: button,

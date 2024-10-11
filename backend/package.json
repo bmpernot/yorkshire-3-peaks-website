@@ -3,6 +3,7 @@
   "description": "backend",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.398.0",
     "@aws-sdk/lib-dynamodb": "^3.398.0"
@@ -13,9 +14,9 @@
   },
   "scripts": {
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
-    "local": "docker compose -f ./docker.compose.yaml up -d && sam local start-api --docker-network backend_sam-local-network --warm-containers EAGER",
-    "local-clean-up": "docker compose -f ./docker.compose.yaml down --volumes",
-    "init-db-tables": "node ./configure-local-db-tables.mjs"
+    "local": "./scripts/run-local.sh",
+    "local-clean-up": "./scripts/run-local-clean-up.sh",
+    "init-db-tables": "node ./scripts/configure-local-db-tables.mjs"
   },
   "jest": {
     "testMatch": [

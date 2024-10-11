@@ -1,10 +1,9 @@
-import {
-  addUser,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-} from "../../../src/handlers/users.mjs";
+// import { addUser, getAllUsers, getUserById, updateUser, deleteUser } from "../../../src/handlers/users.mjs";
+import addUser from "../../src/handlers/users/addUser.mjs";
+import getAllUsers from "../../src/handlers/users/getAllUsers.mjs";
+import getUserById from "../../src/handlers/users/getUserById.mjs";
+import updateUser from "../../src/handlers/users/updateUser.mjs";
+import deleteUser from "../../src/handlers/users/deleteUser.mjs";
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -15,8 +14,6 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { mockClient } from "aws-sdk-client-mock";
 
-const tableName = process.env.USER_TABLE;
-
 describe("User functions", function () {
   const ddbMock = mockClient(DynamoDBDocumentClient);
 
@@ -25,7 +22,7 @@ describe("User functions", function () {
   });
 
   describe("Test addUser", function () {
-    it("Should not be able to add a user if the user object is not complete", async () => {
+    it("Should be able to add a user if the user object is complete", async () => {
       const userObject = {
         id: "1",
         firstName: "Bruce",
@@ -40,7 +37,7 @@ describe("User functions", function () {
 
       const event = {
         httpMethod: "POST",
-        body: userObject,
+        body: JSON.stringify(userObject),
       };
 
       const response = await addUser(event);
@@ -51,15 +48,14 @@ describe("User functions", function () {
     it("Should not be able to add a user if the user object is not complete", async () => {
       const event = {
         httpMethod: "POST",
-        body: { id: "id1", name: "name1" },
+        body: JSON.stringify({ id: "id1", name: "name1" }),
       };
 
       const response = await addUser(event);
 
-      expect(response.statusCode).toEqual(400);
-      expect(response.body).toEqual(
-        new Error(`addUser only accepts the certain data`)
-      );
+      expect(response.statusCode).toEqual(500);
+      expect(response.body).toEqual(new Error(`An error occurred when tring to add a user`));
+      expect(response.body.cause).toEqual(new Error(`addUser only accepts the certain data`));
     });
 
     it("Should be able to handle errors", async () => {
@@ -78,15 +74,14 @@ describe("User functions", function () {
 
       const event = {
         httpMethod: "POST",
-        body: userObject,
+        body: JSON.stringify(userObject),
       };
 
       const response = await addUser(event);
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(
-        new Error(`An error occurred when tring to add a user in ${tableName}`)
-      );
-      expect(response.body.cause).toEqual(rejectedValue);
+      expect(response.body).toEqual(new Error(`An error occurred when tring to add a user`));
+      expect(response.body.cause).toEqual(new Error(`An error occurred when tring to add a user`));
+      expect(response.body.cause.cause).toEqual(rejectedValue);
     });
 
     it("Should reject incorrect http methods", async () => {
@@ -97,11 +92,7 @@ describe("User functions", function () {
       const response = await addUser(event);
 
       expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(
-        new Error(
-          `addUser only accepts POST method, you tried: ${event.httpMethod}`
-        )
-      );
+      expect(response.body).toEqual(new Error(`addUser only accepts POST method, you tried: ${event.httpMethod}`));
     });
   });
 
@@ -141,12 +132,11 @@ describe("User functions", function () {
 
       const response = await getUserById(event);
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(
-        new Error(
-          `An error occurred when tring to get the user with the id of: ${id}`
-        )
+      expect(response.body).toEqual(new Error(`An error occurred when tring to get the user with the id of: ${id}`));
+      expect(response.body.cause).toEqual(
+        new Error(`An error occurred when tring to get the user with the id of: ${id}`),
       );
-      expect(response.body.cause).toEqual(rejectedValue);
+      expect(response.body.cause.cause).toEqual(rejectedValue);
     });
 
     it("Should reject incorrect http methods", async () => {
@@ -157,11 +147,7 @@ describe("User functions", function () {
       const response = await getUserById(event);
 
       expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(
-        new Error(
-          `getUserById only accepts GET method, you tried: ${event.httpMethod}`
-        )
-      );
+      expect(response.body).toEqual(new Error(`getUserById only accepts GET method, you tried: ${event.httpMethod}`));
     });
   });
 
@@ -194,10 +180,9 @@ describe("User functions", function () {
       const response = await getAllUsers(event);
 
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(
-        new Error("An error occurred when tring to get all users")
-      );
-      expect(response.body.cause).toEqual(rejectedValue);
+      expect(response.body).toEqual(new Error("An error occurred when tring to get all users"));
+      expect(response.body.cause).toEqual(new Error("An error occurred when tring to get all users"));
+      expect(response.body.cause.cause).toEqual(rejectedValue);
     });
 
     it("Should reject incorrect http methods", async () => {
@@ -208,11 +193,7 @@ describe("User functions", function () {
       const response = await getAllUsers(event);
 
       expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(
-        new Error(
-          `getAllUsers only accepts GET method, you tried: ${event.httpMethod}`
-        )
-      );
+      expect(response.body).toEqual(new Error(`getAllUsers only accepts GET method, you tried: ${event.httpMethod}`));
     });
   });
 
@@ -237,14 +218,7 @@ describe("User functions", function () {
         pathParameters: {
           id: "id1",
         },
-        body: {
-          firstName: "Bruce",
-          lastName: "Wayne",
-          email: "bruce.wayne@waynecorp.com",
-          number: "01234567890",
-          iceNumber: "01234567891",
-          role: "user",
-        },
+        body: JSON.stringify(userObject),
       };
 
       const response = await updateUser(event);
@@ -259,17 +233,16 @@ describe("User functions", function () {
         pathParameters: {
           id: "id1",
         },
-        body: {
+        body: JSON.stringify({
           random: "value",
-        },
+        }),
       };
 
       const response = await updateUser(event);
 
-      expect(response.statusCode).toEqual(400);
-      expect(response.body).toEqual(
-        new Error(`updateUser needs acceptable data for it to update the user`)
-      );
+      expect(response.statusCode).toEqual(500);
+      expect(response.body).toEqual(new Error("An error occurred when tring to update a user"));
+      expect(response.body.cause).toEqual(new Error(`updateUser needs acceptable data for it to update the user`));
     });
 
     it("Should be able to handle errors", async () => {
@@ -281,25 +254,22 @@ describe("User functions", function () {
         pathParameters: {
           id: "id1",
         },
-        body: {
+        body: JSON.stringify({
           firstName: "Bruce",
           lastName: "Wayne",
           email: "bruce.wayne@waynecorp.com",
           number: "01234567890",
           iceNumber: "01234567891",
           role: "user",
-        },
+        }),
       };
 
       const response = await updateUser(event);
 
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(
-        new Error(
-          `An error occurred when tring to update a user in ${tableName}`
-        )
-      );
-      expect(response.body.cause).toEqual(rejectedValue);
+      expect(response.body).toEqual(new Error("An error occurred when tring to update a user"));
+      expect(response.body.cause).toEqual(new Error(`An error occurred when tring to update the user`));
+      expect(response.body.cause.cause).toEqual(rejectedValue);
     });
 
     it("Should reject incorrect http methods", async () => {
@@ -310,11 +280,7 @@ describe("User functions", function () {
       const response = await updateUser(event);
 
       expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(
-        new Error(
-          `updateUser only accepts PUT method, you tried: ${event.httpMethod}`
-        )
-      );
+      expect(response.body).toEqual(new Error(`updateUser only accepts PUT method, you tried: ${event.httpMethod}`));
     });
   });
 
@@ -352,10 +318,9 @@ describe("User functions", function () {
       const response = await deleteUser(event);
 
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(
-        new Error(`An error occurred when tring delete user with id: ${id}`)
-      );
-      expect(response.body.cause).toEqual(rejectedValue);
+      expect(response.body).toEqual(new Error(`An error occurred when tring delete user with id: ${id}`));
+      expect(response.body.cause).toEqual(new Error(`An error occurred when tring delete user with id: ${id}`));
+      expect(response.body.cause.cause).toEqual(rejectedValue);
     });
 
     it("Should reject incorrect http methods", async () => {
@@ -366,11 +331,7 @@ describe("User functions", function () {
       const response = await deleteUser(event);
 
       expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(
-        new Error(
-          `deleteUser only accepts DELETE method, you tried: ${event.httpMethod}`
-        )
-      );
+      expect(response.body).toEqual(new Error(`deleteUser only accepts DELETE method, you tried: ${event.httpMethod}`));
     });
   });
 });

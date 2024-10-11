@@ -11,7 +11,7 @@ Resources:
   getAllUsers:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users.getAllUsers
+      Handler: src/handlers/users/getAllUsers.default
       Runtime: nodejs20.x
       Architectures:
         - x86_64
@@ -34,7 +34,7 @@ Resources:
   getUserById:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users.getUserById
+      Handler: src/handlers/users/getUserById.default
       Runtime: nodejs20.x
       Architectures:
         - x86_64
@@ -57,7 +57,7 @@ Resources:
   addUser:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users.addUser
+      Handler: src/handlers/users/addUser.default
       Runtime: nodejs20.x
       Architectures:
         - x86_64
@@ -80,7 +80,7 @@ Resources:
   updateUser:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users.updateUser
+      Handler: src/handlers/users/updateUser.default
       Runtime: nodejs20.x
       Architectures:
         - x86_64
@@ -103,7 +103,7 @@ Resources:
   deleteUser:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users.deleteUser
+      Handler: src/handlers/users/deleteUser.default
       Runtime: nodejs20.x
       Architectures:
         - x86_64

@@ -2,7 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { CreateTableCommand } from "@aws-sdk/client-dynamodb";
 
 const client = new DynamoDBClient({
-  endpoint: "http://localhost:8000",
+  endpoint: "http://dynamodb-local:8000",
   region: "local",
 });
 
