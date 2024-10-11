@@ -6,6 +6,9 @@ on:
       - main
     types:
       - closed
+  push:
+    branches:
+      - pipelines-v2
 
 jobs:
   deploy:
