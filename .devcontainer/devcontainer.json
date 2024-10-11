@@ -34,7 +34,8 @@
         "Gruntfuggly.todo-tree",
         "ms-azuretools.vscode-docker",
         "streetsidesoftware.code-spell-checker-british-english",
-        "ms-vsliveshare.vsliveshare"
+        "ms-vsliveshare.vsliveshare",
+        "donjayamanne.git-extension-pack"
       ]
     }
   }
