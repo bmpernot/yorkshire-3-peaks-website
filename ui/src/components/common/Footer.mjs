@@ -2,7 +2,7 @@
 
 import { AppBar, Typography, Container, IconButton } from "@mui/material";
 import { Email as EmailIcon } from "@mui/icons-material";
-import { styles } from "../styles/footer.mui.styles.mjs";
+import { styles } from "../../styles/footer.mui.styles.mjs";
 
 function Footer() {
   return (

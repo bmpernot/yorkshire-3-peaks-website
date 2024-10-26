@@ -53,7 +53,7 @@ export const styles = {
       textDecoration: "none",
     },
   },
-  login: {
+  signIn: {
     wrapper: { flexGrow: 0, display: "flex" },
     button: { my: 2, color: "white", display: "block" },
   },

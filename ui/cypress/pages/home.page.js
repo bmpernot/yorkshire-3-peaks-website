@@ -1,4 +1,4 @@
-const settings = ["profile", "account", "logout"];
+const settings = ["profile", "account", "signOut"];
 
 const pages = [
   "home",
@@ -108,8 +108,8 @@ export default class homePage {
       Admin: () => {
         cy.get("[data-cy=admin]").click();
       },
-      Logout: () => {
-        cy.get("[data-cy=user-settings-dropdown-logout]").click();
+      SignOut: () => {
+        cy.get("[data-cy=user-settings-dropdown-signOut]").click();
       },
       Profile: () => {
         cy.get("[data-cy=user-settings-dropdown-profile]").click();

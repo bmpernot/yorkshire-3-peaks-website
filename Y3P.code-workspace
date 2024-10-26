@@ -16,5 +16,8 @@
       "backend": true,
     },
     "prettier.printWidth": 120,
+    "cSpell.words": [
+      "apos"
+    ],
   },
 }

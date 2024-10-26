@@ -26,29 +26,30 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { styles } from "../styles/navbar.mui.styles.mjs";
+import { styles } from "../../styles/navbar.mui.styles.mjs";
+import { USER_ROLES } from "@/src/utils/constants.mjs";
 
 const settings = [
-  { label: "Profile", link: "profile", role: "user", icon: <AccountBoxIcon /> },
-  { label: "Account", link: "account", role: "user", icon: <SettingsIcon /> },
-  { label: "Logout", link: "logout", role: "user", icon: <LogoutIcon /> },
+  { label: "Profile", link: "profile", role: USER_ROLES.USER, icon: <AccountBoxIcon /> },
+  { label: "Account", link: "account", role: USER_ROLES.USER, icon: <SettingsIcon /> },
+  { label: "Sign Out", link: "signOut", role: USER_ROLES.USER, icon: <LogoutIcon /> },
 ];
 
 const pages = [
-  { label: "Home", link: "home", role: "user" },
-  { label: "Route", link: "route", role: "user" },
-  { label: "Rules", link: "rules", role: "user" },
+  { label: "Home", link: "home", role: USER_ROLES.GUEST },
+  { label: "Route", link: "route", role: USER_ROLES.GUEST },
+  { label: "Rules", link: "rules", role: USER_ROLES.GUEST },
   {
     label: "Events",
     links: [
-      { label: "Current Event", link: "event", role: "user" },
-      { label: "Promotion", link: "promotion", role: "user" },
+      { label: "Current Event", link: "event", role: USER_ROLES.GUEST },
+      { label: "Promotion", link: "promotion", role: USER_ROLES.GUEST },
     ],
-    role: "user",
+    role: USER_ROLES.GUEST,
   },
-  { label: "Results", link: "results", role: "user" },
-  { label: "Organisers", link: "organisers", role: "organiser" },
-  { label: "Admin", link: "admin", role: "admin" },
+  { label: "Results", link: "results", role: USER_ROLES.GUEST },
+  { label: "Organisers", link: "organisers", role: USER_ROLES.ORGANISER },
+  { label: "Admin", link: "admin", role: USER_ROLES.ADMIN },
 ];
 
 function Navbar({ children, window: dom, user, setPageView }) {
@@ -92,15 +93,15 @@ function Navbar({ children, window: dom, user, setPageView }) {
               setAnchorElInternalNavMenu={setAnchorElInternalNavMenu}
               setPageView={setPageView}
             />
-            {user ? (
+            {user.role === USER_ROLES.GUEST ? (
+              <SignInButton setPageView={setPageView} />
+            ) : (
               <UserMenu
                 user={user}
                 anchorElUser={anchorElUser}
                 setAnchorElUser={setAnchorElUser}
                 setPageView={setPageView}
               />
-            ) : (
-              <LoginButton setPageView={setPageView} />
             )}
           </Toolbar>
         </Container>
@@ -217,18 +218,18 @@ const NavMenu = memo(function NavMenu({
   );
 });
 
-function LoginButton({ setPageView }) {
+function SignInButton({ setPageView }) {
   return (
-    <Box sx={styles.login.wrapper}>
+    <Box sx={styles.signIn.wrapper}>
       <Button
-        data-cy="login-button"
-        key="login"
-        sx={styles.login.button}
+        data-cy="signIn-button"
+        key="signIn"
+        sx={styles.signIn.button}
         onClick={() => {
-          setPageView("login");
+          setPageView("signIn");
         }}
       >
-        Login
+        Sign In
       </Button>
     </Box>
   );
@@ -439,7 +440,7 @@ const handleOpenInternalNavMenu = (event, button, setAnchorElInternalNavMenu) =>
 };
 
 const shouldUserViewPage = (userRole, pageRestriction) => {
-  const roles = ["admin", "organiser", "user"];
+  const roles = [USER_ROLES.ADMIN, USER_ROLES.ORGANISER, USER_ROLES.USER, USER_ROLES.GUEST];
 
   return roles.indexOf(userRole) <= roles.indexOf(pageRestriction);
 };
