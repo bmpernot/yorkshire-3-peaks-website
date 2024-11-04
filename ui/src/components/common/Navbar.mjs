@@ -26,36 +26,41 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 import { styles } from "../../styles/navbar.mui.styles.mjs";
-import { USER_ROLES } from "@/src/utils/constants.mjs";
+import { USER_ROLES, USER_ROLES_IN_ORDER_OF_PRECEDENCE } from "@/src/lib/constants.mjs";
+import { handleSignOut } from "@/src/lib/cognitoActions.mjs";
+
+import useAuthUser from "@/src/app/hooks/use-auth-user";
 
 const settings = [
-  { label: "Profile", link: "profile", role: USER_ROLES.USER, icon: <AccountBoxIcon /> },
-  { label: "Account", link: "account", role: USER_ROLES.USER, icon: <SettingsIcon /> },
-  { label: "Sign Out", link: "signOut", role: USER_ROLES.USER, icon: <LogoutIcon /> },
+  { label: "Profile", link: "/user/profile", role: USER_ROLES.USER, icon: <AccountBoxIcon /> },
+  { label: "Account", link: "/user/account", role: USER_ROLES.USER, icon: <SettingsIcon /> },
+  { label: "Sign Out", function: handleSignOut, role: USER_ROLES.USER, icon: <LogoutIcon /> },
 ];
 
 const pages = [
-  { label: "Home", link: "home", role: USER_ROLES.GUEST },
-  { label: "Route", link: "route", role: USER_ROLES.GUEST },
-  { label: "Rules", link: "rules", role: USER_ROLES.GUEST },
+  { label: "Home", link: "/", role: USER_ROLES.GUEST },
   {
-    label: "Events",
+    label: "Event",
     links: [
-      { label: "Current Event", link: "event", role: USER_ROLES.GUEST },
-      { label: "Promotion", link: "promotion", role: USER_ROLES.GUEST },
+      { label: "Current Event", link: "/event/current", role: USER_ROLES.GUEST },
+      { label: "Route", link: "/event/route", role: USER_ROLES.GUEST },
+      { label: "Rules", link: "/event/rules", role: USER_ROLES.GUEST },
+      { label: "Results", link: "/event/results", role: USER_ROLES.GUEST },
+      { label: "Promotion", link: "/event/promotion", role: USER_ROLES.GUEST },
     ],
     role: USER_ROLES.GUEST,
   },
-  { label: "Results", link: "results", role: USER_ROLES.GUEST },
-  { label: "Organisers", link: "organisers", role: USER_ROLES.ORGANISER },
-  { label: "Admin", link: "admin", role: USER_ROLES.ADMIN },
+  { label: "Organisers", link: "/organiser", role: USER_ROLES.ORGANISER },
+  { label: "Admin", link: "/admin", role: USER_ROLES.ADMIN },
 ];
 
-function Navbar({ children, window: dom, user, setPageView }) {
+function Navbar({ children, window: dom }) {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNavMenu, setAnchorElNavMenu] = useState(null);
   const [anchorElInternalNavMenu, setAnchorElInternalNavMenu] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,6 +85,8 @@ function Navbar({ children, window: dom, user, setPageView }) {
     };
   }, []);
 
+  const user = useAuthUser();
+
   return (
     <HideOnScroll children={children} window={dom}>
       <AppBar data-cy="navbar">
@@ -91,17 +98,12 @@ function Navbar({ children, window: dom, user, setPageView }) {
               setAnchorElNavMenu={setAnchorElNavMenu}
               anchorElInternalNavMenu={anchorElInternalNavMenu}
               setAnchorElInternalNavMenu={setAnchorElInternalNavMenu}
-              setPageView={setPageView}
+              router={router}
             />
-            {user.role === USER_ROLES.GUEST ? (
-              <SignInButton setPageView={setPageView} />
+            {user?.role === USER_ROLES.GUEST ? (
+              <SignInButton router={router} />
             ) : (
-              <UserMenu
-                user={user}
-                anchorElUser={anchorElUser}
-                setAnchorElUser={setAnchorElUser}
-                setPageView={setPageView}
-              />
+              <UserMenu user={user} anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} router={router} />
             )}
           </Toolbar>
         </Container>
@@ -122,7 +124,7 @@ function HideOnScroll({ children, window }) {
   );
 }
 
-const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, setPageView }) {
+const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, router }) {
   return (
     <Box data-cy="user-settings" sx={styles.userMenu.dropDown.wrapper}>
       <Tooltip title="Open settings">
@@ -131,7 +133,7 @@ const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, s
           sx={styles.userMenu.dropDown.button}
           data-cy="button"
         >
-          <Avatar alt={user.firstName} src="/" />
+          <Avatar alt={user?.firstName} src="/" />
         </IconButton>
       </Tooltip>
       <Menu
@@ -155,10 +157,10 @@ const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, s
         {settings.map((setting) => (
           <MenuItem
             data-cy={`user-settings-dropdown-${setting.link}`}
-            key={setting.link}
+            key={setting.label}
             onClick={() => {
               setAnchorElUser(null);
-              setPageView(setting.link);
+              router.push(setting.link);
             }}
           >
             <ListItemIcon>{setting.icon}</ListItemIcon>
@@ -176,7 +178,7 @@ const NavMenu = memo(function NavMenu({
   setAnchorElNavMenu,
   anchorElInternalNavMenu,
   setAnchorElInternalNavMenu,
-  setPageView,
+  router,
 }) {
   // i think this causes an addition rerender on page launch (acceptable)
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("md"));
@@ -190,7 +192,7 @@ const NavMenu = memo(function NavMenu({
           anchorElInternalNavMenu={anchorElInternalNavMenu}
           setAnchorElInternalNavMenu={setAnchorElInternalNavMenu}
           user={user}
-          setPageView={setPageView}
+          router={router}
         />
       ) : null}
       <LandscapeIcon sx={styles.navMenu.logo} data-cy="logo" />
@@ -200,7 +202,7 @@ const NavMenu = memo(function NavMenu({
         noWrap
         component="span"
         onClick={() => {
-          setPageView("home");
+          router.push("home");
         }}
         sx={styles.navMenu.title}
       >
@@ -211,14 +213,14 @@ const NavMenu = memo(function NavMenu({
           user={user}
           anchorElInternalNavMenu={anchorElInternalNavMenu}
           setAnchorElInternalNavMenu={setAnchorElInternalNavMenu}
-          setPageView={setPageView}
+          router={router}
         />
       )}
     </>
   );
 });
 
-function SignInButton({ setPageView }) {
+function SignInButton({ router }) {
   return (
     <Box sx={styles.signIn.wrapper}>
       <Button
@@ -226,7 +228,7 @@ function SignInButton({ setPageView }) {
         key="signIn"
         sx={styles.signIn.button}
         onClick={() => {
-          setPageView("signIn");
+          router.push("/auth/sign-in");
         }}
       >
         Sign In
@@ -241,7 +243,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
   setAnchorElNavMenu,
   anchorElInternalNavMenu,
   setAnchorElInternalNavMenu,
-  setPageView,
+  router,
 }) {
   return (
     <Box data-cy="small-nav-menu" sx={styles.navMenu.dropDown.wrapper}>
@@ -274,20 +276,20 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
         data-cy="small-nav-menu-dropdown"
       >
         {pages.map((page) => {
-          if (page.link && shouldUserViewPage(user.role, page.role)) {
+          if (page.link && shouldUserViewPage(user?.role, page.role)) {
             return (
               <MenuItem
                 data-cy={`${page.link}`}
                 key={page.link}
                 onClick={() => {
                   setAnchorElNavMenu(null);
-                  setPageView(page.link);
+                  router.push(page.link);
                 }}
               >
                 <Typography sx={styles.navMenu.dropDown.items}>{page.label}</Typography>
               </MenuItem>
             );
-          } else if (page.links && shouldUserViewPage(user.role, page.role)) {
+          } else if (page.links && shouldUserViewPage(user?.role, page.role)) {
             return (
               <MenuItem
                 key={page.label.toLowerCase()}
@@ -331,7 +333,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                       onClick={() => {
                         setAnchorElInternalNavMenu(null);
                         setAnchorElNavMenu(null);
-                        setPageView(link.link);
+                        router.push(link.link);
                       }}
                     >
                       <Typography sx={styles.navMenu.dropDown.items}>{link.label}</Typography>
@@ -351,17 +353,17 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
   user,
   anchorElInternalNavMenu,
   setAnchorElInternalNavMenu,
-  setPageView,
+  router,
 }) {
   return (
     <Box data-cy="large-nav-menu" sx={styles.navMenu.itemList.wrapper}>
       {pages.map((page) => {
-        if (page.link) {
+        if (page.link && shouldUserViewPage(user?.role, page.role)) {
           return (
             <Button
               data-cy={`${page.link}`}
               key={page.link}
-              onClick={() => setPageView(page.link)}
+              onClick={() => router.push(page.link)}
               sx={styles.navMenu.itemList.button}
             >
               {page.label}
@@ -404,14 +406,14 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
                 data-cy={`${page.label.toLowerCase()}-dropdown`}
               >
                 {page.links.map((link) => {
-                  if (link.link && shouldUserViewPage(user.role, link.role)) {
+                  if (link.link && shouldUserViewPage(user?.role, link.role)) {
                     return (
                       <MenuItem
                         key={link.link}
                         data-cy={`${page.label.toLowerCase()}-dropdown-${link.link}`}
                         onClick={() => {
                           setAnchorElInternalNavMenu(null);
-                          setPageView(link.link);
+                          router.push(link.link);
                         }}
                       >
                         <Typography sx={styles.navMenu.dropDown.items}>{link.label}</Typography>
@@ -440,9 +442,13 @@ const handleOpenInternalNavMenu = (event, button, setAnchorElInternalNavMenu) =>
 };
 
 const shouldUserViewPage = (userRole, pageRestriction) => {
-  const roles = [USER_ROLES.ADMIN, USER_ROLES.ORGANISER, USER_ROLES.USER, USER_ROLES.GUEST];
+  if (!userRole) {
+    userRole = USER_ROLES.GUEST;
+  }
 
-  return roles.indexOf(userRole) <= roles.indexOf(pageRestriction);
+  return (
+    USER_ROLES_IN_ORDER_OF_PRECEDENCE.indexOf(userRole) <= USER_ROLES_IN_ORDER_OF_PRECEDENCE.indexOf(pageRestriction)
+  );
 };
 
 export default Navbar;

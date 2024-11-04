@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Box, Button, FormControl, FormLabel, Link, TextField, Typography, Stack, Card } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -5,7 +7,7 @@ import ForgotPassword from "./ForgotPassword.mjs";
 import { LogoTitle } from "../common/CustomIcons.mjs";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 
-function SignIn({ setUser, setPageView }) {
+function SignIn() {
   const [emailErrorMessage, setEmailErrorMessage] = useState(null);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(null);
   const [open, setOpen] = useState(false);
@@ -25,14 +27,14 @@ function SignIn({ setUser, setPageView }) {
     });
 
     // TODO - temp data - will delete once i figure out how to make an aws user
-    setUser({
-      firstName: "Bruce",
-      lastName: "Wayne",
-      email: "bruce.wayne@waynecorp.com",
-      number: "01234567890",
-      iceNumber: "01234567891",
-      role: "admin",
-    });
+    // setUser({
+    //   firstName: "Bruce",
+    //   lastName: "Wayne",
+    //   email: "bruce.wayne@waynecorp.com",
+    //   number: "01234567890",
+    //   iceNumber: "01234567891",
+    //   role: "admin",
+    // });
 
     // navigate to account page
   };
@@ -109,7 +111,8 @@ function SignIn({ setUser, setPageView }) {
             <span>
               <Link
                 onClick={() => {
-                  setPageView("signUp");
+                  // setPageView("signUp");
+                  console.log("object");
                 }}
                 variant="body2"
                 sx={styles.signIn.signUpLink}

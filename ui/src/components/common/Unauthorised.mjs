@@ -1,3 +1,5 @@
+"use client";
+
 function Unauthorised() {
   return <h1>Unauthorised</h1>;
 }

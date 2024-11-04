@@ -1,3 +1,5 @@
+"use client";
+
 function Promotion() {
   return <h1>Promotion</h1>;
 }

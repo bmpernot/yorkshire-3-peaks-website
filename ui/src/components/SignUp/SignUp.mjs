@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   Box,
@@ -13,9 +15,9 @@ import {
   Card,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { LogoTitle } from "./common/CustomIcons.mjs";
-import { isEmptyObject } from "../utils/commonFunctions.mjs";
-import { styles } from "../styles/signUp.mui.styles.mjs";
+import { LogoTitle } from "../common/CustomIcons.mjs";
+import { isEmptyObject } from "../../lib/commonFunctions.mjs";
+import { styles } from "../../styles/signUp.mui.styles.mjs";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -39,7 +41,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-function SignUp({ user, setUser, setPageView }) {
+function SignUp() {
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
@@ -55,15 +57,15 @@ function SignUp({ user, setUser, setPageView }) {
       email: data.get("email"),
       password: data.get("password"),
     });
-    setUser({
-      firstName: "Bruce",
-      lastName: "Wayne",
-      email: "bruce.wayne@waynecorp.com",
-      number: "01234567890",
-      iceNumber: "01234567891",
-      role: "admin",
-    });
-    setPageView("account");
+    // setUser({
+    //   firstName: "Bruce",
+    //   lastName: "Wayne",
+    //   email: "bruce.wayne@waynecorp.com",
+    //   number: "01234567890",
+    //   iceNumber: "01234567891",
+    //   role: "admin",
+    // });
+    // setPageView("account");
   };
 
   return (
@@ -194,7 +196,11 @@ function SignUp({ user, setUser, setPageView }) {
           <Typography sx={styles.existingAccountTitle}>
             Already have an account?{" "}
             <span>
-              <Link onClick={() => setPageView("signIn")} variant="body2" sx={styles.existingAccountLink}>
+              <Link
+                onClick={() => /*setPageView("signIn")*/ console.log("qwert")}
+                variant="body2"
+                sx={styles.existingAccountLink}
+              >
                 Sign in
               </Link>
             </span>
