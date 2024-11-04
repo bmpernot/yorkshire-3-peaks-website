@@ -145,7 +145,7 @@ Resources:
         AllowAdminCreateUserOnly: false
       EmailConfiguration:
         SourceArn: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/yorkshirepeaks@gmail.com
-        #manually verified the email via AWS console so we don't have the ARN
+        # manually verified the email via AWS console so we don't have the ARN reference
         ReplyToEmailAddress: yorkshirepeaks@gmail.com
         EmailSendingAccount: DEVELOPER
         From: The Yorkshire 3 Peaks Team <yorkshirepeaks@gmail.com>
@@ -156,7 +156,7 @@ Resources:
       VerificationMessageTemplate:
         DefaultEmailOption: CONFIRM_WITH_CODE
         EmailMessage: >-
-          Thank you for signing up to Yorkshire 3 Peaks, Here is your activation code: 
+          Thank you for signing up to Yorkshire 3 Peaks, Here is your activation code:
 
           {####}
 
@@ -189,7 +189,9 @@ Resources:
           AttributeDataType: String
           DeveloperOnlyAttribute: false
           Mutable: true
-          StringAttributeConstraints: {}
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
         - Name: email
           AttributeDataType: String
           DeveloperOnlyAttribute: false
@@ -214,6 +216,31 @@ Resources:
           StringAttributeConstraints:
             MinLength: "0"
             MaxLength: "2048"
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: yorkshire-3-peaks-user-pool-app-client
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      ReadAttributes:
+        - custom:ice_number
+        - email
+        - phone_number
+        - given_name
+        - family_name
+        - email_verified
+        - phone_number_verified
+      UserPoolId: !Ref CognitoUserPool
+      WriteAttributes:
+        - custom:ice_number
+        - email
+        - phone_number
+        - given_name
+        - family_name
 
   UserPoolGroupORGANISER:
     Type: AWS::Cognito::UserPoolGroup
