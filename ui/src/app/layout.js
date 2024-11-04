@@ -1,46 +1,29 @@
-"use client";
-
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
-import { ThemeProvider, createTheme, Container } from "@mui/material";
-import { globalThemeOptions } from "../styles/globalThemeOptions.mjs";
-import { useEffect, useState } from "react";
-import App from "./page.js";
-import { USER_ROLES } from "../utils/constants.mjs";
+import { Container } from "@mui/material";
+import styles from "@/src/styles/page.module.css";
 
-import Navbar from "../components/common/Navbar.mjs";
-import Footer from "../components/common/Footer.mjs";
+import Navbar from "@/src/components/common/Navbar.mjs";
+import Footer from "@/src/components/common/Footer.mjs";
+import ClientThemeProvider from "@/src/components/common/ClientThemeProvider.mjs";
+import ConfigureAmplifyClientSide from "@/src/app/amplify-cognito-config";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout() {
-  const theme = createTheme(globalThemeOptions);
-
-  const [pageView, setPageView] = useState("home");
-  // const [user, setUser] = useState({
-  //   firstName: "Bruce",
-  //   lastName: "Wayne",
-  //   email: "bruce.wayne@waynecorp.com",
-  //   number: "01234567890",
-  //   iceNumber: "01234567891",
-  //   role: USER_ROLES.ADMIN,
-  // });
-  const [user, setUser] = useState({ role: USER_ROLES.GUEST });
-
-  useEffect(() => {
-    globalThis.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [pageView]);
-
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider theme={theme}>
-          <Navbar user={user} setPageView={setPageView} />
+        <ClientThemeProvider>
+          <Navbar />
+          <ConfigureAmplifyClientSide />
           <Container maxWidth="xl">
-            <App user={user} setUser={setUser} pageView={pageView} setPageView={setPageView} />
+            <main data-cy="body" className={styles.main}>
+              {children}
+            </main>
           </Container>
           <Footer />
-        </ThemeProvider>
+        </ClientThemeProvider>
       </body>
     </html>
   );
