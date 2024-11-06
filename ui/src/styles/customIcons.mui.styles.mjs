@@ -1,5 +1,5 @@
 export const styles = {
-  logoTitle: { display: "flex", alignItems: "center", flexWrap: "wrap", "justify-content": "center" },
+  logoTitle: { display: "flex", alignItems: "center", flexWrap: "wrap", justifyContent: "center" },
   logo: { display: "flex", mr: 1 },
   title: {
     mr: 2,
