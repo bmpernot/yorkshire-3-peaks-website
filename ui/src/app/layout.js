@@ -8,6 +8,9 @@ import Footer from "@/src/components/common/Footer.mjs";
 import ClientThemeProvider from "@/src/components/common/ClientThemeProvider.mjs";
 import ConfigureAmplifyClientSide from "@/src/app/amplify-cognito-config";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
@@ -15,6 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <ClientThemeProvider>
+          <ToastContainer position="bottom-right" />
           <Navbar />
           <ConfigureAmplifyClientSide />
           <Container maxWidth="xl">

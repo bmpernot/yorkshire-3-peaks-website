@@ -11,6 +11,7 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
+import { toast } from "react-toastify";
 
 function ForgotPassword({ open, setOpen }) {
   return (
@@ -21,15 +22,38 @@ function ForgotPassword({ open, setOpen }) {
       }}
       PaperProps={{
         component: "form",
-        onSubmit: (event) => {
+        onSubmit: async (event) => {
           event.preventDefault();
+          if (!open) {
+            return;
+          }
 
           const formData = new FormData(event.currentTarget);
           const email = formData.get("email");
 
           console.log("Email:", email);
 
-          setOpen(false);
+          try {
+            ///// need to use aws cognito to send a email to the url to reset the password /////
+            await new Promise((resolve, reject) => {
+              const x = true;
+
+              if (x === true) {
+                setTimeout(resolve, 1000);
+              } else {
+                setTimeout(reject, 1000);
+              }
+            });
+            /////
+
+            toast.success(`We've sent a email to ${email} with your reset password`);
+            setOpen(false);
+          } catch (error) {
+            console.error(
+              new Error(`An Error occurred when trying to send your reset password to ${email}`, { cause: error }),
+            );
+            toast.error(`An Error occurred when trying to send your reset password to ${email}`);
+          }
         },
       }}
     >
