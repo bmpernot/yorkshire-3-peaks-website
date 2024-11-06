@@ -6,19 +6,22 @@ import { styled } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword.mjs";
 import { LogoTitle } from "../common/CustomIcons.mjs";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 function SignIn() {
   const [emailErrorMessage, setEmailErrorMessage] = useState(null);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [invalidLogin, setInvalidLogin] = useState(false);
+  const [isForgotPasswordModelOpen, setIsForgotPasswordModelOpen] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (event) => {
-    if (emailErrorMessage || passwordErrorMessage) {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setInvalidLogin(false);
+    if (emailErrorMessage || isForgotPasswordModelOpen) {
       event.preventDefault();
       return;
     }
-
-    // TODO - need to make sure that the submit of forget password form does not trigger this
 
     const data = new FormData(event.currentTarget);
     console.log({
@@ -26,17 +29,28 @@ function SignIn() {
       password: data.get("password"),
     });
 
-    // TODO - temp data - will delete once i figure out how to make an aws user
-    // setUser({
-    //   firstName: "Bruce",
-    //   lastName: "Wayne",
-    //   email: "bruce.wayne@waynecorp.com",
-    //   number: "01234567890",
-    //   iceNumber: "01234567891",
-    //   role: "admin",
-    // });
+    try {
+      ///// need to call aws cognito actions to sign the user in with the email and password from the form /////
 
-    // navigate to account page
+      const response = await new Promise((resolve, reject) => {
+        const x = true;
+
+        if (x === true) {
+          // setTimeout(resolve("Invalid Login"), 1000);
+          setTimeout(resolve(), 1000);
+        } else {
+          setTimeout(reject, 1000);
+        }
+      });
+      /////
+
+      if (response === "Invalid Login") {
+        setInvalidLogin(true);
+      }
+    } catch (error) {
+      console.error(new Error(`An Error occurred when trying to sign you in`, { cause: error }));
+      toast.error(`An Error occurred when trying to sign you in`);
+    }
   };
 
   return (
@@ -46,11 +60,12 @@ function SignIn() {
         <Typography component="h1" variant="h4" sx={styles.signIn.title}>
           Sign in
         </Typography>
+        {invalidLogin ? <InvalidLogin /> : null}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={styles.signIn.form}>
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
-              error={emailErrorMessage ? true : false}
+              error={emailErrorMessage || invalidLogin ? true : false}
               helperText={emailErrorMessage}
               id="email"
               type="email"
@@ -72,7 +87,7 @@ function SignIn() {
                 component="button"
                 type="button"
                 onClick={() => {
-                  setOpen(true);
+                  setIsForgotPasswordModelOpen(true);
                 }}
                 variant="body2"
                 sx={styles.signIn.forgotPasswordButton}
@@ -81,8 +96,7 @@ function SignIn() {
               </Link>
             </Box>
             <TextField
-              error={passwordErrorMessage ? true : false}
-              helperText={passwordErrorMessage}
+              error={invalidLogin ? true : false}
               name="password"
               placeholder="••••••••"
               type="password"
@@ -92,16 +106,16 @@ function SignIn() {
               required
               fullWidth
               variant="outlined"
-              color={passwordErrorMessage ? "error" : "primary"}
+              color={invalidLogin ? "error" : "primary"}
             />
           </FormControl>
-          <ForgotPassword open={open} setOpen={setOpen} />
+          <ForgotPassword open={isForgotPasswordModelOpen} setOpen={setIsForgotPasswordModelOpen} />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             onClick={() => {
-              validateInputs({ setEmailErrorMessage, setPasswordErrorMessage });
+              validateInputs({ setEmailErrorMessage });
             }}
           >
             Sign in
@@ -111,8 +125,7 @@ function SignIn() {
             <span>
               <Link
                 onClick={() => {
-                  // setPageView("signUp");
-                  console.log("object");
+                  router.push("/auth/sign-up");
                 }}
                 variant="body2"
                 sx={styles.signIn.signUpLink}
@@ -129,9 +142,29 @@ function SignIn() {
 
 export default SignIn;
 
-const validateInputs = ({ setEmailErrorMessage, setPasswordErrorMessage }) => {
+function InvalidLogin() {
+  return (
+    <Card
+      variant="outlined"
+      sx={{
+        borderColor: "error.main",
+        backgroundColor: "error.main",
+        color: "white",
+        textAlign: "center",
+        display: "flex",
+        alignItems: "center",
+        padding: "1rem",
+        justifyContent: "center",
+        width: "1000%",
+      }}
+    >
+      <Typography sx={{ justifyContent: "center", alignItems: "center" }}>Email or Password was invalid</Typography>
+    </Card>
+  );
+}
+
+const validateInputs = ({ setEmailErrorMessage }) => {
   const email = document.getElementById("email");
-  const password = document.getElementById("password");
 
   let isValid = true;
 
@@ -142,27 +175,20 @@ const validateInputs = ({ setEmailErrorMessage, setPasswordErrorMessage }) => {
     setEmailErrorMessage(null);
   }
 
-  if (!password.value || password.value.length < 8) {
-    setPasswordErrorMessage("Password must be at least 8 characters long.");
-    isValid = false;
-  } else {
-    setPasswordErrorMessage(null);
-  }
-
   return isValid;
 };
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
+  width: "100%",
+  [theme.breakpoints.down("sm")]: {
+    width: "225px",
   },
+  alignItems: "center",
+  justifyContent: "space-between",
   boxShadow: "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
   ...theme.applyStyles("dark", {
     boxShadow: "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
@@ -171,6 +197,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   padding: theme.spacing(2),
   [theme.breakpoints.up("sm")]: {
     padding: theme.spacing(4),
