@@ -1,8 +1,7 @@
-"use client";
-
-import { AppBar, Typography, Container, IconButton } from "@mui/material";
+import { AppBar, Typography, Container, IconButton, Box } from "@mui/material";
 import { Email as EmailIcon } from "@mui/icons-material";
 import { styles } from "../../styles/footer.mui.styles.mjs";
+import { openEmail } from "../../lib/commonFunctionsClient.mjs";
 
 function Footer() {
   return (
@@ -21,17 +20,15 @@ function Footer() {
           Copyright &copy; {new Date().getFullYear()} Ben Pernot
           <br />
         </Typography>
-        <IconButton data-cy="contact-info" sx={styles.button} onClick={openEmail}>
-          <EmailIcon />
-          <Typography sx={styles.typography.bold}>: yorkshirepeaks@gmail.com</Typography>
-        </IconButton>
+        <Box sx={styles.button.box}>
+          <IconButton data-cy="contact-info" sx={styles.button.icon} onClick={openEmail}>
+            <EmailIcon />
+            <Typography sx={styles.typography.bold}>: yorkshirepeaks@gmail.com</Typography>
+          </IconButton>
+        </Box>
       </Container>
     </AppBar>
   );
 }
-
-const openEmail = () => {
-  window.location = "mailto:yorkshirepeaks@gmail.com";
-};
 
 export default Footer;

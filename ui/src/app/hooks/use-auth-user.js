@@ -1,7 +1,7 @@
 import { fetchAuthSession, fetchUserAttributes, getCurrentUser } from "aws-amplify/auth";
 import { useEffect, useState } from "react";
 import { USER_ROLES } from "../../lib/constants.mjs";
-import { getHighestUserGroup } from "@/src/lib/commonFunctions.mjs";
+import { getHighestUserGroup } from "@/src/lib/commonFunctionsServer.mjs";
 
 export default function useAuthUser() {
   const [user, setUser] = useState();

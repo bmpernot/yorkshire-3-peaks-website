@@ -1,6 +1,16 @@
 import { redirect } from "next/navigation";
-import { signUp, confirmSignUp, signIn, signOut, resendSignUpCode, autoSignIn } from "aws-amplify/auth";
-import { getErrorMessage } from "@/src/lib/commonFunctions.mjs";
+import {
+  signUp,
+  confirmSignUp,
+  signIn,
+  signOut,
+  resendSignUpCode,
+  autoSignIn,
+  resetPassword,
+  deleteUser,
+  updateUserAttributes,
+} from "aws-amplify/auth";
+import { getErrorMessage } from "@/src/lib/commonFunctionsServer.mjs";
 
 export async function handleSignUp(prevState, formData) {
   try {
@@ -56,7 +66,7 @@ export async function handleConfirmSignUp(prevState, formData) {
 }
 
 export async function handleSignIn(prevState, formData) {
-  let redirectLink = "/dashboard";
+  let redirectLink = "/auth/account";
   try {
     const { isSignedIn, nextStep } = await signIn({
       username: String(formData.get("email")),
@@ -68,6 +78,8 @@ export async function handleSignIn(prevState, formData) {
       });
       redirectLink = "/auth/confirm-signup";
     }
+
+    // need to check if the signed in worked - if not return "Invalid Login" so we can handle it on the ui
   } catch (error) {
     return getErrorMessage(error);
   }

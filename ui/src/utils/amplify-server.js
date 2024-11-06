@@ -2,7 +2,7 @@ import { authConfig } from "@/src/app/amplify-cognito-config";
 import { createServerRunner } from "@aws-amplify/adapter-nextjs";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth/server";
 import { USER_ROLES } from "../lib/constants.mjs";
-import { getHighestUserGroup } from "../lib/commonFunctions.mjs";
+import { getHighestUserGroup } from "../lib/commonFunctionsServer.mjs";
 
 export const { runWithAmplifyServerContext } = createServerRunner({
   config: {
