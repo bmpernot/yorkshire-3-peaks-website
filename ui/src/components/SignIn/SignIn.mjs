@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Button, FormControl, FormLabel, Link, TextField, Typography, Stack, Card } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Button, FormControl, FormLabel, Link, TextField, Typography, Card } from "@mui/material";
 import ForgotPassword from "./ForgotPassword.mjs";
 import { LogoTitle } from "../common/CustomIcons.mjs";
+import { StyledCard, StyledContainer as SignInContainer } from "../common/CustomComponents.mjs";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -144,20 +144,7 @@ export default SignIn;
 
 function InvalidLogin() {
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        borderColor: "error.main",
-        backgroundColor: "error.main",
-        color: "white",
-        textAlign: "center",
-        display: "flex",
-        alignItems: "center",
-        padding: "1rem",
-        justifyContent: "center",
-        width: "1000%",
-      }}
-    >
+    <Card variant="outlined" sx={styles.invalidLogin}>
       <Typography sx={{ justifyContent: "center", alignItems: "center" }}>Email or Password was invalid</Typography>
     </Card>
   );
@@ -177,31 +164,3 @@ const validateInputs = ({ setEmailErrorMessage }) => {
 
   return isValid;
 };
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  width: "100%",
-  [theme.breakpoints.down("sm")]: {
-    width: "225px",
-  },
-  alignItems: "center",
-  justifyContent: "space-between",
-  boxShadow: "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  ...theme.applyStyles("dark", {
-    boxShadow: "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  }),
-}));
-
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-}));

@@ -11,83 +11,102 @@ import {
   Link,
   TextField,
   Typography,
-  Stack,
-  Card,
+  Tooltip,
+  IconButton,
+  ClickAwayListener,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
+import { Info as InfoIcon } from "@mui/icons-material";
 import { LogoTitle } from "../common/CustomIcons.mjs";
-import { isEmptyObject } from "../../lib/commonFunctions.mjs";
+import { isErrors } from "../../lib/commonFunctionsServer.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  boxShadow: "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  [theme.breakpoints.up("sm")]: {
-    width: "450px",
-  },
-}));
-
-const SignUpContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-}));
+import { useRouter } from "next/navigation";
 
 function SignUp() {
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({
+    email: [],
+    password: [],
+    fname: [],
+    lname: [],
+    number: [],
+    iceNumber: [],
+    confirmPassword: [],
+  });
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = (event) => {
-    if (!isEmptyObject(errors)) {
-      event.preventDefault();
+    event.preventDefault();
+    if (isErrors(errors)) {
       return;
     }
 
     const data = new FormData(event.currentTarget);
     console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
+      firstName: data.get("fname"),
+      lastName: data.get("lname"),
       email: data.get("email"),
       password: data.get("password"),
+      number: data.get("number"),
+      iceNumber: data.get("iceNumber"),
+      notify: data.get("notify") === "true" ? true : false,
     });
-    // setUser({
-    //   firstName: "Bruce",
-    //   lastName: "Wayne",
-    //   email: "bruce.wayne@waynecorp.com",
-    //   number: "01234567890",
-    //   iceNumber: "01234567891",
-    //   role: "admin",
-    // });
-    // setPageView("account");
+
+    //// TODO - need to call the aws cognito helper function ot sign up the user with this data /////
   };
 
   return (
     <SignUpContainer direction="column" justifyContent="space-between">
       <StyledCard variant="outlined">
         <LogoTitle dataCy="sign-up" />
-        <Typography component="h1" variant="h4" sx={styles.title}>
-          Sign up
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={styles.formBox}>
+        <Box sx={styles.titleBox}>
+          <Typography component="h1" variant="h4" sx={styles.title}>
+            Sign up
+          </Typography>
+          <ClickAwayListener onClickAway={() => setIsTooltipOpen(false)}>
+            <div>
+              <Tooltip
+                PopperProps={{
+                  disablePortal: true,
+                  modifiers: [
+                    {
+                      name: "preventOverflow",
+                      options: {
+                        boundary: "viewport",
+                      },
+                    },
+                  ],
+                }}
+                onClose={() => setIsTooltipOpen(false)}
+                open={isTooltipOpen}
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                title="We collect this information in the event of an incident we can provide these details to mountain rescue and other emergency services. Please fill them out to the best of your ability. Thank you."
+                placement="bottom-end"
+              >
+                <IconButton onClick={() => setIsTooltipOpen(true)}>
+                  <InfoIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </ClickAwayListener>
+        </Box>
+        <Box component="form" onSubmit={handleSubmit} sx={styles.formBox} method="POST">
           <FormControl>
             <FormLabel htmlFor="fname">First name</FormLabel>
             <TextField
               autoComplete="fname"
               name="fname"
-              required
               fullWidth
               id="fname"
               placeholder="Jon"
-              error={errors.firstName}
-              helperText={errors.firstName}
-              color={errors.firstName ? "error" : "primary"}
+              error={errors.fname.length > 0}
+              helperText={errors.fname
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
+              color={errors.fname.length > 0 ? "error" : "primary"}
+              sx={styles.formTextField}
             />
           </FormControl>
           <FormControl>
@@ -95,62 +114,69 @@ function SignUp() {
             <TextField
               autoComplete="lname"
               name="lname"
-              required
               fullWidth
               id="lname"
               placeholder="Snow"
-              error={errors.lastName}
-              helperText={errors.lastName}
-              color={errors.lastName ? "error" : "primary"}
+              error={errors.lname.length > 0}
+              helperText={errors.lname
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
+              color={errors.lname.length > 0 ? "error" : "primary"}
+              sx={styles.formTextField}
             />
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="number">Number</FormLabel>
+            <FormLabel htmlFor="number">Phone Number</FormLabel>
             <TextField
               autoComplete="number"
               name="number"
-              required
               fullWidth
               id="number"
               placeholder="01234 567890"
-              error={errors.number}
-              helperText={errors.number}
-              color={errors.number ? "error" : "primary"}
+              error={errors.number.length > 0}
+              helperText={errors.number
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
+              color={errors.number.length > 0 ? "error" : "primary"}
+              sx={styles.formTextField}
             />
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="iceNumber">In Case of Emergency (ICE) Number</FormLabel>
+            <FormLabel htmlFor="iceNumber">In Case of Emergency (ICE) Phone Number</FormLabel>
             <TextField
               autoComplete="iceNumber"
               name="iceNumber"
-              required
               fullWidth
               id="iceNumber"
               placeholder="01234 567890"
-              error={errors.iceNumber}
-              helperText={errors.iceNumber}
-              color={errors.iceNumber ? "error" : "primary"}
+              error={errors.iceNumber.length > 0}
+              helperText={errors.iceNumber
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
+              color={errors.iceNumber.length > 0 ? "error" : "primary"}
+              sx={styles.formTextField}
             />
           </FormControl>
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
-              required
               fullWidth
               id="email"
               placeholder="your@email.com"
               name="email"
               autoComplete="email"
               variant="outlined"
-              error={errors.email}
-              helperText={errors.email}
-              color={errors.email ? "error" : "primary"}
+              error={errors.email.length > 0}
+              helperText={errors.email
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
+              color={errors.email.length > 0 ? "error" : "primary"}
+              sx={styles.formTextField}
             />
           </FormControl>
           <FormControl>
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
-              required
               fullWidth
               name="password"
               placeholder="••••••••"
@@ -158,15 +184,17 @@ function SignUp() {
               id="password"
               autoComplete="new-password"
               variant="outlined"
-              error={errors.password}
-              helperText={errors.password}
-              color={errors.password ? "error" : "primary"}
+              error={errors.password.length > 0}
+              helperText={errors.password
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
+              color={errors.password.length > 0 ? "error" : "primary"}
+              sx={styles.formTextField}
             />
           </FormControl>
           <FormControl>
             <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
             <TextField
-              required
               fullWidth
               name="confirmPassword"
               placeholder="••••••••"
@@ -174,13 +202,15 @@ function SignUp() {
               id="confirmPassword"
               autoComplete="new-password"
               variant="outlined"
-              error={errors.confirmPassword}
-              helperText={errors.confirmPassword}
-              color={errors.confirmPassword ? "error" : "primary"}
+              error={errors.confirmPassword.length > 0}
+              helperText={errors.confirmPassword
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
+              color={errors.confirmPassword.length > 0 ? "error" : "primary"}
             />
           </FormControl>
           <FormControlLabel
-            control={<Checkbox value="allowEmails" color="primary" />}
+            control={<Checkbox value={true} id="notify" color="primary" name="notify" />}
             label="I want to receive updates about current and future events."
           />
           <Button
@@ -196,11 +226,7 @@ function SignUp() {
           <Typography sx={styles.existingAccountTitle}>
             Already have an account?{" "}
             <span>
-              <Link
-                onClick={() => /*setPageView("signIn")*/ console.log("qwert")}
-                variant="body2"
-                sx={styles.existingAccountLink}
-              >
+              <Link onClick={() => router.push("/auth/sign-in")} variant="body2" sx={styles.existingAccountLink}>
                 Sign in
               </Link>
             </span>
@@ -216,105 +242,122 @@ export default SignUp;
 const validateInputs = (setErrors) => {
   const email = document.getElementById("email");
   const password = document.getElementById("password");
-  const fname = document.getElementById("nfame");
+  const fname = document.getElementById("fname");
   const lname = document.getElementById("lname");
   const number = document.getElementById("number");
   const iceNumber = document.getElementById("iceNumber");
   const confirmPassword = document.getElementById("confirmPassword");
 
   let isValid = true;
-  // refactor so it is less dry
+  const formValidations = [
+    {
+      validation: () => {
+        return !email.value || !/\S+@\S+\.\S+/.test(email.value);
+      },
+      errorMessage: "Please enter a valid email address.",
+      field: "email",
+    },
+    {
+      validation: () => {
+        return !password.value || password.value.length < 8;
+      },
+      errorMessage: "Password must be at least 8 characters long.",
+      field: "password",
+    },
+    {
+      validation: () => {
+        return !/[A-Z]/.test(password.value);
+      },
+      errorMessage: "Password must have a upper case letter.",
+      field: "password",
+    },
+    {
+      validation: () => {
+        return !/[a-z]/.test(password.value);
+      },
+      errorMessage: "Password must have a lower case letter.",
+      field: "password",
+    },
+    {
+      validation: () => {
+        return !/\d/.test(password.value);
+      },
+      errorMessage: "Password must have a number.",
+      field: "password",
+    },
+    {
+      validation: () => {
+        return !/[^$*.[\]{}()?\\!"@#%&/\\,><':;|_~`+=-]/.test(password.value);
+      },
+      errorMessage: "Password must have special characters.",
+      field: "password",
+    },
+    {
+      validation: () => {
+        return !confirmPassword.value || confirmPassword.value !== password.value;
+      },
+      errorMessage: "Passwords do not match.",
+      field: "confirmPassword",
+    },
+    {
+      validation: () => {
+        return !number.value || number.value.length !== 11;
+      },
+      errorMessage: "Number is required.",
+      field: "number",
+    },
+    {
+      validation: () => {
+        return !fname.value || fname.value.length < 1;
+      },
+      errorMessage: "First name is required.",
+      field: "fname",
+    },
+    {
+      validation: () => {
+        return !lname.value || lname.value.length < 1;
+      },
+      errorMessage: "Last name is required.",
+      field: "lname",
+    },
+    {
+      validation: () => {
+        return !iceNumber.value || iceNumber.value.length !== 11;
+      },
+      errorMessage: "ICE number is required.",
+      field: "iceNumber",
+    },
+  ];
 
-  if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-    setErrors((errors) => {
-      errors.email = "Please enter a valid email address.";
-      return errors;
-    });
-    isValid = false;
-  } else {
-    setErrors((errors) => {
-      delete errors.email;
-      return errors;
-    });
-  }
-
-  if (!password.value || password.value.length < 8) {
-    setErrors((errors) => {
-      errors.password = "Password must be at least 8 characters long.";
-      return errors;
-    });
-    isValid = false;
-  } else {
-    setErrors((errors) => {
-      delete errors.password;
-      return errors;
-    });
-  }
-
-  if (!confirmPassword.value || confirmPassword.value !== password.value) {
-    setErrors((errors) => {
-      errors.confirmPassword = "Passwords do not match.";
-      return errors;
-    });
-    isValid = false;
-  } else {
-    setErrors((errors) => {
-      delete errors.confirmPassword;
-      return errors;
-    });
-  }
-
-  if (!number.value || number.value.length !== 11) {
-    setErrors((errors) => {
-      errors.number = "Number is required.";
-      return errors;
-    });
-    isValid = false;
-  } else {
-    setErrors((errors) => {
-      delete errors.number;
-      return errors;
-    });
-  }
-
-  if (!fname.value || fname.value.length < 1) {
-    setErrors((errors) => {
-      errors.fname = "First name is required.";
-      return errors;
-    });
-    isValid = false;
-  } else {
-    setErrors((errors) => {
-      delete errors.fname;
-      return errors;
-    });
-  }
-
-  if (!lname.value || lname.value.length < 1) {
-    setErrors((errors) => {
-      errors.lname = "Last name is required.";
-      return errors;
-    });
-    isValid = false;
-  } else {
-    setErrors((errors) => {
-      delete errors.lname;
-      return errors;
-    });
-  }
-
-  if (!iceNumber.value || iceNumber.value.length !== 11) {
-    setErrors((errors) => {
-      errors.iceNumber = "ICE number is required.";
-      return errors;
-    });
-    isValid = false;
-  } else {
-    setErrors((errors) => {
-      delete errors.iceNumber;
-      return errors;
-    });
-  }
+  formValidations.forEach((formValidation) => {
+    if (formValidation.validation()) {
+      setErrors((errors) => {
+        let newErrors = { ...errors };
+        if (!errors[formValidation.field].includes(formValidation.errorMessage)) {
+          newErrors = {
+            ...errors,
+            [formValidation.field]: [...errors[formValidation.field], formValidation.errorMessage],
+          };
+        }
+        isValid = errors[formValidation.field].length > 0 ? false : true;
+        return newErrors;
+      });
+    } else {
+      setErrors((errors) => {
+        let newErrors = { ...errors };
+        if (errors[formValidation.field].includes(formValidation.errorMessage)) {
+          const updatedFieldErrors = errors[formValidation.field].filter(
+            (element) => element !== formValidation.errorMessage,
+          );
+          newErrors = {
+            ...errors,
+            [formValidation.field]: updatedFieldErrors,
+          };
+        }
+        return newErrors;
+      });
+    }
+  });
 
   return isValid;
 };

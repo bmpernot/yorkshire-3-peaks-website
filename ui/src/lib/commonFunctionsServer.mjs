@@ -32,4 +32,8 @@ function getErrorMessage(error) {
   return "An error occurred";
 }
 
-export { isEmptyObject, getHighestUserGroup, getErrorMessage };
+function isErrors(errors) {
+  return Object.values(errors).some((error) => error.length > 0);
+}
+
+export { isEmptyObject, getHighestUserGroup, getErrorMessage, isErrors };

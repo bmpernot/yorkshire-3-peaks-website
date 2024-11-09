@@ -192,6 +192,13 @@ Resources:
           StringAttributeConstraints:
             MinLength: "0"
             MaxLength: "2048"
+        - Name: "notify"
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
         - Name: email
           AttributeDataType: String
           DeveloperOnlyAttribute: false
@@ -228,6 +235,7 @@ Resources:
       PreventUserExistenceErrors: ENABLED
       ReadAttributes:
         - custom:ice_number
+        - custom:notify
         - email
         - phone_number
         - given_name
@@ -237,6 +245,7 @@ Resources:
       UserPoolId: !Ref CognitoUserPool
       WriteAttributes:
         - custom:ice_number
+        - custom:notify
         - email
         - phone_number
         - given_name
