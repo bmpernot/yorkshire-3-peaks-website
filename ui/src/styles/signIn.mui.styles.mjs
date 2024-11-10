@@ -27,6 +27,11 @@ export const styles = {
     alignItems: "center",
     padding: "1rem",
     justifyContent: "center",
-    width: "1000%",
+    width: "90%",
+  },
+  formTextField: {
+    "& .MuiFormHelperText-root": {
+      whiteSpace: "pre-line", // Allows line breaks in helper text
+    },
   },
 };
