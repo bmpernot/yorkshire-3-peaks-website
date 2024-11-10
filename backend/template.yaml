@@ -70,6 +70,12 @@ Resources:
       Environment:
         Variables:
           USER_TABLE: !Ref UserTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /user/
+            Method: POST
 
   updateUser:
     Type: AWS::Serverless::Function
@@ -167,7 +173,6 @@ Resources:
           - email
       MfaConfiguration: "OFF"
       DeletionProtection: ACTIVE
-      LambdaConfig: { PostConfirmation: !GetAtt addUser.Arn }
       Policies:
         PasswordPolicy:
           MinimumLength: 8
