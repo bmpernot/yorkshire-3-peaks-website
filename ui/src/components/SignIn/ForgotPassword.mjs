@@ -1,89 +1,103 @@
 "use client";
 
-import * as React from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  OutlinedInput,
-} from "@mui/material";
+import { useState } from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
+import { handleResetPassword } from "../../lib/cognitoActions.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import ErrorCard from "../common/ErrorCard.mjs";
 
-function ForgotPassword({ open, setOpen }) {
+function ForgotPassword({ open, setOpen, router }) {
+  const [submissionError, setSubmissionError] = useState(null);
+  const [emailErrorMessage, setEmailErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <Dialog
       open={open}
       onClose={() => {
+        setSubmissionError(null);
+        setEmailErrorMessage(null);
         setOpen(false);
       }}
       PaperProps={{
         component: "form",
         onSubmit: async (event) => {
           event.preventDefault();
-          if (!open) {
+          setSubmissionError(null);
+
+          if (!open || emailErrorMessage) {
             return;
           }
+
+          setIsLoading(true);
 
           const formData = new FormData(event.currentTarget);
           const email = formData.get("email");
 
-          console.log("Email:", email);
-
           try {
-            ///// need to use aws cognito to send a email to the url to reset the password /////
-            await new Promise((resolve, reject) => {
-              const x = true;
+            await handleResetPassword(router, email);
 
-              if (x === true) {
-                setTimeout(resolve, 1000);
-              } else {
-                setTimeout(reject, 1000);
-              }
-            });
-            /////
-
-            toast.success(`We've sent a email to ${email} with your reset password`);
+            toast.success(`We've sent an email to ${email} with your validation code to reset password`);
             setOpen(false);
           } catch (error) {
             console.error(
-              new Error(`An Error occurred when trying to send your reset password to ${email}`, { cause: error }),
+              new Error(`An Error occurred when trying to send your validation code to reset password to ${email}`, {
+                cause: error,
+              }),
             );
-            toast.error(`An Error occurred when trying to send your reset password to ${email}`);
+            toast.error(
+              `An Error occurred when trying to send your validation code to reset your password to ${email}`,
+            );
+            setSubmissionError(getErrorMessage(error.cause));
+          } finally {
+            setIsLoading(false);
           }
         },
+        noValidate: true,
       }}
     >
       <DialogTitle>Reset password</DialogTitle>
       <DialogContent sx={styles.forgotPassword.dialogContent}>
         <DialogContentText>
-          Enter your account&apos;s email address, and we&apos;ll send you a link to reset your password.
+          Enter your account&apos;s email address, and we&apos;ll send you a code to reset your password.
         </DialogContentText>
-        <OutlinedInput
-          autoFocus={true}
-          required={true}
+        {submissionError ? <ErrorCard error={submissionError} /> : null}
+        <TextField
+          autoFocus
           margin="dense"
-          id="email"
+          id="reset-password-for-email"
           name="email"
           label="Email address"
           placeholder="Email address"
           type="email"
           fullWidth={true}
+          error={emailErrorMessage ? true : false}
+          helperText={emailErrorMessage}
+          color={emailErrorMessage ? "error" : "primary"}
+          sx={styles.signIn.emailInput}
         />
       </DialogContent>
       <DialogActions sx={styles.forgotPassword.dialogActions}>
         <Button
           onClick={() => {
+            setSubmissionError(null);
+            setEmailErrorMessage(null);
             setOpen(false);
           }}
         >
           Cancel
         </Button>
-        <Button variant="contained" type="submit">
-          Continue
+        <Button
+          variant="contained"
+          type="submit"
+          onClick={() => {
+            validateInputs({ setEmailErrorMessage });
+          }}
+          disabled={isLoading}
+        >
+          Reset
         </Button>
       </DialogActions>
     </Dialog>
@@ -91,3 +105,17 @@ function ForgotPassword({ open, setOpen }) {
 }
 
 export default ForgotPassword;
+
+const validateInputs = ({ setEmailErrorMessage }) => {
+  const email = document.getElementById("reset-password-for-email");
+  let isValid = true;
+
+  if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    setEmailErrorMessage("Please enter a valid email address.");
+    isValid = false;
+  } else {
+    setEmailErrorMessage(null);
+  }
+
+  return isValid;
+};
