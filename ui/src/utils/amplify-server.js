@@ -28,7 +28,7 @@ export async function authenticatedUser(context) {
 
         return user;
       } catch (error) {
-        console.log(error);
+        console.error(new Error("An error occurred when ", { cause: error }));
       }
     },
   });
