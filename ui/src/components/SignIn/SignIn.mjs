@@ -1,55 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Button, FormControl, FormLabel, Link, TextField, Typography, Card } from "@mui/material";
+import { Box, Button, FormControl, FormLabel, Link, TextField, Typography } from "@mui/material";
 import ForgotPassword from "./ForgotPassword.mjs";
 import { LogoTitle } from "../common/CustomIcons.mjs";
 import { StyledCard, StyledContainer as SignInContainer } from "../common/CustomComponents.mjs";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-
+import { handleSignIn } from "../../lib/cognitoActions.mjs";
+import ErrorCard from "../common/ErrorCard.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 function SignIn() {
   const [emailErrorMessage, setEmailErrorMessage] = useState(null);
-  const [invalidLogin, setInvalidLogin] = useState(false);
+  const [submissionError, setSubmissionError] = useState(null);
   const [isForgotPasswordModelOpen, setIsForgotPasswordModelOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setInvalidLogin(false);
+    setSubmissionError(null);
     if (emailErrorMessage || isForgotPasswordModelOpen) {
       event.preventDefault();
       return;
     }
 
+    setIsLoading(true);
+
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = {
       email: data.get("email"),
       password: data.get("password"),
-    });
+    };
 
     try {
-      ///// need to call aws cognito actions to sign the user in with the email and password from the form /////
-
-      const response = await new Promise((resolve, reject) => {
-        const x = true;
-
-        if (x === true) {
-          // setTimeout(resolve("Invalid Login"), 1000);
-          setTimeout(resolve(), 1000);
-        } else {
-          setTimeout(reject, 1000);
-        }
-      });
-      /////
-
-      if (response === "Invalid Login") {
-        setInvalidLogin(true);
-      }
+      await handleSignIn(router, formData);
     } catch (error) {
       console.error(new Error(`An Error occurred when trying to sign you in`, { cause: error }));
       toast.error(`An Error occurred when trying to sign you in`);
+      setSubmissionError(getErrorMessage(error.cause));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,12 +52,12 @@ function SignIn() {
         <Typography component="h1" variant="h4" sx={styles.signIn.title}>
           Sign in
         </Typography>
-        {invalidLogin ? <InvalidLogin /> : null}
+        {submissionError ? <ErrorCard error={submissionError} /> : null}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={styles.signIn.form}>
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
-              error={emailErrorMessage || invalidLogin ? true : false}
+              error={emailErrorMessage ? true : false}
               helperText={emailErrorMessage}
               id="email"
               type="email"
@@ -96,7 +88,6 @@ function SignIn() {
               </Link>
             </Box>
             <TextField
-              error={invalidLogin ? true : false}
               name="password"
               placeholder="••••••••"
               type="password"
@@ -106,10 +97,9 @@ function SignIn() {
               required
               fullWidth
               variant="outlined"
-              color={invalidLogin ? "error" : "primary"}
             />
           </FormControl>
-          <ForgotPassword open={isForgotPasswordModelOpen} setOpen={setIsForgotPasswordModelOpen} />
+          <ForgotPassword open={isForgotPasswordModelOpen} setOpen={setIsForgotPasswordModelOpen} router={router} />
           <Button
             type="submit"
             fullWidth
@@ -117,6 +107,7 @@ function SignIn() {
             onClick={() => {
               validateInputs({ setEmailErrorMessage });
             }}
+            disabled={isLoading}
           >
             Sign in
           </Button>
@@ -141,14 +132,6 @@ function SignIn() {
 }
 
 export default SignIn;
-
-function InvalidLogin() {
-  return (
-    <Card variant="outlined" sx={styles.invalidLogin}>
-      <Typography sx={{ justifyContent: "center", alignItems: "center" }}>Email or Password was invalid</Typography>
-    </Card>
-  );
-}
 
 const validateInputs = ({ setEmailErrorMessage }) => {
   const email = document.getElementById("email");
