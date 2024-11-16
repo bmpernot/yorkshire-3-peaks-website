@@ -1,50 +1,76 @@
 "use client";
 
-import { useState } from "react";
-import { Box, Button, FormControl, FormLabel, TextField, Typography, Card } from "@mui/material";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Box, Button, FormControl, FormLabel, TextField, Typography } from "@mui/material";
 import { LogoTitle } from "../common/CustomIcons.mjs";
 import { StyledCard, StyledContainer as ConfirmSignUpContainer } from "../common/CustomComponents.mjs";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
+import { handleConfirmSignUp, handleSendEmailVerificationCode } from "../../lib/cognitoActions.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import ErrorCard from "../common/ErrorCard.mjs";
 
 function ConfirmSignUp() {
   const [codeErrorMessage, setCodeErrorMessage] = useState(null);
-  const [invalidCode, setInvalidCode] = useState(false);
+  const [submissionError, setSubmissionError] = useState(null);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [isLoadingResendCode, setIsLoadingResendCode] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("userEmail")) {
+      toast.error(
+        "Failed to pass email to this page - please make sure you allow cookies for this website and start the process again",
+      );
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setInvalidCode(false);
+    setSubmissionError(null);
     if (codeErrorMessage) {
-      event.preventDefault();
       return;
     }
 
+    setIsLoadingSubmit(true);
+
     const data = new FormData(event.currentTarget);
-    console.log({
-      code: data.get("code"),
-    });
+    const email = sessionStorage.getItem("userEmail");
+
+    if (!email) {
+      toast.error(
+        "Failed to pass email to this page - please make sure you allow cookies for this website and start the process again",
+      );
+    }
+
+    const formData = { email: sessionStorage.getItem("userEmail"), code: data.get("code") };
 
     try {
-      ///// need to call aws cognito actions to sign the user in with the code and password from the form /////
-
-      const response = await new Promise((resolve, reject) => {
-        const x = true;
-
-        if (x === true) {
-          // setTimeout(resolve("Invalid Code"), 1000);
-          setTimeout(resolve(), 1000);
-        } else {
-          setTimeout(reject, 1000);
-        }
-      });
-      /////
-
-      if (response === "Invalid Code") {
-        setInvalidCode(true);
-      }
+      await handleConfirmSignUp(router, formData);
     } catch (error) {
       console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
       toast.error(`An Error occurred when trying to confirm your account.`);
+      setSubmissionError(getErrorMessage(error.cause));
+    } finally {
+      setIsLoadingSubmit(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    const email = sessionStorage.getItem("userEmail");
+    if (email) {
+      try {
+        setIsLoadingResendCode(true);
+        await handleSendEmailVerificationCode(email);
+      } catch (error) {
+        console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
+        toast.error(`An Error occurred when trying to confirm your account.`);
+        setSubmissionError(getErrorMessage(error.cause));
+      } finally {
+        setIsLoadingResendCode(false);
+      }
     }
   };
 
@@ -55,12 +81,12 @@ function ConfirmSignUp() {
         <Typography component="h1" variant="h4" sx={styles.signIn.title}>
           Confirm Account
         </Typography>
-        {invalidCode ? <InvalidCode /> : null}
+        {submissionError ? <ErrorCard error={submissionError} /> : null}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={styles.signIn.form}>
           <FormControl>
             <FormLabel htmlFor="code">Confirmation code</FormLabel>
             <TextField
-              error={codeErrorMessage || invalidCode ? true : false}
+              error={codeErrorMessage ? true : false}
               helperText={codeErrorMessage}
               id="code"
               type="code"
@@ -82,6 +108,7 @@ function ConfirmSignUp() {
             onClick={() => {
               validateInputs({ setCodeErrorMessage });
             }}
+            disabled={isLoadingSubmit}
           >
             Submit
           </Button>
@@ -89,9 +116,9 @@ function ConfirmSignUp() {
             fullWidth
             variant="contained"
             onClick={() => {
-              console.log("resend confirmation code");
-              // TODO - need to resend confirmation code using aws cognito helper functions //
+              handleResendCode();
             }}
+            disabled={isLoadingResendCode}
           >
             Resend code
           </Button>
@@ -102,14 +129,6 @@ function ConfirmSignUp() {
 }
 
 export default ConfirmSignUp;
-
-function InvalidCode() {
-  return (
-    <Card variant="outlined" sx={styles.invalidLogin}>
-      <Typography sx={{ justifyContent: "center", alignItems: "center" }}>Code invalid</Typography>
-    </Card>
-  );
-}
 
 const validateInputs = ({ setCodeErrorMessage }) => {
   const code = document.getElementById("code");
