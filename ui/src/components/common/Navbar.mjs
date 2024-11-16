@@ -30,14 +30,9 @@ import { useRouter } from "next/navigation";
 import { styles } from "../../styles/navbar.mui.styles.mjs";
 import { USER_ROLES, USER_ROLES_IN_ORDER_OF_PRECEDENCE } from "@/src/lib/constants.mjs";
 import { handleSignOut } from "@/src/lib/cognitoActions.mjs";
+import { toast } from "react-toastify";
 
 import useAuthUser from "@/src/app/hooks/use-auth-user";
-
-const settings = [
-  { label: "Profile", link: "/user/profile", role: USER_ROLES.USER, icon: <AccountBoxIcon /> },
-  { label: "Account", link: "/user/account", role: USER_ROLES.USER, icon: <SettingsIcon /> },
-  { label: "Sign Out", function: handleSignOut, role: USER_ROLES.USER, icon: <LogoutIcon /> },
-];
 
 const pages = [
   { label: "Home", link: "/", role: USER_ROLES.GUEST },
@@ -125,6 +120,30 @@ function HideOnScroll({ children, window }) {
 }
 
 const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, router }) {
+  const [isLoadingSignOut, setIsLoadingSignOut] = useState(false);
+
+  const settings = [
+    { label: "Profile", link: "/user/profile", role: USER_ROLES.USER, icon: <AccountBoxIcon /> },
+    { label: "Account", link: "/user/account", role: USER_ROLES.USER, icon: <SettingsIcon /> },
+    {
+      label: "Sign Out",
+      function: async () => {
+        try {
+          setIsLoadingSignOut(true);
+          await handleSignOut();
+        } catch (error) {
+          console.error(new Error("Failed to sign you out", { cause: error }));
+          toast.error("Failed to sign you out");
+        } finally {
+          setIsLoadingSignOut(false);
+        }
+      },
+      role: USER_ROLES.USER,
+      icon: <LogoutIcon />,
+      isLoadingState: isLoadingSignOut,
+    },
+  ];
+
   return (
     <Box data-cy="user-settings" sx={styles.userMenu.dropDown.wrapper}>
       <Tooltip title="Open settings">
@@ -158,10 +177,16 @@ const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, r
           <MenuItem
             data-cy={`user-settings-dropdown-${setting.link}`}
             key={setting.label}
-            onClick={() => {
+            onClick={async () => {
               setAnchorElUser(null);
-              router.push(setting.link);
+              if (setting.link) {
+                router.push(setting.link);
+              }
+              if (setting.function) {
+                await setting.function();
+              }
             }}
+            disabled={setting.isLoadingState}
           >
             <ListItemIcon>{setting.icon}</ListItemIcon>
             <Typography sx={styles.userMenu.dropDown.items}>{setting.label}</Typography>
