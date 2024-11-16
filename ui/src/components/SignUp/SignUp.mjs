@@ -18,11 +18,15 @@ import {
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { Info as InfoIcon } from "@mui/icons-material";
 import { LogoTitle } from "../common/CustomIcons.mjs";
-import { isErrors } from "../../lib/commonFunctionsServer.mjs";
+import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { useRouter } from "next/navigation";
+import { handleSignUp } from "../../lib/cognitoActions.mjs";
+import ErrorCard from "../common/ErrorCard.mjs";
+import { toast } from "react-toastify";
 
 function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({
     email: [],
     password: [],
@@ -33,16 +37,21 @@ function SignUp() {
     confirmPassword: [],
   });
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const [submissionError, setSubmissionError] = useState(false);
+
   const router = useRouter();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setSubmissionError(null);
     if (isErrors(errors)) {
       return;
     }
 
+    setIsLoading(true);
+
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = {
       firstName: data.get("fname"),
       lastName: data.get("lname"),
       email: data.get("email"),
@@ -50,9 +59,17 @@ function SignUp() {
       number: data.get("number"),
       iceNumber: data.get("iceNumber"),
       notify: data.get("notify") === "true" ? true : false,
-    });
+    };
 
-    //// TODO - need to call the aws cognito helper function ot sign up the user with this data /////
+    try {
+      await handleSignUp(formData);
+    } catch (error) {
+      console.error(new Error("An Error occurred when trying to sign you up", { cause: error }));
+      toast.error(`An Error occurred when trying to sign you up`);
+      setSubmissionError(getErrorMessage(error.cause));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,6 +92,12 @@ function SignUp() {
                         boundary: "viewport",
                       },
                     },
+                    {
+                      name: "offset",
+                      options: {
+                        offset: [35, 0],
+                      },
+                    },
                   ],
                 }}
                 onClose={() => setIsTooltipOpen(false)}
@@ -92,6 +115,7 @@ function SignUp() {
             </div>
           </ClickAwayListener>
         </Box>
+        {submissionError ? <ErrorCard error={submissionError} /> : null}
         <Box component="form" onSubmit={handleSubmit} sx={styles.formBox} method="POST">
           <FormControl>
             <FormLabel htmlFor="fname">First name</FormLabel>
@@ -217,9 +241,8 @@ function SignUp() {
             type="submit"
             fullWidth
             variant="contained"
-            onClick={() => {
-              validateInputs(setErrors);
-            }}
+            onClick={() => validateInputs(setErrors)}
+            disabled={isLoading}
           >
             Sign up
           </Button>
@@ -325,6 +348,13 @@ const validateInputs = (setErrors) => {
         return !iceNumber.value || iceNumber.value.length !== 11;
       },
       errorMessage: "ICE number is required.",
+      field: "iceNumber",
+    },
+    {
+      validation: () => {
+        return iceNumber.value !== number.value;
+      },
+      errorMessage: "ICE number cannot be your own.",
       field: "iceNumber",
     },
   ];
