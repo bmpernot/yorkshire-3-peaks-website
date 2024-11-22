@@ -11,8 +11,9 @@ import {
   updatePassword,
   confirmResetPassword,
   getCurrentUser,
+  fetchUserAttributes,
 } from "aws-amplify/auth";
-import { addUser, modifyUser, deleteUser as deleteUserFromDB } from "./backendActions.mjs";
+import { addUser, modifyUser, deleteUser as deleteUserFromDB, getUser } from "./backendActions.mjs";
 
 export async function handleSignUp(router, formData) {
   try {
@@ -78,20 +79,20 @@ export async function handleConfirmSignUp(router, formData) {
   }
 
   try {
-    const userData = await getCurrentUser();
-    await addUser(userData);
-  } catch (error) {
-    const cause = new Error("An error occurred when trying to add your information to our db", { cause: error });
-    console.error(cause);
-    throw cause;
-  }
-
-  try {
     await autoSignIn();
   } catch (error) {
     const cause = new Error("An error has occurred when trying to log the user in after confirmation", {
       cause: error,
     });
+    console.error(cause);
+    throw cause;
+  }
+
+  try {
+    const userData = await getCurrentUser();
+    await addUser(userData);
+  } catch (error) {
+    const cause = new Error("An error occurred when trying to add your information to our db", { cause: error });
     console.error(cause);
     throw cause;
   }
@@ -118,6 +119,12 @@ export async function handleSignIn(router, formData) {
       });
       sessionStorage.setItem("userEmail", formData.email);
       redirectLink = "/auth/confirm-signup";
+    } else {
+      const doesUserExist = await verifyDbHasUser();
+
+      if (!doesUserExist) {
+        await addUserToDB();
+      }
     }
   } catch (error) {
     const cause = new Error("An error occurred when trying to log you in", { cause: error });
@@ -200,17 +207,17 @@ export async function handleConfirmResetPassword(router, formData) {
 
 export async function handleDeleteUser(router, id) {
   try {
-    await deleteUser();
+    await deleteUserFromDB(id);
   } catch (error) {
-    const cause = new Error("An error occurred when trying to delete your account", { cause: error });
+    const cause = new Error("An error occurred when trying to delete your information from the DB", { cause: error });
     console.error(cause);
     throw cause;
   }
 
   try {
-    await deleteUserFromDB(id);
+    await deleteUser();
   } catch (error) {
-    const cause = new Error("An error occurred when trying to delete your information from the DB", { cause: error });
+    const cause = new Error("An error occurred when trying to delete your account", { cause: error });
     console.error(cause);
     throw cause;
   }
@@ -224,17 +231,19 @@ export async function handleDeleteUser(router, id) {
   }
 }
 
-export async function handleUpdateUserAttribute(formData) {
+export async function handleUpdateUserAttributes(formData) {
   let updatedValues;
+
   try {
     updatedValues = await updateUserAttributes({
-      userAttribute: formData,
+      userAttributes: formData,
     });
   } catch (error) {
     const cause = new Error("An error occurred when trying to modify your account", { cause: error });
     console.error(cause);
     throw cause;
   }
+
   if (updatedValues) {
     try {
       const id = (await getCurrentUser()).userId;
@@ -252,6 +261,34 @@ export async function handleUpdatePassword(formData) {
     await updatePassword(formData);
   } catch (error) {
     const cause = new Error("An error occurred when trying to update your password", { cause: error });
+    console.error(cause);
+    throw cause;
+  }
+}
+
+async function verifyDbHasUser() {
+  try {
+    const currentUser = await getCurrentUser();
+    const user = await getUser(currentUser.userId);
+    return user ? true : false;
+  } catch (error) {
+    const cause = new Error(`An error occurred when trying to get your information`, {
+      cause: error,
+    });
+    console.error(cause);
+    throw cause;
+  }
+}
+
+async function addUserToDB() {
+  try {
+    const userData = await fetchUserAttributes();
+    // TODO - reformat the data so it is nicer
+    await addUser(userData);
+  } catch (error) {
+    const cause = new Error(`An error occurred when trying to add your information to our DB`, {
+      cause: error,
+    });
     console.error(cause);
     throw cause;
   }
