@@ -32,14 +32,13 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
 
     const data = new FormData(event.currentTarget);
 
-    // TODO - make the key the same as cognito
     const formData = {
-      firstName: data.get("fname"),
-      lastName: data.get("lname"),
+      given_name: data.get("fname"),
+      family_name: data.get("lname"),
       email: data.get("email"),
-      number: data.get("number"),
-      iceNumber: data.get("iceNumber"),
-      notify: data.get("notify") === "true" ? true : false,
+      phone_number: data.get("number"),
+      "custom:ice_number": data.get("iceNumber"),
+      "custom:notify": data.get("notify") === "true" ? true : false,
     };
 
     try {

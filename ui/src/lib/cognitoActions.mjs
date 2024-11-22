@@ -17,20 +17,7 @@ import { addUser, modifyUser, deleteUser as deleteUserFromDB, getUser } from "./
 
 export async function handleSignUp(router, formData) {
   try {
-    await signUp({
-      username: formData.email,
-      password: formData.password,
-      options: {
-        userAttributes: {
-          phone_number: formData.number,
-          email: formData.email,
-          given_name: formData.firstName,
-          family_name: formData.lastName,
-          "custom:notify": formData.notify,
-          "custom:ice_number": formData.iceNumber,
-        },
-      },
-    });
+    await signUp(formData);
   } catch (error) {
     throw new Error("An error occurred when trying to sign the user up", { cause: error });
   }
@@ -62,10 +49,7 @@ export async function handleSendEmailVerificationCode(email) {
 
 export async function handleConfirmSignUp(router, formData) {
   try {
-    await confirmSignUp({
-      username: formData.email,
-      confirmationCode: formData.code,
-    });
+    await confirmSignUp(formData);
   } catch (error) {
     throw new Error("An error has occurred when trying to confirm your account", { cause: error });
   }
@@ -95,15 +79,12 @@ export async function handleConfirmSignUp(router, formData) {
 export async function handleSignIn(router, formData) {
   let redirectLink = "/auth/account";
   try {
-    const { nextStep } = await signIn({
-      username: formData.email,
-      password: formData.password,
-    });
+    const { nextStep } = await signIn(formData);
     if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
       await resendSignUpCode({
         username: String(formData.get("email")),
       });
-      sessionStorage.setItem("userEmail", formData.email);
+      sessionStorage.setItem("userEmail", formData.username);
       redirectLink = "/auth/confirm-signup";
     } else {
       const doesUserExist = await verifyDbHasUser();

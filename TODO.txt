@@ -4,5 +4,3 @@ TODO - need to make all forms use validateInput()
 Need to do:
 
 TODO - deploy backend - make sure add user has an api endpoint
-
-TODO - make sure all the data is entering the functions correctly from the forms

@@ -30,7 +30,7 @@ function SignIn() {
 
     const data = new FormData(event.currentTarget);
     const formData = {
-      email: data.get("email"),
+      username: data.get("email"),
       password: data.get("password"),
     };
 

@@ -9,8 +9,12 @@ import PasswordForm from "./PasswordForm.mjs";
 import DeleteAccountForm from "./DeleteAccountForm.mjs";
 
 function Account() {
+  const user = useAuthUser();
   // TODO - make sure data is right
-  const { id, email, firstName, lastName, number, iceNumber, notify } = useAuthUser();
+
+  console.log("user", user);
+
+  const { id, email, firstName, lastName, number, iceNumber, notify } = "user";
 
   return (
     <Grid2

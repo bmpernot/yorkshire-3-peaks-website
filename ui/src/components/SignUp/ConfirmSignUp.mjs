@@ -45,7 +45,7 @@ function ConfirmSignUp() {
       );
     }
 
-    const formData = { email: sessionStorage.getItem("userEmail"), code: data.get("code") };
+    const formData = { username: sessionStorage.getItem("userEmail"), confirmationCode: data.get("code") };
 
     try {
       await handleConfirmSignUp(router, formData);

@@ -52,17 +52,22 @@ function SignUp() {
 
     const data = new FormData(event.currentTarget);
     const formData = {
-      firstName: data.get("fname"),
-      lastName: data.get("lname"),
-      email: data.get("email"),
+      username: data.get("email"),
       password: data.get("password"),
-      number: data.get("number"),
-      iceNumber: data.get("iceNumber"),
-      notify: data.get("notify") === "true" ? true : false,
+      options: {
+        userAttributes: {
+          phone_number: data.get("number"),
+          email: data.get("email"),
+          given_name: data.get("fname"),
+          family_name: data.get("lname"),
+          "custom:notify": data.get("notify") === "true" ? true : false,
+          "custom:ice_number": data.get("iceNumber"),
+        },
+      },
     };
 
     try {
-      await handleSignUp(formData);
+      await handleSignUp(router, formData);
     } catch (error) {
       console.error(new Error("An Error occurred when trying to sign you up", { cause: error }));
       toast.error(`An Error occurred when trying to sign you up`);
