@@ -6,7 +6,7 @@ import { StyledCard, StyledContainer } from "../common/CustomComponents.mjs";
 import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
-import { handleUpdateUserAttribute } from "../../lib/cognitoActions.mjs";
+import { handleUpdateUserAttributes } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
 
@@ -31,6 +31,8 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
     setIsLoading(true);
 
     const data = new FormData(event.currentTarget);
+
+    // TODO - make the key the same as cognito
     const formData = {
       firstName: data.get("fname"),
       lastName: data.get("lname"),
@@ -41,7 +43,7 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
     };
 
     try {
-      await handleUpdateUserAttribute(formData);
+      await handleUpdateUserAttributes(formData);
     } catch (error) {
       console.error(new Error("An Error occurred when trying to update your details", { cause: error }));
       toast.error(`An Error occurred when trying to update your details`);
