@@ -10,11 +10,7 @@ import DeleteAccountForm from "./DeleteAccountForm.mjs";
 
 function Account() {
   const user = useAuthUser();
-  // TODO - make sure data is right
-
-  console.log("user", user);
-
-  const { id, email, firstName, lastName, number, iceNumber, notify } = "user";
+  const { id, email, firstName, lastName, number, iceNumber, notify } = user;
 
   return (
     <Grid2

@@ -95,7 +95,7 @@ function Navbar({ children, window: dom }) {
               setAnchorElInternalNavMenu={setAnchorElInternalNavMenu}
               router={router}
             />
-            {user?.role === USER_ROLES.GUEST ? (
+            {user.role === USER_ROLES.GUEST ? (
               <SignInButton router={router} />
             ) : (
               <UserMenu user={user} anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} router={router} />
@@ -301,7 +301,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
         data-cy="small-nav-menu-dropdown"
       >
         {pages.map((page) => {
-          if (page.link && shouldUserViewPage(user?.role, page.role)) {
+          if (page.link && shouldUserViewPage(user.role, page.role)) {
             return (
               <MenuItem
                 data-cy={`${page.link}`}
@@ -314,7 +314,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                 <Typography sx={styles.navMenu.dropDown.items}>{page.label}</Typography>
               </MenuItem>
             );
-          } else if (page.links && shouldUserViewPage(user?.role, page.role)) {
+          } else if (page.links && shouldUserViewPage(user.role, page.role)) {
             return (
               <MenuItem
                 key={page.label.toLowerCase()}
@@ -383,7 +383,7 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
   return (
     <Box data-cy="large-nav-menu" sx={styles.navMenu.itemList.wrapper}>
       {pages.map((page) => {
-        if (page.link && shouldUserViewPage(user?.role, page.role)) {
+        if (page.link && shouldUserViewPage(user.role, page.role)) {
           return (
             <Button
               data-cy={`${page.link}`}
@@ -431,7 +431,7 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
                 data-cy={`${page.label.toLowerCase()}-dropdown`}
               >
                 {page.links.map((link) => {
-                  if (link.link && shouldUserViewPage(user?.role, link.role)) {
+                  if (link.link && shouldUserViewPage(user.role, link.role)) {
                     return (
                       <MenuItem
                         key={link.link}
