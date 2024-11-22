@@ -32,9 +32,7 @@ export async function handleSignUp(router, formData) {
       },
     });
   } catch (error) {
-    const cause = new Error("An error occurred when trying to sign the user up", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to sign the user up", { cause: error });
   }
 
   try {
@@ -42,11 +40,9 @@ export async function handleSignUp(router, formData) {
 
     router.push("/auth/confirm-signup");
   } catch (error) {
-    const cause = new Error("An error occurred when trying to redirect you to the confirm-signup page", {
+    throw new Error("An error occurred when trying to redirect you to the confirm-signup page", {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 }
 
@@ -56,11 +52,9 @@ export async function handleSendEmailVerificationCode(email) {
     await resendSignUpCode({ username: email });
     response = "Code sent successfully";
   } catch (error) {
-    const cause = new Error(`An error occurred when trying to resend a verification code to ${email}`, {
+    throw new Error(`An error occurred when trying to resend a verification code to ${email}`, {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 
   return response;
@@ -73,36 +67,28 @@ export async function handleConfirmSignUp(router, formData) {
       confirmationCode: formData.code,
     });
   } catch (error) {
-    const cause = new Error("An error has occurred when trying to confirm your account", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error has occurred when trying to confirm your account", { cause: error });
   }
 
   try {
     await autoSignIn();
   } catch (error) {
-    const cause = new Error("An error has occurred when trying to log the user in after confirmation", {
+    throw new Error("An error has occurred when trying to log the user in after confirmation", {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 
   try {
     const userData = await getCurrentUser();
     await addUser(userData);
   } catch (error) {
-    const cause = new Error("An error occurred when trying to add your information to our db", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to add your information to our db", { cause: error });
   }
 
   try {
     router.push("/auth/account");
   } catch (error) {
-    const cause = new Error("An error occurred when trying to redirect you to the account page", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to redirect you to the account page", { cause: error });
   }
 }
 
@@ -127,19 +113,15 @@ export async function handleSignIn(router, formData) {
       }
     }
   } catch (error) {
-    const cause = new Error("An error occurred when trying to log you in", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to log you in", { cause: error });
   }
 
   try {
     router.push(redirectLink);
   } catch (error) {
-    const cause = new Error(`An error occurred when trying to redirect you to the ${redirectLink.slice(6)} page`, {
+    throw new Error(`An error occurred when trying to redirect you to the ${redirectLink.slice(6)} page`, {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 }
 
@@ -147,17 +129,13 @@ export async function handleSignOut(router) {
   try {
     await signOut();
   } catch (error) {
-    const cause = new Error("An error occurred when trying to sign you out", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to sign you out", { cause: error });
   }
 
   try {
     router.push("/");
   } catch (error) {
-    const cause = new Error("An error occurred when trying to redirect you to the home page", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to redirect you to the home page", { cause: error });
   }
 }
 
@@ -167,11 +145,9 @@ export async function handleResetPassword(router, email) {
       username: email,
     });
   } catch (error) {
-    const cause = new Error("An error occurred when trying to send you a verification code to reset your password", {
+    throw new Error("An error occurred when trying to send you a verification code to reset your password", {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 
   try {
@@ -179,11 +155,9 @@ export async function handleResetPassword(router, email) {
 
     router.push("/auth/reset-password");
   } catch (error) {
-    const cause = new Error("An error occurred when trying to redirect you to the reset password page", {
+    throw new Error("An error occurred when trying to redirect you to the reset password page", {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 }
 
@@ -191,17 +165,13 @@ export async function handleConfirmResetPassword(router, formData) {
   try {
     await confirmResetPassword(formData);
   } catch (error) {
-    const cause = new Error("An error occurred when trying to reset your password", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to reset your password", { cause: error });
   }
 
   try {
     router.push("/auth/sign-in");
   } catch (error) {
-    const cause = new Error("An error occurred when trying to redirect you to the sign in page", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to redirect you to the sign in page", { cause: error });
   }
 }
 
@@ -209,25 +179,19 @@ export async function handleDeleteUser(router, id) {
   try {
     await deleteUserFromDB(id);
   } catch (error) {
-    const cause = new Error("An error occurred when trying to delete your information from the DB", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to delete your information from the DB", { cause: error });
   }
 
   try {
     await deleteUser();
   } catch (error) {
-    const cause = new Error("An error occurred when trying to delete your account", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to delete your account", { cause: error });
   }
 
   try {
     router.push("/");
   } catch (error) {
-    const cause = new Error("An error occurred when trying to redirect you to the home page", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to redirect you to the home page", { cause: error });
   }
 }
 
@@ -239,9 +203,7 @@ export async function handleUpdateUserAttributes(formData) {
       userAttributes: formData,
     });
   } catch (error) {
-    const cause = new Error("An error occurred when trying to modify your account", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to modify your account", { cause: error });
   }
 
   if (updatedValues) {
@@ -249,9 +211,7 @@ export async function handleUpdateUserAttributes(formData) {
       const id = (await getCurrentUser()).userId;
       await modifyUser(id, updatedValues);
     } catch (error) {
-      const cause = new Error("An error occurred when trying to add your information to our db", { cause: error });
-      console.error(cause);
-      throw cause;
+      throw new Error("An error occurred when trying to add your information to our db", { cause: error });
     }
   }
 }
@@ -260,9 +220,7 @@ export async function handleUpdatePassword(formData) {
   try {
     await updatePassword(formData);
   } catch (error) {
-    const cause = new Error("An error occurred when trying to update your password", { cause: error });
-    console.error(cause);
-    throw cause;
+    throw new Error("An error occurred when trying to update your password", { cause: error });
   }
 }
 
@@ -272,11 +230,9 @@ async function verifyDbHasUser() {
     const user = await getUser(currentUser.userId);
     return user ? true : false;
   } catch (error) {
-    const cause = new Error(`An error occurred when trying to get your information`, {
+    throw new Error(`An error occurred when trying to get your information`, {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 }
 
@@ -286,10 +242,8 @@ async function addUserToDB() {
     // TODO - reformat the data so it is nicer
     await addUser(userData);
   } catch (error) {
-    const cause = new Error(`An error occurred when trying to add your information to our DB`, {
+    throw new Error(`An error occurred when trying to add your information to our DB`, {
       cause: error,
     });
-    console.error(cause);
-    throw cause;
   }
 }
