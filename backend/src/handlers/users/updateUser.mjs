@@ -12,6 +12,10 @@ const updateUser = async (event) => {
 
   console.info("Received: ", event);
 
+  // TODO - make sure that the user is modifying themselves or it is an admin
+
+  // TODO - update to a patch
+
   const newUserData = JSON.parse(event.body);
   const id = event.pathParameters.id;
 

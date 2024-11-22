@@ -12,6 +12,8 @@ const getAllUsers = async (event) => {
 
   console.info("Received: ", event);
 
+  // TODO - make sure that the user not trying to add additional fields to get unless they are an admin - don't want to give away everyone's data unless we are generating the cards
+
   try {
     const data = await getAllUsersFunction();
     const users = data.Items;

@@ -12,6 +12,8 @@ const getUserById = async (event) => {
 
   console.info("Received: ", event);
 
+  // TODO - make sure that the user is getting themselves or it is an admin
+
   const id = event.pathParameters.id;
 
   try {

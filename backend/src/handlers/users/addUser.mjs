@@ -10,6 +10,8 @@ const addUser = async (event) => {
     return response;
   }
 
+  // TODO - make sure that the user is adding themselves or it is an admin
+
   console.info("Received: ", event);
 
   const userObject = JSON.parse(event.body);

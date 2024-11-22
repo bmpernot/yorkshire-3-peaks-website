@@ -10,6 +10,10 @@ const deleteUser = async (event) => {
     return response;
   }
 
+  // TODO - make sure that the user is deleting themselves or it is an admin
+
+  // TODO - do not throw if there isn't a user to delete
+
   console.info("Received: ", event);
 
   const id = event.pathParameters.id;
