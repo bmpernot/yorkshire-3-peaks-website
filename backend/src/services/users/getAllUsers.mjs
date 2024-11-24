@@ -7,14 +7,30 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 
 const userTable = process.env.USER_TABLE;
 
-const getAllUsers = async () => {
+const defaultFields = ["id", "email"];
+
+const getAllUsers = async (fields) => {
   const params = {
     TableName: userTable,
   };
 
+  const mergedFields = Array.from(new Set([...fields, ...defaultFields]));
+
+  // TODO - need to implement pagination eventually as dynamo has a max of 1MB
+
   try {
     const data = await ddbDocClient.send(new ScanCommand(params));
-    return data;
+
+    const filteredUsers = data.Items.map((user) => {
+      return mergedFields.reduce((filtered, field) => {
+        if (field in user) {
+          filtered[field] = user[field];
+        }
+        return filtered;
+      }, {});
+    });
+
+    return filteredUsers;
   } catch (error) {
     throw new Error("An error occurred when tring to get all users", { cause: error });
   }
