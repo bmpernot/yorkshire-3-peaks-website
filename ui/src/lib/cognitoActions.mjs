@@ -63,8 +63,7 @@ export async function handleConfirmSignUp(router, formData) {
   }
 
   try {
-    const userData = await getCurrentUser();
-    await addUser(userData);
+    await addUserToDB();
   } catch (error) {
     throw new Error("An error occurred when trying to add your information to our db", { cause: error });
   }
@@ -220,8 +219,17 @@ async function verifyDbHasUser() {
 async function addUserToDB() {
   try {
     const userData = await fetchUserAttributes();
-    // TODO - reformat the data so it is nicer
-    await addUser(userData);
+
+    const formattedData = {
+      id: userData.sub,
+      email: userData.email,
+      firstName: userData.given_name,
+      lastName: userData.family_name,
+      number: userData.phone_number,
+      iceNumber: userData["custom:ice_number"],
+      notify: userData["custom:notify"],
+    };
+    await addUser(formattedData);
   } catch (error) {
     throw new Error(`An error occurred when trying to add your information to our DB`, {
       cause: error,

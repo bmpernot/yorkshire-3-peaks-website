@@ -1,4 +1,4 @@
-import { fetchAuthSession, fetchUserAttributes, getCurrentUser } from "aws-amplify/auth";
+import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth";
 import { useEffect, useState } from "react";
 import { USER_ROLES } from "../../lib/constants.mjs";
 import { getHighestUserGroup } from "@/src/lib/commonFunctionsServer.mjs";
@@ -8,26 +8,30 @@ export default function useAuthUser() {
 
   useEffect(() => {
     async function getUser() {
-      const session = await fetchAuthSession();
-      if (!session.tokens) {
-        setUser({ role: USER_ROLES.GUEST });
-        return;
-      }
+      try {
+        const session = await fetchAuthSession();
 
-      // TODO - make sure the data is correct - may only need to do a fetch user attributes call as it looks like it has everything
-      const [currentUser, userAttributes] = await Promise.all([getCurrentUser(), fetchUserAttributes()]);
-      const user = {
-        id: userAttributes.sub ?? currentUser.userId,
-        email: userAttributes.email ?? currentUser.username,
-        firstName: userAttributes.given_name,
-        lastName: userAttributes.family_name,
-        number: userAttributes.phone_number,
-        iceNumber: userAttributes["custom:ice_number"],
-        notify: userAttributes["custom:notify"],
-        role: USER_ROLES.USER,
-      };
-      const groups = session.tokens.accessToken.payload["cognito:groups"];
-      user.role = getHighestUserGroup(groups);
+        if (!session.tokens) {
+          setUser({ role: USER_ROLES.GUEST });
+          return;
+        }
+
+        const userAttributes = await fetchUserAttributes();
+        const user = {
+          id: userAttributes.sub,
+          email: userAttributes.email,
+          firstName: userAttributes.given_name,
+          lastName: userAttributes.family_name,
+          number: userAttributes.phone_number,
+          iceNumber: userAttributes["custom:ice_number"],
+          notify: userAttributes["custom:notify"],
+          role: USER_ROLES.USER,
+        };
+        const groups = session.tokens.accessToken.payload["cognito:groups"];
+        user.role = getHighestUserGroup(groups);
+      } catch (error) {
+        throw new Error("Failed to get user", { cause: error });
+      }
 
       setUser(user);
     }
