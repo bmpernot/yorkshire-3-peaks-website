@@ -18,7 +18,7 @@ export const apiConfig = {
       region: process.env.NEXT_PUBLIC_AWS_REGION,
       custom_header: async () => {
         const session = await Amplify.Auth.currentSession();
-        return { Authorization: `Bearer ${session.getIdToken().getJwtToken()}` };
+        return { Authorization: `Bearer ${session.getAccessToken().getJwtToken()}` };
       },
     },
   ],
