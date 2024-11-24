@@ -19,131 +19,25 @@ Resources:
       Timeout: 100
       Description: A function to grab all users' information
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-        - CognitoUserPoolPolicy:
-            UserPoolName: !Ref CognitoUserPool
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "cognito-idp:ListUsers"
+            Resource: !GetAtt CognitoUserPool.Arn
       Events:
         Api:
           Type: Api
           Properties:
             Path: /user/
             Method: GET
-            Auth:
-              Authorizer: CognitoAuthorizer
-
-  getUserById:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/getUserById.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to grab the user's information by id
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-        - CognitoUserPoolPolicy:
-            UserPoolName: !Ref CognitoUserPool
       Environment:
         Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/{id}
-            Method: GET
-            Auth:
-              Authorizer: CognitoAuthorizer
+          COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+  ##### User Resources #####
 
-  addUser:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/addUser.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to add a user to the user table
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-        - CognitoUserPoolPolicy:
-            UserPoolName: !Ref CognitoUserPool
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/
-            Method: POST
-            Auth:
-              Authorizer: CognitoAuthorizer
+  ##### Event Resources #####
 
-  updateUser:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/updateUser.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to update the user's information
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-        - CognitoUserPoolPolicy:
-            UserPoolName: !Ref CognitoUserPool
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/{id}
-            Method: PATCH
-            Auth:
-              Authorizer: CognitoAuthorizer
-
-  deleteUser:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/deleteUser.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to delete the user's information
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-        - CognitoUserPoolPolicy:
-            UserPoolName: !Ref CognitoUserPool
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/{id}
-            Method: DELETE
-            Auth:
-              Authorizer: CognitoAuthorizer
-
-  UserTable:
+  EventsTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
       PrimaryKey:
@@ -153,7 +47,20 @@ Resources:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
 
-  ##### User Resources #####
+  TeamsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+  ##### Event Resources #####
+
+  ##### Information Resources #####
+  ##### Information Resources #####
 
   ##### Cognito User Pool #####
 

@@ -1,39 +1,61 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClientConfig } from "../../utils/dbConfig.mjs";
+import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentityProviderConfig } from "../../utils/infrastructureConfig.mjs";
 
-const client = new DynamoDBClient(DynamoDBClientConfig);
-const ddbDocClient = DynamoDBDocumentClient.from(client);
+const client = new CognitoIdentityProviderClient(CognitoIdentityProviderConfig);
 
-const userTable = process.env.USER_TABLE;
+const userPoolId = process.env.COGNITO_USER_POOL_ID;
 
-const defaultFields = ["id", "email"];
+const defaultFields = ["sub", "email"];
 
-const getAllUsers = async (fields) => {
-  const params = {
-    TableName: userTable,
-  };
+const cognitoDefaultAttributes = [
+  "email",
+  "phone_number",
+  "given_name",
+  "family_name",
+  "email_verified",
+  "phone_number_verified",
+];
 
-  const mergedFields = Array.from(new Set([...fields, ...defaultFields]));
-
-  // TODO - need to implement pagination eventually as dynamo has a max of 1MB
+const getAllUsers = async (fields = []) => {
+  let allUsers = [];
+  let paginationToken;
 
   try {
-    const data = await ddbDocClient.send(new ScanCommand(params));
+    const mergedFields = Array.from(new Set([...fields, ...defaultFields]));
+    const processedFields = ensureCustomPrefix(mergedFields, cognitoDefaultAttributes);
 
-    const filteredUsers = data.Items.map((user) => {
-      return mergedFields.reduce((filtered, field) => {
-        if (field in user) {
-          filtered[field] = user[field];
-        }
-        return filtered;
-      }, {});
+    do {
+      const params = {
+        UserPoolId: userPoolId,
+        Limit: 60,
+        AttributesToGet: processedFields,
+        PaginationToken: paginationToken,
+      };
+      const data = await client.send(new ListUsersCommand(params));
+
+      allUsers = [...allUsers, ...data.Users];
+      paginationToken = data.PaginationToken;
+    } while (paginationToken);
+
+    const filteredUsers = allUsers.map((user) => {
+      return user.Attributes.map((attribute) => {
+        return { [attribute.Name]: attribute.Value };
+      });
     });
 
     return filteredUsers;
   } catch (error) {
-    throw new Error("An error occurred when tring to get all users", { cause: error });
+    throw new Error("An error occurred when trying to get all users from Cognito", { cause: error });
   }
 };
 
 export default getAllUsers;
+
+function ensureCustomPrefix(fields, defaultFields) {
+  return fields.map((field) => {
+    if (defaultFields.includes(field) || field.startsWith("custom:")) {
+      return field;
+    }
+    return `custom:${field}`;
+  });
+}

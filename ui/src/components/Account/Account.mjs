@@ -13,11 +13,10 @@ import ErrorCard from "../common/ErrorCard.mjs";
 
 function Account() {
   const [error, setError] = useState();
-  let id, email, firstName, lastName, number, iceNumber, notify;
+  let email, firstName, lastName, number, iceNumber, notify;
 
   try {
     const user = useAuthUser();
-    id = user.id;
     email = user.email;
     firstName = user.firstName;
     lastName = user.lastName;
@@ -59,7 +58,7 @@ function Account() {
         <PasswordForm />
       </Grid2>
       <Grid2 xs={12} md={4}>
-        <DeleteAccountForm id={id} email={email} />
+        <DeleteAccountForm email={email} />
       </Grid2>
     </Grid2>
   );

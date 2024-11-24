@@ -10,10 +10,8 @@ import {
   updateUserAttributes,
   updatePassword,
   confirmResetPassword,
-  getCurrentUser,
-  fetchUserAttributes,
 } from "aws-amplify/auth";
-import { addUser, modifyUser, deleteUser as deleteUserFromDB, getUser } from "./backendActions.mjs";
+// import { getAllUsers } from "./backendActions.mjs";
 
 export async function handleSignUp(router, formData) {
   try {
@@ -63,12 +61,6 @@ export async function handleConfirmSignUp(router, formData) {
   }
 
   try {
-    await addUserToDB();
-  } catch (error) {
-    throw new Error("An error occurred when trying to add your information to our db", { cause: error });
-  }
-
-  try {
     router.push("/auth/account");
   } catch (error) {
     throw new Error("An error occurred when trying to redirect you to the account page", { cause: error });
@@ -85,12 +77,6 @@ export async function handleSignIn(router, formData) {
       });
       sessionStorage.setItem("userEmail", formData.username);
       redirectLink = "/auth/confirm-signup";
-    } else {
-      const doesUserExist = await verifyDbHasUser();
-
-      if (!doesUserExist) {
-        await addUserToDB();
-      }
     }
   } catch (error) {
     throw new Error("An error occurred when trying to log you in", { cause: error });
@@ -155,13 +141,7 @@ export async function handleConfirmResetPassword(router, formData) {
   }
 }
 
-export async function handleDeleteUser(router, id) {
-  try {
-    await deleteUserFromDB(id);
-  } catch (error) {
-    throw new Error("An error occurred when trying to delete your information from the DB", { cause: error });
-  }
-
+export async function handleDeleteUser(router) {
   try {
     await deleteUser();
   } catch (error) {
@@ -176,23 +156,12 @@ export async function handleDeleteUser(router, id) {
 }
 
 export async function handleUpdateUserAttributes(formData) {
-  let updatedValues;
-
   try {
-    updatedValues = await updateUserAttributes({
+    await updateUserAttributes({
       userAttributes: formData,
     });
   } catch (error) {
     throw new Error("An error occurred when trying to modify your account", { cause: error });
-  }
-
-  if (updatedValues) {
-    try {
-      const id = (await getCurrentUser()).userId;
-      await modifyUser(id, updatedValues);
-    } catch (error) {
-      throw new Error("An error occurred when trying to add your information to our db", { cause: error });
-    }
   }
 }
 
@@ -201,38 +170,5 @@ export async function handleUpdatePassword(formData) {
     await updatePassword(formData);
   } catch (error) {
     throw new Error("An error occurred when trying to update your password", { cause: error });
-  }
-}
-
-async function verifyDbHasUser() {
-  try {
-    const currentUser = await getCurrentUser();
-    const user = await getUser(currentUser.userId);
-    return user ? true : false;
-  } catch (error) {
-    throw new Error(`An error occurred when trying to get your information`, {
-      cause: error,
-    });
-  }
-}
-
-async function addUserToDB() {
-  try {
-    const userData = await fetchUserAttributes();
-
-    const formattedData = {
-      id: userData.sub,
-      email: userData.email,
-      firstName: userData.given_name,
-      lastName: userData.family_name,
-      number: userData.phone_number,
-      iceNumber: userData["custom:ice_number"],
-      notify: userData["custom:notify"],
-    };
-    await addUser(formattedData);
-  } catch (error) {
-    throw new Error(`An error occurred when trying to add your information to our DB`, {
-      cause: error,
-    });
   }
 }

@@ -3,6 +3,8 @@ TODO - need to make all forms use validateInput()
 
 Need to do:
 
-TODO - deploy backend - make sure add user has an api endpoint
+TODO - deploy backend
 
 TODO - make it so we don't have to get the user on every page - might user a useContext
+
+TODO - setup localstack to test stuff 
