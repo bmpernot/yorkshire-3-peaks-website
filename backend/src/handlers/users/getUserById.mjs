@@ -10,33 +10,32 @@ const getUserById = async (event) => {
     return response;
   }
 
-  console.info("Received: ", event);
-
-  // TODO - make sure that the user is getting themselves or it is an admin
-
-  const id = event.pathParameters.id;
+  const idToGet = event.pathParameters.id;
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims.sub;
+  const userRole = claims["cognito:groups"];
 
   try {
-    const data = await getUserByIdFunction({ id });
-    const item = data.Item;
+    if (userId === idToGet || userRole.includes("Admin")) {
+      const user = await getUserByIdFunction({ id: idToGet });
 
-    console.info(`Response from: ${event.path}, ${item}`);
-
-    const response = {
-      statusCode: 200,
-      body: item,
-    };
-
-    return response;
+      return {
+        statusCode: 200,
+        body: JSON.stringify(user),
+      };
+    } else {
+      return {
+        statusCode: 403,
+        body: "Unauthorized to get this user.",
+      };
+    }
   } catch (error) {
-    console.error("Error: ", error);
+    console.error(error);
 
-    const response = {
+    return {
       statusCode: 500,
-      body: new Error(`An error occurred when tring to get the user with the id of: ${id}`, { cause: error }),
+      body: `Failed to get user: ${idToGet}`,
     };
-
-    return response;
   }
 };
 

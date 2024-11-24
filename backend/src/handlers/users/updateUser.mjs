@@ -1,43 +1,43 @@
 import updateUserFunction from "../../services/users/updateUser.mjs";
 
 const updateUser = async (event) => {
-  if (event.httpMethod !== "PUT") {
-    const response = {
+  if (event.httpMethod !== "PATCH") {
+    return {
       statusCode: 405,
-      body: new Error(`updateUser only accepts PUT method, you tried: ${event.httpMethod}`),
+      body: `updateUser only accepts PUT method, you tried: ${event.httpMethod}`,
     };
-
-    return response;
   }
 
-  console.info("Received: ", event);
-
-  // TODO - make sure that the user is modifying themselves or it is an admin
-
-  // TODO - update to a patch
-
   const newUserData = JSON.parse(event.body);
-  const id = event.pathParameters.id;
+  const idToUpdate = event.pathParameters.id;
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims.sub;
+  const userRole = claims["cognito:groups"];
 
   try {
-    const data = await updateUserFunction({ newUserData, id });
-    const updatedAttributes = data.Attributes;
+    if (userId === idToUpdate || userRole.includes("Admin")) {
+      const data = await updateUserFunction({ newUserData, id: idToUpdate });
+      const updatedAttributes = data.Attributes;
 
-    console.info(`Response from: ${event.path}, Success - user updated, ${updatedAttributes}`);
+      console.info(`Successfully updated user: ${idToUpdate}`);
 
-    const response = {
-      statusCode: 200,
-      body: updatedAttributes,
-    };
-
-    return response;
+      return {
+        statusCode: 200,
+        body: updatedAttributes,
+      };
+    } else {
+      return {
+        statusCode: 403,
+        body: "Unauthorized to update this user.",
+      };
+    }
   } catch (error) {
-    const response = {
-      statusCode: 500,
-      body: new Error(`An error occurred when tring to update a user`, { cause: error }),
-    };
+    console.error(error);
 
-    return response;
+    return {
+      statusCode: 500,
+      body: `Failed to update user: ${idToUpdate}`,
+    };
   }
 };
 

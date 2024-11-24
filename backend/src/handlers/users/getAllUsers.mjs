@@ -2,41 +2,38 @@ import getAllUsersFunction from "../../services/users/getAllUsers.mjs";
 
 const getAllUsers = async (event) => {
   if (event.httpMethod !== "GET") {
-    const response = {
+    return {
       statusCode: 405,
-      body: new Error(`getAllUsers only accepts GET method, you tried: ${event.httpMethod}`),
+      body: `getAllUsers only accepts GET method, you tried: ${event.httpMethod}`,
     };
-
-    return response;
   }
 
-  console.info("Received: ", event);
-
-  // TODO - make sure that the user not trying to add additional fields to get unless they are an admin - don't want to give away everyone's data unless we are generating the cards
+  const queryParams = event.queryStringParameters || {};
+  const fields = queryParams.fields ? queryParams.fields.split(",") : null;
+  const claims = event.requestContext.authorizer.claims;
+  const userRole = claims["cognito:groups"];
 
   try {
-    const data = await getAllUsersFunction();
-    const users = data.Items;
+    if (fields && !userRole.includes("Admin")) {
+      return {
+        statusCode: 403,
+        body: "Unauthorized to get more fields",
+      };
+    } else {
+      const users = await getAllUsersFunction(fields);
 
-    console.info(`Response from: ${event.path}, ${users}`);
-
-    const response = {
-      statusCode: 200,
-      body: users,
-    };
-
-    return response;
+      return {
+        statusCode: 200,
+        body: JSON.stringify(users),
+      };
+    }
   } catch (error) {
-    console.error("Error: ", error);
+    console.error(error);
 
-    const response = {
+    return {
       statusCode: 500,
-      body: new Error("An error occurred when tring to get all users", {
-        cause: error,
-      }),
+      body: "Failed to get all users",
     };
-
-    return response;
   }
 };
 

@@ -2,38 +2,38 @@ import addUserFunction from "../../services/users/addUser.mjs";
 
 const addUser = async (event) => {
   if (event.httpMethod !== "POST") {
-    const response = {
+    return {
       statusCode: 405,
-      body: new Error(`addUser only accepts POST method, you tried: ${event.httpMethod}`),
+      body: `addUser only accepts POST method, you tried: ${event.httpMethod}`,
     };
-
-    return response;
   }
 
-  // TODO - make sure that the user is adding themselves or it is an admin
-
-  console.info("Received: ", event);
-
   const userObject = JSON.parse(event.body);
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims.sub;
+  const userRole = claims["cognito:groups"];
 
   try {
-    const data = await addUserFunction({ userObject });
+    if (userId === userObject.id || userRole.includes("Admin")) {
+      const data = await addUserFunction({ userObject });
 
-    console.info(`Response from: ${event.path}, Success - user added, ${data}`);
-    const response = {
-      statusCode: 201,
-    };
-
-    return response;
+      console.info(`Successfully added user: ${data}`);
+      return {
+        statusCode: 201,
+      };
+    } else {
+      return {
+        statusCode: 403,
+        body: "Unauthorized add this user info.",
+      };
+    }
   } catch (error) {
-    console.error("Error: ", error);
+    console.error(error);
 
-    const response = {
+    return {
       statusCode: 500,
-      body: new Error(`An error occurred when tring to add a user`, { cause: error }),
+      body: `Failed to add user: ${userObject}`,
     };
-
-    return response;
   }
 };
 

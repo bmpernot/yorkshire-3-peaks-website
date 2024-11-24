@@ -2,42 +2,39 @@ import deleteUserFunction from "../../services/users/deleteUser.mjs";
 
 const deleteUser = async (event) => {
   if (event.httpMethod !== "DELETE") {
-    const response = {
+    return {
       statusCode: 405,
-      body: new Error(`deleteUser only accepts DELETE method, you tried: ${event.httpMethod}`),
+      body: `deleteUser only accepts DELETE method, you tried: ${event.httpMethod}`,
     };
-
-    return response;
   }
 
-  // TODO - make sure that the user is deleting themselves or it is an admin
-
-  // TODO - do not throw if there isn't a user to delete
-
-  console.info("Received: ", event);
-
-  const id = event.pathParameters.id;
+  const idToDelete = event.pathParameters.id;
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims.sub;
+  const userRole = claims["cognito:groups"];
 
   try {
-    await deleteUserFunction({ id });
-    console.info(`Response from: ${event.path}, Success - user ${id} deleted`);
+    if (userId === idToDelete || userRole.includes("Admin")) {
+      await deleteUserFunction({ id: idToDelete });
 
-    const response = {
-      statusCode: 204,
-    };
+      console.info(`Successfully deleted user: ${idToDelete}`);
 
-    return response;
+      return {
+        statusCode: 204,
+      };
+    } else {
+      return {
+        statusCode: 403,
+        body: "Unauthorized to delete this user.",
+      };
+    }
   } catch (error) {
-    console.error("Error: ", error);
+    console.error(error);
 
-    const response = {
+    return {
       statusCode: 500,
-      body: new Error(`An error occurred when tring delete user with id: ${id}`, {
-        cause: error,
-      }),
+      body: `Failed to delete user: ${idToDelete}`,
     };
-
-    return response;
   }
 };
 
