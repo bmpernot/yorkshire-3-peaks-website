@@ -112,7 +112,7 @@ Resources:
           Type: Api
           Properties:
             Path: /user/{id}
-            Method: PUT
+            Method: PATCH
             Auth:
               Authorizer: CognitoAuthorizer
 
