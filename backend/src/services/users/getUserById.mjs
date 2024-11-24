@@ -15,7 +15,7 @@ const getUserById = async ({ id }) => {
 
   try {
     const data = await ddbDocClient.send(new GetCommand(params));
-    return data;
+    return data.Item;
   } catch (error) {
     throw new Error(`An error occurred when tring to get the user with the id of: ${id}`, { cause: error });
   }
