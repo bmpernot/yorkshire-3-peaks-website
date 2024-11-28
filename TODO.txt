@@ -7,4 +7,4 @@ TODO - deploy backend
 
 TODO - make it so we don't have to get the user on every page - might user a useContext
 
-TODO - setup localstack to test stuff 
+TODO - figure out if username is sub or email

@@ -29,6 +29,9 @@
     "moduleFileExtensions": [
       "mjs",
       "js"
+    ],
+    "testPathIgnorePatterns": [
+      "__tests__/utils"
     ]
   }
 }

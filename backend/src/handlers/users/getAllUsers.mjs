@@ -9,12 +9,12 @@ const getAllUsers = async (event) => {
   }
 
   const queryParams = event.queryStringParameters || {};
-  const fields = queryParams.fields ? queryParams.fields.split(",") : null;
+  const fields = queryParams.fields.length > 0 ? queryParams.fields.split(",") : undefined;
   const claims = event.requestContext.authorizer.claims;
-  const userRole = claims["cognito:groups"];
+  const userRole = claims["cognito:groups"] ?? "User";
 
   try {
-    if (fields && !userRole.includes("Admin")) {
+    if (fields && !userRole.includes("Organiser") && !userRole.includes("Admin")) {
       return {
         statusCode: 403,
         body: "Unauthorized to get more fields",

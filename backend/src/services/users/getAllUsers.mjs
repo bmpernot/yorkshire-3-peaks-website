@@ -8,6 +8,7 @@ const userPoolId = process.env.COGNITO_USER_POOL_ID;
 const defaultFields = ["sub", "email"];
 
 const cognitoDefaultAttributes = [
+  "sub",
   "email",
   "phone_number",
   "given_name",
@@ -38,9 +39,14 @@ const getAllUsers = async (fields = []) => {
     } while (paginationToken);
 
     const filteredUsers = allUsers.map((user) => {
-      return user.Attributes.map((attribute) => {
-        return { [attribute.Name]: attribute.Value };
+      const attributes = {};
+      user.Attributes.forEach((attribute) => {
+        if (processedFields.includes(attribute.Name)) {
+          attributes[attribute.Name] = attribute.Value;
+        }
       });
+
+      return attributes;
     });
 
     return filteredUsers;
