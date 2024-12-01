@@ -1,6 +1,16 @@
 like to do:
 TODO - need to make all forms use validateInput()
 
+TODO - acceptance tests
+
+setup https://github.com/maitojepoy/cognito-local-docker to be able to run the application locally for testing
+https://medium.com/@freonius/test-an-aws-api-gateway-locally-b869249090f6
+move current local stuff to the main folder
+
+do a combination of local stack and jagregory/cognito-local:latest
+
+TODO - need to make a new branch for testing purposes so that i can manual test there with the actual services if need be
+
 Need to do:
 
 TODO - deploy backend
@@ -8,3 +18,5 @@ TODO - deploy backend
 TODO - make it so we don't have to get the user on every page - might user a useContext
 
 TODO - figure out if username is sub or email
+
+TODO - need to mock the cognito calls for ui using aws-sdk-mock (https://reintech.io/blog/local-testing-debugging-aws-cognito) - use cypress tasks for this 

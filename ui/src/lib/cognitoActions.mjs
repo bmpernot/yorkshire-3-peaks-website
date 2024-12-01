@@ -11,7 +11,6 @@ import {
   updatePassword,
   confirmResetPassword,
 } from "aws-amplify/auth";
-// import { getAllUsers } from "./backendActions.mjs";
 
 export async function handleSignUp(router, formData) {
   try {

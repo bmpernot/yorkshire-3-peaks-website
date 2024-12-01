@@ -1,25 +1,40 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('signIn', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+import * as Auth from "aws-amplify/auth";
+
+Cypress.Commands.add("stubAmplifyAuth", (overrides = {}) => {
+  // Default stubs
+  const defaultStubs = {
+    signUp: cy.stub().resolves({ user: { username: "testuser" } }),
+    confirmSignUp: cy.stub().resolves("SUCCESS"),
+    signIn: cy.stub().resolves({ username: "testuser", attributes: {} }),
+    signOut: cy.stub().resolves(),
+    resendSignUpCode: cy.stub().resolves(),
+    autoSignIn: cy.stub().resolves({ username: "testuser" }),
+    resetPassword: cy.stub().resolves(),
+    deleteUser: cy.stub().resolves(),
+    updateUserAttributes: cy.stub().resolves("SUCCESS"),
+    updatePassword: cy.stub().resolves(),
+    confirmResetPassword: cy.stub().resolves("SUCCESS"),
+    fetchAuthSession: cy.stub().resolves(),
+    fetchUserAttributes: cy.stub().resolves("SUCCESS"),
+  };
+
+  // Merge overrides
+  const stubs = { ...defaultStubs, ...overrides };
+
+  // Replace Auth methods with stubs
+  cy.stub(Auth, "signUp").callsFake(stubs.signUp);
+  cy.stub(Auth, "confirmSignUp").callsFake(stubs.confirmSignUp);
+  cy.stub(Auth, "signIn").callsFake(stubs.signIn);
+  cy.stub(Auth, "signOut").callsFake(stubs.signOut);
+  cy.stub(Auth, "resendSignUpCode").callsFake(stubs.resendSignUpCode);
+  cy.stub(Auth, "autoSignIn").callsFake(stubs.autoSignIn);
+  cy.stub(Auth, "resetPassword").callsFake(stubs.resetPassword);
+  cy.stub(Auth, "deleteUser").callsFake(stubs.deleteUser);
+  cy.stub(Auth, "updateUserAttributes").callsFake(stubs.updateUserAttributes);
+  cy.stub(Auth, "updatePassword").callsFake(stubs.updatePassword);
+  cy.stub(Auth, "confirmResetPassword").callsFake(stubs.confirmResetPassword);
+  cy.stub(Auth, "fetchAuthSession").callsFake(stubs.fetchAuthSession);
+  cy.stub(Auth, "fetchUserAttributes").callsFake(stubs.fetchUserAttributes);
+
+  return stubs; // Return stubs for further assertions in tests
+});
