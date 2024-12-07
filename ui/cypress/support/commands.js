@@ -1,40 +1,112 @@
-import * as Auth from "aws-amplify/auth";
+Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
+  console.log("Intercepting the amplify auth library");
 
-Cypress.Commands.add("stubAmplifyAuth", (overrides = {}) => {
-  // Default stubs
-  const defaultStubs = {
-    signUp: cy.stub().resolves({ user: { username: "testuser" } }),
-    confirmSignUp: cy.stub().resolves("SUCCESS"),
-    signIn: cy.stub().resolves({ username: "testuser", attributes: {} }),
-    signOut: cy.stub().resolves(),
-    resendSignUpCode: cy.stub().resolves(),
-    autoSignIn: cy.stub().resolves({ username: "testuser" }),
-    resetPassword: cy.stub().resolves(),
-    deleteUser: cy.stub().resolves(),
-    updateUserAttributes: cy.stub().resolves("SUCCESS"),
-    updatePassword: cy.stub().resolves(),
-    confirmResetPassword: cy.stub().resolves("SUCCESS"),
-    fetchAuthSession: cy.stub().resolves(),
-    fetchUserAttributes: cy.stub().resolves("SUCCESS"),
+  // Default mocked responses for each API call
+  const defaultMocks = {
+    signUp: {
+      statusCode: 200,
+      body: { user: { username: "testuser" } },
+    },
+    confirmSignUp: {
+      statusCode: 200,
+      body: "SUCCESS",
+    },
+    signIn: {
+      statusCode: 200,
+      body: { username: "testuser", attributes: {} },
+    },
+    signOut: {
+      statusCode: 200,
+      body: {},
+    },
+    resendSignUpCode: {
+      statusCode: 200,
+      body: {},
+    },
+    autoSignIn: {
+      statusCode: 200,
+      body: { username: "testuser" },
+    },
+    resetPassword: {
+      statusCode: 200,
+      body: {},
+    },
+    deleteUser: {
+      statusCode: 200,
+      body: {},
+    },
+    updateUserAttributes: {
+      statusCode: 200,
+      body: "SUCCESS",
+    },
+    updatePassword: {
+      statusCode: 200,
+      body: {},
+    },
+    confirmResetPassword: {
+      statusCode: 200,
+      body: "SUCCESS",
+    },
+    fetchAuthSession: {
+      statusCode: 200,
+      body: {},
+    },
+    fetchUserAttributes: {
+      statusCode: 200,
+      body: { username: "testuser", attributes: {} },
+    },
   };
 
-  // Merge overrides
-  const stubs = { ...defaultStubs, ...overrides };
+  // Merge overrides to allow custom behavior if needed
+  const mocks = { ...defaultMocks, ...overrides };
 
-  // Replace Auth methods with stubs
-  cy.stub(Auth, "signUp").callsFake(stubs.signUp);
-  cy.stub(Auth, "confirmSignUp").callsFake(stubs.confirmSignUp);
-  cy.stub(Auth, "signIn").callsFake(stubs.signIn);
-  cy.stub(Auth, "signOut").callsFake(stubs.signOut);
-  cy.stub(Auth, "resendSignUpCode").callsFake(stubs.resendSignUpCode);
-  cy.stub(Auth, "autoSignIn").callsFake(stubs.autoSignIn);
-  cy.stub(Auth, "resetPassword").callsFake(stubs.resetPassword);
-  cy.stub(Auth, "deleteUser").callsFake(stubs.deleteUser);
-  cy.stub(Auth, "updateUserAttributes").callsFake(stubs.updateUserAttributes);
-  cy.stub(Auth, "updatePassword").callsFake(stubs.updatePassword);
-  cy.stub(Auth, "confirmResetPassword").callsFake(stubs.confirmResetPassword);
-  cy.stub(Auth, "fetchAuthSession").callsFake(stubs.fetchAuthSession);
-  cy.stub(Auth, "fetchUserAttributes").callsFake(stubs.fetchUserAttributes);
+  // Intercept requests to the Cognito URL and match based on the `x-amz-target` header
+  cy.intercept("POST", "https://cognito-idp.eu-west-2.amazonaws.com", (req) => {
+    const target = req.headers["x-amz-target"];
 
-  return stubs; // Return stubs for further assertions in tests
+    // Mock responses based on the x-amz-target header value
+    switch (target) {
+      case "AWSCognitoIdentityProviderService.SignUp":
+        req.reply(mocks.signUp);
+        break;
+      case "AWSCognitoIdentityProviderService.ConfirmSignUp":
+        req.reply(mocks.confirmSignUp);
+        break;
+      case "AWSCognitoIdentityProviderService.SignIn":
+        req.reply(mocks.signIn);
+        break;
+      case "AWSCognitoIdentityProviderService.SignOut":
+        req.reply(mocks.signOut);
+        break;
+      case "AWSCognitoIdentityProviderService.ResendSignUpCode":
+        req.reply(mocks.resendSignUpCode);
+        break;
+      case "AWSCognitoIdentityProviderService.AutoSignIn":
+        req.reply(mocks.autoSignIn);
+        break;
+      case "AWSCognitoIdentityProviderService.ResetPassword":
+        req.reply(mocks.resetPassword);
+        break;
+      case "AWSCognitoIdentityProviderService.DeleteUser":
+        req.reply(mocks.deleteUser);
+        break;
+      case "AWSCognitoIdentityProviderService.UpdateUserAttributes":
+        req.reply(mocks.updateUserAttributes);
+        break;
+      case "AWSCognitoIdentityProviderService.UpdatePassword":
+        req.reply(mocks.updatePassword);
+        break;
+      case "AWSCognitoIdentityProviderService.ConfirmResetPassword":
+        req.reply(mocks.confirmResetPassword);
+        break;
+      case "AWSCognitoIdentityProviderService.GetAuthSession":
+        req.reply(mocks.fetchAuthSession);
+        break;
+      case "AWSCognitoIdentityProviderService.FetchUserAttributes":
+        req.reply(mocks.fetchUserAttributes);
+        break;
+      default:
+        req.reply({ statusCode: 400, body: "Unknown x-amz-target" });
+    }
+  }).as("amplifyAuthRequest");
 });

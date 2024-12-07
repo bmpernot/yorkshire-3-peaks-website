@@ -3,16 +3,222 @@ import authPageClass from "../pages/auth.page.js";
 describe("Authorisation", () => {
   const authPage = new authPageClass();
 
+  beforeEach(() => {
+    cy.interceptAmplifyAuth();
+  });
+
   describe("Signup page", () => {
-    it("Should be able to ", () => {});
+    beforeEach(() => {
+      authPage.open("auth/sign-up");
+    });
 
-    it("Should validate input correctly", () => {});
+    const signupData = {
+      firstName: "Jon",
+      lastName: "Snow",
+      number: "01234567890",
+      iceNumber: "09876543210",
+      email: "jon.snow@example.com",
+      password: "Password1!",
+      confirmPassword: "Password1!",
+      notify: true,
+    };
 
-    it("Should handle errors from cognito gracefully", () => {});
+    it("Should allow the user to sign up", () => {
+      authPage
+        .fillSignupForm(signupData)
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.SignUp");
+          expect(interception.request.body).to.include({
+            Username: signupData.email,
+            Password: signupData.password,
+          });
+          expect(interception.request.body.UserAttributes).to.deep.equal([
+            {
+              Name: "phone_number",
+              Value: "+441234567890",
+            },
+            {
+              Name: "email",
+              Value: "jon.snow@example.com",
+            },
+            {
+              Name: "given_name",
+              Value: "Jon",
+            },
+            {
+              Name: "family_name",
+              Value: "Snow",
+            },
+            {
+              Name: "custom:notify",
+              Value: "true",
+            },
+            {
+              Name: "custom:ice_number",
+              Value: "+449876543210",
+            },
+          ]);
+        })
+        .urlShouldBe("auth/confirm-signup");
+    });
+
+    it("Should validate inputs correctly", () => {
+      authPage
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkValidationMessages([
+          { field: "fname", errors: ["First name is required."] },
+          { field: "lname", errors: ["Last name is required."] },
+          { field: "number", errors: ["Number is required. (local UK numbers only)", "Number needs to be a number"] },
+          {
+            field: "iceNumber",
+            errors: [
+              "ICE number is required. (local UK numbers only)",
+              "ICE number cannot be your own.",
+              "ICE number needs to be a number",
+            ],
+          },
+          { field: "email", errors: ["Please enter a valid email address."] },
+          {
+            field: "password",
+            errors: [
+              "Password must be at least 8 characters long.",
+              "Password must have a upper case letter.",
+              "Password must have a lower case letter.",
+              "Password must have a number.",
+              "Password must have special characters.",
+            ],
+          },
+          { field: "confirmPassword", errors: ["Passwords do not match."] },
+        ])
+        .fillSignupForm({ firstName: signupData.firstName })
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkNoValidationMessages(["fname"])
+        .clearInputs(["fname"])
+        .fillSignupForm({ lastName: signupData.lastName })
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkNoValidationMessages(["lname"])
+        .clearInputs(["lname"])
+        .fillSignupForm({ number: signupData.number })
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkNoValidationMessages(["number"])
+        .clearInputs(["number"])
+        .fillSignupForm({ iceNumber: signupData.iceNumber })
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkNoValidationMessages(["iceNumber"])
+        .clearInputs(["iceNumber"])
+        .fillSignupForm({ email: signupData.email })
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkNoValidationMessages(["email"])
+        .clearInputs(["email"])
+        .fillSignupForm({ password: signupData.password })
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkNoValidationMessages(["password"])
+        .fillSignupForm({ confirmPassword: signupData.confirmPassword })
+        .submitForm()
+        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .checkNoValidationMessages(["confirmPassword"])
+        .clearInputs(["password", "confirmPassword"])
+        .fillSignupForm(signupData)
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.SignUp");
+          expect(interception.request.body).to.include({
+            Username: signupData.email,
+            Password: signupData.password,
+          });
+          expect(interception.request.body.UserAttributes).to.deep.equal([
+            {
+              Name: "phone_number",
+              Value: "+441234567890",
+            },
+            {
+              Name: "email",
+              Value: "jon.snow@example.com",
+            },
+            {
+              Name: "given_name",
+              Value: "Jon",
+            },
+            {
+              Name: "family_name",
+              Value: "Snow",
+            },
+            {
+              Name: "custom:notify",
+              Value: "true",
+            },
+            {
+              Name: "custom:ice_number",
+              Value: "+449876543210",
+            },
+          ]);
+        })
+        .urlShouldBe("auth/confirm-signup");
+    });
+
+    it("Should handle Cognito errors gracefully", () => {
+      const response = {
+        statusCode: 400,
+        body: { __type: "Invalid type", message: "Invalid message" },
+      };
+      cy.interceptAmplifyAuth({
+        signUp: response,
+      });
+
+      authPage
+        .fillSignupForm(signupData)
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.SignUp");
+          expect(interception.request.body).to.include({
+            Username: signupData.email,
+            Password: signupData.password,
+          });
+          expect(interception.request.body.UserAttributes).to.deep.equal([
+            {
+              Name: "phone_number",
+              Value: "+441234567890",
+            },
+            {
+              Name: "email",
+              Value: "jon.snow@example.com",
+            },
+            {
+              Name: "given_name",
+              Value: "Jon",
+            },
+            {
+              Name: "family_name",
+              Value: "Snow",
+            },
+            {
+              Name: "custom:notify",
+              Value: "true",
+            },
+            {
+              Name: "custom:ice_number",
+              Value: "+449876543210",
+            },
+          ]);
+          expect(interception.response.statusCode).to.equal(400);
+          expect(interception.response.body).to.include(response.body);
+        })
+        .urlShouldBe("auth/sign-up")
+        .verifyToast("An Error occurred when trying to sign you up")
+        .verifyFormError("Invalid message");
+    });
   });
 
   describe("Confirm signup page", () => {
-    it("Should be able to ", () => {});
+    it("Should be able to allow the user to confirm there account via their email confirmation code", () => {});
 
     it("Should validate input correctly", () => {});
 
@@ -20,7 +226,7 @@ describe("Authorisation", () => {
   });
 
   describe("Sign in page", () => {
-    it("Should be able to ", () => {});
+    it("Should be able to should allow the user to sign in", () => {});
 
     it("Should validate input correctly", () => {});
 
@@ -28,7 +234,9 @@ describe("Authorisation", () => {
   });
 
   describe("Reset Password page", () => {
-    it("Should be able to ", () => {});
+    it("Should be able to allow the user to request their password to be reset", () => {});
+
+    it("Should be able to allow the user to use the code from the reset password email to be able to reset their password", () => {});
 
     it("Should validate input correctly", () => {});
 
@@ -37,7 +245,7 @@ describe("Authorisation", () => {
 
   describe("Account page", () => {
     describe("Update user details", () => {
-      it("Should be able to ", () => {});
+      it("Should be able to allow the user to update their details", () => {});
 
       it("Should validate input correctly", () => {});
 
@@ -45,7 +253,7 @@ describe("Authorisation", () => {
     });
 
     describe("Update password", () => {
-      it("Should be able to ", () => {});
+      it("Should be able to allow the user to update their password", () => {});
 
       it("Should validate input correctly", () => {});
 
@@ -53,7 +261,7 @@ describe("Authorisation", () => {
     });
 
     describe("Delete Account", () => {
-      it("Should be able to ", () => {});
+      it("Should be able to allow the user to delete their details", () => {});
 
       it("Should validate input correctly", () => {});
 

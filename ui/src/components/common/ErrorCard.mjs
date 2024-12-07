@@ -3,7 +3,7 @@ import { Typography, Card } from "@mui/material";
 
 function ErrorCard({ error }) {
   return (
-    <Card variant="outlined" sx={styles.invalidLogin}>
+    <Card variant="outlined" sx={styles.invalidLogin} id="error-card">
       <Typography sx={{ justifyContent: "center", alignItems: "center" }}>{error}</Typography>
     </Card>
   );

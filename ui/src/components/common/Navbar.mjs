@@ -32,7 +32,6 @@ import { USER_ROLES, USER_ROLES_IN_ORDER_OF_PRECEDENCE } from "@/src/lib/constan
 import { handleSignOut } from "@/src/lib/cognitoActions.mjs";
 import { toast } from "react-toastify";
 import useAuthUser from "@/src/app/hooks/use-auth-user";
-import { getErrorMessage } from "@/src/lib/commonFunctionsServer.mjs";
 
 const pages = [
   { label: "Home", link: "/", role: USER_ROLES.GUEST },
@@ -80,13 +79,7 @@ function Navbar({ children, window: dom }) {
     };
   }, []);
 
-  let user = { role: USER_ROLES.GUEST };
-
-  try {
-    user = useAuthUser();
-  } catch (error) {
-    toast.error(getErrorMessage(error));
-  }
+  const user = useAuthUser();
 
   return (
     <HideOnScroll children={children} window={dom}>

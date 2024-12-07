@@ -2,9 +2,12 @@ import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth";
 import { useEffect, useState } from "react";
 import { USER_ROLES } from "../../lib/constants.mjs";
 import { getHighestUserGroup } from "@/src/lib/commonFunctionsServer.mjs";
+import { toast } from "react-toastify";
+import { getErrorMessage } from "@/src/lib/commonFunctionsServer.mjs";
 
-export default function useAuthUser() {
+export default function useAuthUser(forceFetch = false) {
   const [user, setUser] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getUser() {
@@ -17,7 +20,7 @@ export default function useAuthUser() {
         }
 
         const userAttributes = await fetchUserAttributes();
-        const user = {
+        const userObject = {
           id: userAttributes.sub,
           email: userAttributes.email,
           firstName: userAttributes.given_name,
@@ -28,16 +31,29 @@ export default function useAuthUser() {
           role: USER_ROLES.USER,
         };
         const groups = session.tokens.accessToken.payload["cognito:groups"];
-        user.role = getHighestUserGroup(groups);
-      } catch (error) {
-        throw new Error("Failed to get user", { cause: error });
-      }
+        userObject.role = getHighestUserGroup(groups);
 
-      setUser(user);
+        setUser(userObject);
+      } catch (error) {
+        const formattedError = new Error("Failed to get user", { cause: error });
+        console.error(formattedError);
+        toast.error(getErrorMessage(formattedError));
+        setUser({ role: USER_ROLES.GUEST });
+      } finally {
+        setLoading(false);
+      }
     }
 
-    getUser();
-  }, []);
+    // TODO - test if this caches the stuff or might set up user use context
+    if (!user || forceFetch) {
+      setLoading(true);
+      getUser();
+    }
+  }, [user, forceFetch]);
+
+  if (loading) {
+    return { role: USER_ROLES.GUEST };
+  }
 
   return user;
 }

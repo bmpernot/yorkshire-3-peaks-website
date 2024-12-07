@@ -18,7 +18,7 @@ import {
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { Info as InfoIcon } from "@mui/icons-material";
 import { LogoTitle } from "../common/CustomIcons.mjs";
-import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { useRouter } from "next/navigation";
 import { handleSignUp } from "../../lib/cognitoActions.mjs";
@@ -44,7 +44,9 @@ function SignUp() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmissionError(null);
-    if (isErrors(errors)) {
+
+    const isValid = validateInputs(setErrors);
+    if (!isValid) {
       return;
     }
 
@@ -56,12 +58,12 @@ function SignUp() {
       password: data.get("password"),
       options: {
         userAttributes: {
-          phone_number: data.get("number"),
+          phone_number: formatNumber(data.get("number")),
           email: data.get("email"),
           given_name: data.get("fname"),
           family_name: data.get("lname"),
-          "custom:notify": data.get("notify") === "true" ? true : false,
-          "custom:ice_number": data.get("iceNumber"),
+          "custom:notify": data.get("notify") === "true" ? "true" : "false",
+          "custom:ice_number": formatNumber(data.get("iceNumber")),
         },
       },
     };
@@ -242,13 +244,7 @@ function SignUp() {
             control={<Checkbox value={true} id="notify" color="primary" name="notify" />}
             label="I want to receive updates about current and future events."
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            onClick={() => validateInputs(setErrors)}
-            disabled={isLoading}
-          >
+          <Button type="submit" fullWidth variant="contained" disabled={isLoading}>
             Sign up
           </Button>
           <Typography sx={styles.existingAccountTitle}>
@@ -277,122 +273,104 @@ const validateInputs = (setErrors) => {
   const confirmPassword = document.getElementById("confirmPassword");
 
   let isValid = true;
+  const newErrors = {
+    email: [],
+    password: [],
+    fname: [],
+    lname: [],
+    number: [],
+    iceNumber: [],
+    confirmPassword: [],
+  };
+
   const formValidations = [
     {
-      validation: () => {
-        return !email.value || !/\S+@\S+\.\S+/.test(email.value);
-      },
+      validation: () => !email.value || !/\S+@\S+\.\S+/.test(email.value),
       errorMessage: "Please enter a valid email address.",
       field: "email",
     },
     {
-      validation: () => {
-        return !password.value || password.value.length < 8;
-      },
+      validation: () => !password.value || password.value.length < 8,
       errorMessage: "Password must be at least 8 characters long.",
       field: "password",
     },
     {
-      validation: () => {
-        return !/[A-Z]/.test(password.value);
-      },
+      validation: () => !/[A-Z]/.test(password.value),
       errorMessage: "Password must have a upper case letter.",
       field: "password",
     },
     {
-      validation: () => {
-        return !/[a-z]/.test(password.value);
-      },
+      validation: () => !/[a-z]/.test(password.value),
       errorMessage: "Password must have a lower case letter.",
       field: "password",
     },
     {
-      validation: () => {
-        return !/\d/.test(password.value);
-      },
+      validation: () => !/\d/.test(password.value),
       errorMessage: "Password must have a number.",
       field: "password",
     },
     {
-      validation: () => {
-        return !/[^$*.[\]{}()?\\!"@#%&/\\,><':;|_~`+=-]/.test(password.value);
-      },
+      validation: () => !/[^$*.[\]{}()?\\!"@#%&/\\,><':;|_~`+=-]/.test(password.value),
       errorMessage: "Password must have special characters.",
       field: "password",
     },
     {
-      validation: () => {
-        return !confirmPassword.value || confirmPassword.value !== password.value;
-      },
+      validation: () => !confirmPassword.value || confirmPassword.value !== password.value,
       errorMessage: "Passwords do not match.",
       field: "confirmPassword",
     },
     {
-      validation: () => {
-        return !number.value || number.value.length !== 11;
-      },
-      errorMessage: "Number is required.",
+      validation: () => !number.value || number.value.length !== 11 || !number.value.startsWith("0"),
+      errorMessage: "Number is required. (local UK numbers only)",
       field: "number",
     },
     {
-      validation: () => {
-        return !fname.value || fname.value.length < 1;
-      },
+      validation: () => !/^\d+$/.test(number.value),
+      errorMessage: "Number needs to be a number.",
+      field: "number",
+    },
+    {
+      validation: () => !fname.value || fname.value.length < 1,
       errorMessage: "First name is required.",
       field: "fname",
     },
     {
-      validation: () => {
-        return !lname.value || lname.value.length < 1;
-      },
+      validation: () => !lname.value || lname.value.length < 1,
       errorMessage: "Last name is required.",
       field: "lname",
     },
     {
-      validation: () => {
-        return !iceNumber.value || iceNumber.value.length !== 11;
-      },
-      errorMessage: "ICE number is required.",
+      validation: () => !iceNumber.value || iceNumber.value.length !== 11 || !iceNumber.value.startsWith("0"),
+      errorMessage: "ICE number is required. (local UK numbers only)",
       field: "iceNumber",
     },
     {
-      validation: () => {
-        return iceNumber.value !== number.value;
-      },
+      validation: () => iceNumber.value === number.value,
       errorMessage: "ICE number cannot be your own.",
+      field: "iceNumber",
+    },
+
+    {
+      validation: () => !/^\d+$/.test(iceNumber.value),
+      errorMessage: "ICE number needs to be a number.",
       field: "iceNumber",
     },
   ];
 
-  formValidations.forEach((formValidation) => {
-    if (formValidation.validation()) {
-      setErrors((errors) => {
-        let newErrors = { ...errors };
-        if (!errors[formValidation.field].includes(formValidation.errorMessage)) {
-          newErrors = {
-            ...errors,
-            [formValidation.field]: [...errors[formValidation.field], formValidation.errorMessage],
-          };
-        }
-        isValid = errors[formValidation.field].length > 0 ? false : true;
-        return newErrors;
-      });
-    } else {
-      setErrors((errors) => {
-        let newErrors = { ...errors };
-        if (errors[formValidation.field].includes(formValidation.errorMessage)) {
-          const updatedFieldErrors = errors[formValidation.field].filter(
-            (element) => element !== formValidation.errorMessage,
-          );
-          newErrors = {
-            ...errors,
-            [formValidation.field]: updatedFieldErrors,
-          };
-        }
-        return newErrors;
-      });
+  formValidations.forEach(({ validation, errorMessage, field }) => {
+    if (validation()) {
+      if (!newErrors[field].includes(errorMessage)) {
+        newErrors[field].push(errorMessage);
+      }
+      isValid = false;
     }
   });
 
+  setErrors(newErrors);
+
   return isValid;
 };
+
+function formatNumber(number) {
+  return `+44${number.slice(1)}`;
+}
