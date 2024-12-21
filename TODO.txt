@@ -19,4 +19,4 @@ TODO - make it so we don't have to get the user on every page - might user a use
 
 TODO - figure out if username is sub or email
 
-TODO - need to mock the cognito calls for ui using aws-sdk-mock (https://reintech.io/blog/local-testing-debugging-aws-cognito) - use cypress tasks for this 
+TODO - figure out why the email is not working
