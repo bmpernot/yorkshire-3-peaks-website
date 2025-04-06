@@ -11,12 +11,16 @@ import { useRouter } from "next/navigation";
 import { handleSignIn } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import { useUser } from "@/src/utils/userContext";
+
 function SignIn() {
   const [emailErrorMessage, setEmailErrorMessage] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
   const [isForgotPasswordModelOpen, setIsForgotPasswordModelOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const { updateUser } = useUser();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,7 +39,7 @@ function SignIn() {
     };
 
     try {
-      await handleSignIn(router, formData);
+      await handleSignIn(router, formData, updateUser);
     } catch (error) {
       console.error(new Error(`An Error occurred when trying to sign you in`, { cause: error }));
       toast.error(`An Error occurred when trying to sign you in`);

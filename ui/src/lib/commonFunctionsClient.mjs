@@ -8,7 +8,7 @@ function validateInputs(setErrors, formValidations) {
   let isValid = true;
 
   formValidations.forEach((formValidation) => {
-    if (formValidation.validation(...formValidation.element)) {
+    if (formValidation.validation(...formValidation.element())) {
       setErrors((errors) => {
         let newErrors = { ...errors };
         if (!errors[formValidation.field].includes(formValidation.errorMessage)) {

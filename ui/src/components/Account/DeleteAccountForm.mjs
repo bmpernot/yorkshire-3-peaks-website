@@ -11,7 +11,7 @@ import { handleDeleteUser } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
 
-function DeleteAccountForm({ email }) {
+function DeleteAccountForm({ email, updateUser }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({ confirmDeletion: [] });
   const [submissionError, setSubmissionError] = useState(false);
@@ -29,6 +29,7 @@ function DeleteAccountForm({ email }) {
 
     try {
       await handleDeleteUser(router);
+      await updateUser();
     } catch (error) {
       console.error(new Error("An Error occurred when trying to delete your account", { cause: error }));
       toast.error(`An Error occurred when trying to delete your account`);
@@ -91,6 +92,6 @@ const formValidationsDeleteAccount = [
     },
     errorMessage: "Please enter the email address of this account.",
     field: "confirmDeletion",
-    element: [document.getElementById("confirmDeletion"), document.getElementById("email")],
+    element: () => [document.getElementById("confirmDeletion"), document.getElementById("email")],
   },
 ];

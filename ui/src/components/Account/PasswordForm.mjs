@@ -35,6 +35,12 @@ function PasswordForm() {
 
     try {
       await handleUpdatePassword(formData);
+
+      toast.success("Password was successfully updated");
+
+      document.getElementById("oldPassword").value = "";
+      document.getElementById("newPassword").value = "";
+      document.getElementById("confirmNewPassword").value = "";
     } catch (error) {
       console.error(new Error("An Error occurred when trying to update your password", { cause: error }));
       toast.error(`An Error occurred when trying to update your password`);
@@ -105,6 +111,7 @@ function PasswordForm() {
             variant="contained"
             onClick={() => validateInputs(setErrors, formValidationsPassword)}
             disabled={isLoading}
+            loading={isLoading}
           >
             Update password
           </Button>
@@ -123,7 +130,7 @@ const formValidationsPassword = [
     },
     errorMessage: "Password must be at least 8 characters long.",
     field: "newPassword",
-    element: [document.getElementById("newPassword")],
+    element: () => [document.getElementById("newPassword")],
   },
   {
     validation: (newPassword) => {
@@ -131,7 +138,7 @@ const formValidationsPassword = [
     },
     errorMessage: "Password must have a upper case letter.",
     field: "newPassword",
-    element: [document.getElementById("newPassword")],
+    element: () => [document.getElementById("newPassword")],
   },
   {
     validation: (newPassword) => {
@@ -139,7 +146,7 @@ const formValidationsPassword = [
     },
     errorMessage: "Password must have a lower case letter.",
     field: "newPassword",
-    element: [document.getElementById("newPassword")],
+    element: () => [document.getElementById("newPassword")],
   },
   {
     validation: (newPassword) => {
@@ -147,7 +154,7 @@ const formValidationsPassword = [
     },
     errorMessage: "Password must have a number.",
     field: "newPassword",
-    element: [document.getElementById("newPassword")],
+    element: () => [document.getElementById("newPassword")],
   },
   {
     validation: (newPassword) => {
@@ -155,7 +162,7 @@ const formValidationsPassword = [
     },
     errorMessage: "Password must have special characters.",
     field: "newPassword",
-    element: [document.getElementById("newPassword")],
+    element: () => [document.getElementById("newPassword")],
   },
 
   {
@@ -164,7 +171,7 @@ const formValidationsPassword = [
     },
     errorMessage: "New password cannot be the old password.",
     field: "newPassword",
-    element: [document.getElementById("newPassword"), document.getElementById("oldPassword")],
+    element: () => [document.getElementById("newPassword"), document.getElementById("oldPassword")],
   },
   {
     validation: (confirmNewPassword, newPassword) => {
@@ -172,6 +179,6 @@ const formValidationsPassword = [
     },
     errorMessage: "Passwords do not match.",
     field: "confirmNewPassword",
-    element: [document.getElementById("confirmNewPassword"), document.getElementById("newPassword")],
+    element: () => [document.getElementById("confirmNewPassword"), document.getElementById("newPassword")],
   },
 ];

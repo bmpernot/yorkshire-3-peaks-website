@@ -9,8 +9,9 @@ import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { handleUpdateUserAttributes } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
+import { phone } from 'phone';
 
-function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify }) {
+function UserDetailsForm({ user }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({
     fname: [],
@@ -19,6 +20,17 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
     iceNumber: [],
   });
   const [submissionError, setSubmissionError] = useState(false);
+  const [formData, setFormData] = useState({
+    fname: user.firstName,
+    lname: user.lastName,
+    number: user.number,
+    iceNumber: user.iceNumber,
+    notify: Boolean(user.notify),
+  });
+
+  const handleInputChange = (e, value) => {
+    setFormData({ ...formData, [e.target.name]: value ?? e.target.value });
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,14 +47,14 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
     const formData = {
       given_name: data.get("fname"),
       family_name: data.get("lname"),
-      email: data.get("email"),
-      phone_number: data.get("number"),
-      "custom:ice_number": data.get("iceNumber"),
-      "custom:notify": data.get("notify") === "true" ? true : false,
+      phone_number: phone(data.get("number"), {country: "GB"}).phoneNumber,
+      "custom:ice_number": phone(data.get("iceNumber"), {country: "GB"}).phoneNumber,
+      "custom:notify": data.get("notify") ? "true" : "false",
     };
 
     try {
       await handleUpdateUserAttributes(formData);
+      toast.success("Your details have been updated");
     } catch (error) {
       console.error(new Error("An Error occurred when trying to update your details", { cause: error }));
       toast.error(`An Error occurred when trying to update your details`);
@@ -70,7 +82,7 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
               name="email"
               variant="outlined"
               disabled={true}
-              value={email}
+              value={user.email}
               sx={styles.formTextField}
             />
           </FormControl>
@@ -81,12 +93,13 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
               name="fname"
               fullWidth
               id="fname"
-              value={firstName}
+              value={formData.fname}
               error={errors.fname.length > 0}
               helperText={errors.fname
                 .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
                 .slice(0, -1)}
               color={errors.fname.length > 0 ? "error" : "primary"}
+              onChange={handleInputChange}
               sx={styles.formTextField}
             />
           </FormControl>
@@ -97,12 +110,13 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
               name="lname"
               fullWidth
               id="lname"
-              value={lastName}
+              value={formData.lname}
               error={errors.lname.length > 0}
               helperText={errors.lname
                 .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
                 .slice(0, -1)}
               color={errors.lname.length > 0 ? "error" : "primary"}
+              onChange={handleInputChange}
               sx={styles.formTextField}
             />
           </FormControl>
@@ -113,12 +127,13 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
               name="number"
               fullWidth
               id="number"
-              value={number}
+              value={formData.number}
               error={errors.number.length > 0}
               helperText={errors.number
                 .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
                 .slice(0, -1)}
               color={errors.number.length > 0 ? "error" : "primary"}
+              onChange={handleInputChange}
               sx={styles.formTextField}
             />
           </FormControl>
@@ -129,17 +144,27 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
               name="iceNumber"
               fullWidth
               id="iceNumber"
-              value={iceNumber}
+              value={formData.iceNumber}
               error={errors.iceNumber.length > 0}
               helperText={errors.iceNumber
                 .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
                 .slice(0, -1)}
               color={errors.iceNumber.length > 0 ? "error" : "primary"}
+              onChange={handleInputChange}
               sx={styles.formTextField}
             />
           </FormControl>
           <FormControlLabel
-            control={<Checkbox value="true" id="notify" color="primary" name="notify" checked={notify} />}
+            control={
+              <Checkbox
+                value="true"
+                id="notify"
+                color="primary"
+                name="notify"
+                checked={formData.notify}
+                onChange={(e) => handleInputChange(e, !formData.notify)}
+              />
+            }
             label="I want to receive updates about current and future events."
           />
           <Button
@@ -148,6 +173,7 @@ function UserDetailsForm({ email, firstName, lastName, number, iceNumber, notify
             variant="contained"
             onClick={() => validateInputs(setErrors, formValidationsUserDetails)}
             disabled={isLoading}
+            loading={isLoading}
           >
             Update details
           </Button>
@@ -162,11 +188,11 @@ export default UserDetailsForm;
 const formValidationsUserDetails = [
   {
     validation: (number) => {
-      return !number.value || number.value.length !== 11;
+      return !number.value;
     },
     errorMessage: "Number is required.",
     field: "number",
-    element: [document.getElementById("number")],
+    element: () => [document.getElementById("number")],
   },
   {
     validation: (fname) => {
@@ -174,7 +200,7 @@ const formValidationsUserDetails = [
     },
     errorMessage: "First name is required.",
     field: "fname",
-    element: [document.getElementById("fname")],
+    element: () => [document.getElementById("fname")],
   },
   {
     validation: (lname) => {
@@ -182,15 +208,15 @@ const formValidationsUserDetails = [
     },
     errorMessage: "Last name is required.",
     field: "lname",
-    element: [document.getElementById("lname")],
+    element: () => [document.getElementById("lname")],
   },
   {
     validation: (iceNumber) => {
-      return !iceNumber.value || iceNumber.value.length !== 11;
+      return !iceNumber.value;
     },
     errorMessage: "ICE number is required.",
     field: "iceNumber",
-    element: [document.getElementById("iceNumber")],
+    element: () => [document.getElementById("iceNumber")],
   },
   {
     validation: (iceNumber, number) => {
@@ -198,6 +224,22 @@ const formValidationsUserDetails = [
     },
     errorMessage: "ICE number cannot be your own.",
     field: "iceNumber",
-    element: [document.getElementById("iceNumber"), document.getElementById("number")],
+    element: () => [document.getElementById("iceNumber"), document.getElementById("number")],
+  },
+  {
+    validation: (number) => {
+      return !phone(number, {country: "GB"}).isValid;
+    },
+    errorMessage: "Number needs to be a valid GB mobile number, landlines not accepted.",
+    field: "number",
+    element: () => [document.getElementById("number")],
+  },
+  {
+    validation: (iceNumber) => {
+      return !phone(iceNumber, {country: "GB"}).isValid;
+    },
+    errorMessage: "ICE number needs to be a valid GB mobile number, landlines not accepted.",
+    field: "iceNumber",
+    element: () => [document.getElementById("iceNumber")],
   },
 ];

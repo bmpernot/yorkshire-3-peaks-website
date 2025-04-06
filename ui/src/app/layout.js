@@ -7,6 +7,7 @@ import Navbar from "@/src/components/common/Navbar.mjs";
 import Footer from "@/src/components/common/Footer.mjs";
 import ClientThemeProvider from "@/src/components/common/ClientThemeProvider.mjs";
 import ConfigureAmplifyClientSide from "@/src/app/amplify-cognito-config";
+import { UserProvider } from "@/src/utils/userContext";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,14 +20,16 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <ClientThemeProvider>
           <ToastContainer position="bottom-right" />
-          <Navbar />
-          <ConfigureAmplifyClientSide />
-          <Container maxWidth="xl">
-            <main data-cy="body" className={styles.main}>
-              {children}
-            </main>
-          </Container>
-          <Footer />
+          <UserProvider>
+            <Navbar />
+            <ConfigureAmplifyClientSide />
+            <Container maxWidth="xl">
+              <main data-cy="body" className={styles.main}>
+                {children}
+              </main>
+            </Container>
+            <Footer />
+          </UserProvider>
         </ClientThemeProvider>
       </body>
     </html>

@@ -16,9 +16,11 @@ export async function authenticatedUser(context) {
     operation: async (contextSpec) => {
       try {
         const session = await fetchAuthSession(contextSpec);
+
         if (!session.tokens) {
           return { role: USER_ROLES.GUEST };
         }
+
         const user = {
           ...(await getCurrentUser(contextSpec)),
           role: USER_ROLES.USER,

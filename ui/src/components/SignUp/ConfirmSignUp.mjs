@@ -10,20 +10,29 @@ import { toast } from "react-toastify";
 import { handleConfirmSignUp, handleSendEmailVerificationCode } from "../../lib/cognitoActions.mjs";
 import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
+import { useUser } from "@/src/utils/userContext";
+import { useSearchParams } from "next/navigation";
 
 function ConfirmSignUp() {
   const [codeErrorMessage, setCodeErrorMessage] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isLoadingResendCode, setIsLoadingResendCode] = useState(false);
+  const [email, setEmail] = useState("");
 
   const router = useRouter();
+  const searchParams = useSearchParams()
+  
+  const { updateUser } = useUser();
 
   useEffect(() => {
-    if (!sessionStorage.getItem("userEmail")) {
-      toast.error(
-        "Failed to pass email to this page - please make sure you allow cookies for this website and start the process again",
-      );
+    const emailFromParams = searchParams.get("email");
+
+    if (emailFromParams) {
+      setEmail(emailFromParams);
+      router.replace("/auth/confirm-signup");
+    } else {
+      toast.error("Email not found");
     }
   }, []);
 
@@ -37,18 +46,11 @@ function ConfirmSignUp() {
     setIsLoadingSubmit(true);
 
     const data = new FormData(event.currentTarget);
-    const email = sessionStorage.getItem("userEmail");
 
-    if (!email) {
-      toast.error(
-        "Failed to pass email to this page - please make sure you allow cookies for this website and start the process again",
-      );
-    }
-
-    const formData = { username: sessionStorage.getItem("userEmail"), confirmationCode: data.get("code") };
+    const formData = { username: email, confirmationCode: data.get("code") };
 
     try {
-      await handleConfirmSignUp(router, formData);
+      await handleConfirmSignUp(router, formData, updateUser);
     } catch (error) {
       console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
       toast.error(`An Error occurred when trying to confirm your account.`);
@@ -59,11 +61,11 @@ function ConfirmSignUp() {
   };
 
   const handleResendCode = async () => {
-    const email = sessionStorage.getItem("userEmail");
     if (email) {
       try {
         setIsLoadingResendCode(true);
         await handleSendEmailVerificationCode(email);
+        toast.success(`New code sent to ${email}.`)
       } catch (error) {
         console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
         toast.error(`An Error occurred when trying to confirm your account.`);
@@ -135,7 +137,7 @@ const validateInputs = ({ setCodeErrorMessage }) => {
 
   let isValid = true;
 
-  if (!code.value || code.value.length !== 4) {
+  if (!code.value || code.value.length !== 6) {
     setCodeErrorMessage("Please enter a valid code.");
     isValid = false;
   } else {

@@ -20,9 +20,7 @@ export async function handleSignUp(router, formData) {
   }
 
   try {
-    sessionStorage.setItem("userEmail", formData.email);
-
-    router.push("/auth/confirm-signup");
+    router.push(`/auth/confirm-signup?email=${encodeURIComponent(formData.username)}`);
   } catch (error) {
     throw new Error("An error occurred when trying to redirect you to the confirm-signup page", {
       cause: error,
@@ -44,42 +42,55 @@ export async function handleSendEmailVerificationCode(email) {
   return response;
 }
 
-export async function handleConfirmSignUp(router, formData) {
+export async function handleConfirmSignUp(router, formData, updateUser) {
+  let confirmSignUpResponse
   try {
-    await confirmSignUp(formData);
+    confirmSignUpResponse = await confirmSignUp(formData);
   } catch (error) {
     throw new Error("An error has occurred when trying to confirm your account", { cause: error });
   }
 
-  try {
-    await autoSignIn();
-  } catch (error) {
-    throw new Error("An error has occurred when trying to log the user in after confirmation", {
-      cause: error,
-    });
-  }
+  if(confirmSignUpResponse.nextStep === "COMPLETE_AUTO_SIGN_IN"){
+    try {
+      await autoSignIn();
+    } catch (error) {
+      throw new Error("An error has occurred when trying to log the user in after confirmation", {
+        cause: error,
+      });
+    }
 
-  try {
-    router.push("/auth/account");
-  } catch (error) {
-    throw new Error("An error occurred when trying to redirect you to the account page", { cause: error });
+    await updateUser();
+    
+    try {
+      router.push("/user/account");
+    } catch (error) {
+      throw new Error("An error occurred when trying to redirect you to the account page", { cause: error });
+    }
+  } else {
+    try {
+      router.push("/auth/sign-in");
+    } catch (error) {
+      throw new Error("An error occurred when trying to redirect you to the sign in page", { cause: error });
+    }
   }
 }
 
-export async function handleSignIn(router, formData) {
-  let redirectLink = "/auth/account";
+export async function handleSignIn(router, formData, updateUser) {
+  let redirectLink = "/user/account";
+
   try {
     const { nextStep } = await signIn(formData);
     if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
       await resendSignUpCode({
-        username: String(formData.get("email")),
+        username: formData.username,
       });
-      sessionStorage.setItem("userEmail", formData.username);
-      redirectLink = "/auth/confirm-signup";
+      redirectLink = `/auth/confirm-signup?email=${encodeURIComponent(formData.username)}`;
     }
   } catch (error) {
     throw new Error("An error occurred when trying to log you in", { cause: error });
   }
+
+  await updateUser();
 
   try {
     router.push(redirectLink);
@@ -104,7 +115,7 @@ export async function handleSignOut(router) {
   }
 }
 
-export async function handleResetPassword(router, email) {
+export async function handleResetPassword(router, email, onPage = false) {
   try {
     await resetPassword({
       username: email,
@@ -114,15 +125,15 @@ export async function handleResetPassword(router, email) {
       cause: error,
     });
   }
-
-  try {
-    sessionStorage.setItem("userEmail", email);
-
-    router.push("/auth/reset-password");
-  } catch (error) {
-    throw new Error("An error occurred when trying to redirect you to the reset password page", {
-      cause: error,
-    });
+  
+  if(!onPage){
+    try {
+      router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+    } catch (error) {
+      throw new Error("An error occurred when trying to redirect you to the reset password page", {
+        cause: error,
+      });
+    }
   }
 }
 

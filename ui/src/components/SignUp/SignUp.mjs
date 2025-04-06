@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { handleSignUp } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
+import { phone } from 'phone';
 
 function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
@@ -58,12 +59,12 @@ function SignUp() {
       password: data.get("password"),
       options: {
         userAttributes: {
-          phone_number: formatNumber(data.get("number")),
+          phone_number: phone(data.get("number"), {country: "GB"}).phoneNumber,
           email: data.get("email"),
           given_name: data.get("fname"),
           family_name: data.get("lname"),
           "custom:notify": data.get("notify") === "true" ? "true" : "false",
-          "custom:ice_number": formatNumber(data.get("iceNumber")),
+          "custom:ice_number": phone(data.get("iceNumber"), {country: "GB"}).phoneNumber,
         },
       },
     };
@@ -320,13 +321,13 @@ const validateInputs = (setErrors) => {
       field: "confirmPassword",
     },
     {
-      validation: () => !number.value || number.value.length !== 11 || !number.value.startsWith("0"),
-      errorMessage: "Number is required. (local UK numbers only)",
+      validation: () => !number.value,
+      errorMessage: "Number is required",
       field: "number",
     },
     {
-      validation: () => !/^\d+$/.test(number.value),
-      errorMessage: "Number needs to be a number.",
+      validation: () => !phone(number, {country: "GB"}).isValid,
+      errorMessage: "Number needs to be a valid GB mobile number, landlines not accepted.",
       field: "number",
     },
     {
@@ -351,8 +352,8 @@ const validateInputs = (setErrors) => {
     },
 
     {
-      validation: () => !/^\d+$/.test(iceNumber.value),
-      errorMessage: "ICE number needs to be a number.",
+      validation: () => !phone(iceNumber, {country: "GB"}).isValid,
+      errorMessage: "ICE number needs to be a valid GB mobile number, landlines not accepted.",
       field: "iceNumber",
     },
   ];
@@ -370,7 +371,3 @@ const validateInputs = (setErrors) => {
 
   return isValid;
 };
-
-function formatNumber(number) {
-  return `+44${number.slice(1)}`;
-}

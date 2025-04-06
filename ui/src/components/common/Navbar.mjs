@@ -31,7 +31,9 @@ import { styles } from "../../styles/navbar.mui.styles.mjs";
 import { USER_ROLES, USER_ROLES_IN_ORDER_OF_PRECEDENCE } from "@/src/lib/constants.mjs";
 import { handleSignOut } from "@/src/lib/cognitoActions.mjs";
 import { toast } from "react-toastify";
-import useAuthUser from "@/src/app/hooks/use-auth-user";
+import { useUser } from "@/src/utils/userContext";
+import { createAvatar } from "@dicebear/core";
+import { shapes } from "@dicebear/collection";
 
 const pages = [
   { label: "Home", link: "/", role: USER_ROLES.GUEST },
@@ -56,6 +58,8 @@ function Navbar({ children, window: dom }) {
   const [anchorElInternalNavMenu, setAnchorElInternalNavMenu] = useState(null);
   const router = useRouter();
 
+  const { user, updateUser } = useUser();
+
   useEffect(() => {
     const handleScroll = () => {
       setAnchorElUser((previousStateValue) => {
@@ -79,8 +83,6 @@ function Navbar({ children, window: dom }) {
     };
   }, []);
 
-  const user = useAuthUser();
-
   return (
     <HideOnScroll children={children} window={dom}>
       <AppBar data-cy="navbar">
@@ -97,7 +99,13 @@ function Navbar({ children, window: dom }) {
             {user.role === USER_ROLES.GUEST ? (
               <SignInButton router={router} />
             ) : (
-              <UserMenu user={user} anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} router={router} />
+              <UserMenu
+                user={user}
+                updateUser={updateUser}
+                anchorElUser={anchorElUser}
+                setAnchorElUser={setAnchorElUser}
+                router={router}
+              />
             )}
           </Toolbar>
         </Container>
@@ -118,7 +126,7 @@ function HideOnScroll({ children, window }) {
   );
 }
 
-const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, router }) {
+const UserMenu = memo(function UserMenu({ user, updateUser, anchorElUser, setAnchorElUser, router }) {
   const [isLoadingSignOut, setIsLoadingSignOut] = useState(false);
 
   const settings = [
@@ -129,7 +137,8 @@ const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, r
       function: async () => {
         try {
           setIsLoadingSignOut(true);
-          await handleSignOut();
+          await handleSignOut(router);
+          await updateUser();
         } catch (error) {
           console.error(new Error("Failed to sign you out", { cause: error }));
           toast.error("Failed to sign you out");
@@ -143,6 +152,8 @@ const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, r
     },
   ];
 
+  const avatar = createAvatar(shapes, { seed: `${user?.firstName} ${user?.lastName}` });
+
   return (
     <Box data-cy="user-settings" sx={styles.userMenu.dropDown.wrapper}>
       <Tooltip title="Open settings">
@@ -151,7 +162,7 @@ const UserMenu = memo(function UserMenu({ user, anchorElUser, setAnchorElUser, r
           sx={styles.userMenu.dropDown.button}
           data-cy="button"
         >
-          <Avatar alt={user?.firstName} src="/" />
+          <Avatar alt={`${user?.firstName} ${user?.lastName}`} src={avatar.toDataUri()} />
         </IconButton>
       </Tooltip>
       <Menu
@@ -204,7 +215,6 @@ const NavMenu = memo(function NavMenu({
   setAnchorElInternalNavMenu,
   router,
 }) {
-  // i think this causes an addition rerender on page launch (acceptable)
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   return (

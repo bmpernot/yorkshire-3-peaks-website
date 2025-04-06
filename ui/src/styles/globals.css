@@ -58,3 +58,5 @@ body {
     color-scheme: dark;
   }
 }
+
+@import url("./margins.css");

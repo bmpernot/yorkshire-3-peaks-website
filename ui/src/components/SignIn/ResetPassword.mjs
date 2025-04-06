@@ -7,9 +7,10 @@ import { LogoTitle } from "../common/CustomIcons.mjs";
 import { StyledCard, StyledContainer as ResetPasswordContainer } from "../common/CustomComponents.mjs";
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
-import { handleConfirmResetPassword } from "../../lib/cognitoActions.mjs";
+import { handleConfirmResetPassword, handleResetPassword } from "../../lib/cognitoActions.mjs";
 import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
+import { useSearchParams } from "next/navigation";
 
 function ResetPassword() {
   const [errors, setErrors] = useState({
@@ -18,14 +19,21 @@ function ResetPassword() {
     confirmPassword: [],
   });
   const [submissionError, setSubmissionError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [isLoadingResendCode, setIsLoadingResendCode] = useState(false);
+  const [email, setEmail] = useState("");
+
   const router = useRouter();
 
+  const searchParams = useSearchParams()
+
   useEffect(() => {
-    if (!sessionStorage.getItem("userEmail")) {
-      toast.error(
-        "Failed to pass email to this page - please make sure you allow cookies for this website and start the process again",
-      );
+    const emailFromParams = searchParams.get("email");
+    if (emailFromParams) {
+      setEmail(emailFromParams);
+      router.replace("/auth/reset-password");
+    } else {
+      toast.error("Email not found")
     }
   }, []);
 
@@ -36,16 +44,7 @@ function ResetPassword() {
       return;
     }
 
-    setIsLoading(true);
-
-    const email = sessionStorage.getItem("userEmail");
-
-    if (!email) {
-      toast.error(
-        "Failed to pass email to this page - please make sure you allow cookies for this website and start the process again",
-      );
-      return;
-    }
+    setIsLoadingSubmit(true);
 
     const data = new FormData(event.currentTarget);
     const formData = {
@@ -61,9 +60,25 @@ function ResetPassword() {
       toast.error(`An Error occurred when trying to reset your password`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
-      setIsLoading(false);
+      setIsLoadingSubmit(false);
     }
   };
+
+  const handleResendCode = async () => {
+      if (email) {
+        try {
+          setIsLoadingResendCode(true);
+          await handleResetPassword(router, email, true);
+          toast.success(`New code sent to ${email}.`)
+        } catch (error) {
+          console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
+          toast.error(`An Error occurred when trying to confirm your account.`);
+          setSubmissionError(getErrorMessage(error.cause));
+        } finally {
+          setIsLoadingResendCode(false);
+        }
+      }
+    };
 
   return (
     <ResetPasswordContainer direction="column" justifyContent="space-between">
@@ -137,9 +152,19 @@ function ResetPassword() {
             onClick={() => {
               validateInputs(setErrors);
             }}
-            disabled={isLoading}
+            disabled={isLoadingSubmit}
           >
             Reset Password
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={() => {
+              handleResendCode();
+            }}
+            disabled={isLoadingResendCode}
+          >
+            Resend code
           </Button>
         </Box>
       </StyledCard>

@@ -89,12 +89,8 @@ Resources:
       VerificationMessageTemplate:
         DefaultEmailOption: CONFIRM_WITH_CODE
         EmailMessage: >-
-          Thank you for signing up to Yorkshire 3 Peaks, Here is your activation code:
-
-          {####}
-
-          :)
-        EmailSubject: Yorkshire 3 Peaks Account Activation Code
+          Here is your code: {####}
+        EmailSubject: Yorkshire 3 Peaks Account Code
       UserAttributeUpdateSettings:
         AttributesRequireVerificationBeforeUpdate:
           - email

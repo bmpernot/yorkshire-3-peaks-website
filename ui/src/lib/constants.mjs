@@ -1,8 +1,8 @@
 const USER_ROLES = {
-  GUEST: "guest",
-  USER: "user",
-  ORGANISER: "organiser",
-  ADMIN: "admin",
+  GUEST: "Guest",
+  USER: "User",
+  ORGANISER: "Organiser",
+  ADMIN: "Admin",
 };
 const USER_ROLES_IN_ORDER_OF_PRECEDENCE = [USER_ROLES.ADMIN, USER_ROLES.ORGANISER, USER_ROLES.USER, USER_ROLES.GUEST];
 const RESTRICTED_PAGES = {

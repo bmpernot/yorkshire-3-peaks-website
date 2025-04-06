@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.2.26",
+    "@dicebear/collection": "^9.2.2",
+    "@dicebear/core": "^9.2.2",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@fontsource/roboto": "^5.0.15",
@@ -19,6 +21,7 @@
     "@mui/material": "^6.1.0",
     "aws-amplify": "^6.8.0",
     "next": "14.2.13",
+    "phone": "^3.1.58",
     "react": "^18",
     "react-dom": "^18",
     "react-toastify": "^10.0.6"
