@@ -9,7 +9,7 @@ import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { handleUpdateUserAttributes } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
-import { phone } from 'phone';
+import { phone } from "phone";
 
 function UserDetailsForm({ user }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,8 +47,8 @@ function UserDetailsForm({ user }) {
     const formData = {
       given_name: data.get("fname"),
       family_name: data.get("lname"),
-      phone_number: phone(data.get("number"), {country: "GB"}).phoneNumber,
-      "custom:ice_number": phone(data.get("iceNumber"), {country: "GB"}).phoneNumber,
+      phone_number: phone(data.get("number"), { country: "GB" }).phoneNumber,
+      "custom:ice_number": phone(data.get("iceNumber"), { country: "GB" }).phoneNumber,
       "custom:notify": data.get("notify") ? "true" : "false",
     };
 
@@ -228,7 +228,7 @@ const formValidationsUserDetails = [
   },
   {
     validation: (number) => {
-      return !phone(number, {country: "GB"}).isValid;
+      return !phone(number.value, { country: "GB" }).isValid;
     },
     errorMessage: "Number needs to be a valid GB mobile number, landlines not accepted.",
     field: "number",
@@ -236,7 +236,7 @@ const formValidationsUserDetails = [
   },
   {
     validation: (iceNumber) => {
-      return !phone(iceNumber, {country: "GB"}).isValid;
+      return !phone(iceNumber.value, { country: "GB" }).isValid;
     },
     errorMessage: "ICE number needs to be a valid GB mobile number, landlines not accepted.",
     field: "iceNumber",

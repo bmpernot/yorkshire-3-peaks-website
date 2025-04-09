@@ -1,4 +1,5 @@
 import authPageClass from "../pages/auth.page.js";
+import { USER_ROLES } from "../../src/lib/constants.mjs";
 
 describe("Authorisation", () => {
   const authPage = new authPageClass();
@@ -7,7 +8,7 @@ describe("Authorisation", () => {
     cy.interceptAmplifyAuth();
   });
 
-  describe("Signup page", () => {
+  describe("Sign up page", () => {
     beforeEach(() => {
       authPage.open("auth/sign-up");
     });
@@ -15,8 +16,8 @@ describe("Authorisation", () => {
     const signupData = {
       firstName: "Jon",
       lastName: "Snow",
-      number: "01234567890",
-      iceNumber: "09876543210",
+      number: "07484048733",
+      iceNumber: "07740139354",
       email: "jon.snow@example.com",
       password: "Password1!",
       confirmPassword: "Password1!",
@@ -36,7 +37,7 @@ describe("Authorisation", () => {
           expect(interception.request.body.UserAttributes).to.deep.equal([
             {
               Name: "phone_number",
-              Value: "+441234567890",
+              Value: "+447484048733",
             },
             {
               Name: "email",
@@ -56,7 +57,7 @@ describe("Authorisation", () => {
             },
             {
               Name: "custom:ice_number",
-              Value: "+449876543210",
+              Value: "+447740139354",
             },
           ]);
         })
@@ -70,13 +71,16 @@ describe("Authorisation", () => {
         .checkValidationMessages([
           { field: "fname", errors: ["First name is required."] },
           { field: "lname", errors: ["Last name is required."] },
-          { field: "number", errors: ["Number is required. (local UK numbers only)", "Number needs to be a number"] },
+          {
+            field: "number",
+            errors: ["Number is required.", "Number needs to be a valid GB mobile number, landlines not accepted."],
+          },
           {
             field: "iceNumber",
             errors: [
-              "ICE number is required. (local UK numbers only)",
+              "ICE number is required.",
               "ICE number cannot be your own.",
-              "ICE number needs to be a number",
+              "ICE number needs to be a valid GB mobile number, landlines not accepted.",
             ],
           },
           { field: "email", errors: ["Please enter a valid email address."] },
@@ -137,7 +141,7 @@ describe("Authorisation", () => {
           expect(interception.request.body.UserAttributes).to.deep.equal([
             {
               Name: "phone_number",
-              Value: "+441234567890",
+              Value: "+447484048733",
             },
             {
               Name: "email",
@@ -157,7 +161,7 @@ describe("Authorisation", () => {
             },
             {
               Name: "custom:ice_number",
-              Value: "+449876543210",
+              Value: "+447740139354",
             },
           ]);
         })
@@ -185,7 +189,7 @@ describe("Authorisation", () => {
           expect(interception.request.body.UserAttributes).to.deep.equal([
             {
               Name: "phone_number",
-              Value: "+441234567890",
+              Value: "+447484048733",
             },
             {
               Name: "email",
@@ -205,7 +209,7 @@ describe("Authorisation", () => {
             },
             {
               Name: "custom:ice_number",
-              Value: "+449876543210",
+              Value: "+447740139354",
             },
           ]);
           expect(interception.response.statusCode).to.equal(400);
@@ -217,7 +221,7 @@ describe("Authorisation", () => {
     });
   });
 
-  describe("Confirm signup page", () => {
+  describe("Confirm sign up page", () => {
     it("Should be able to allow the user to confirm there account via their email confirmation code", () => {});
 
     it("Should validate input correctly", () => {});
@@ -269,13 +273,90 @@ describe("Authorisation", () => {
     });
   });
 
-  describe("Unauthorised page", () => {
-    // TODO - need to generate all the different scenarios
-    const scenarios = [{ user: "", pages: [{ page: "", authorised: true }] }];
+  describe.only("Unauthorised page", () => {
+    const scenarios = [
+      {
+        user: USER_ROLES.GUEST,
+        pages: [
+          { page: "", authorised: true },
+          { page: "admin", authorised: false },
+          { page: "organiser", authorised: false },
+          { page: "user/account", authorised: false },
+          { page: "user/profile", authorised: false },
+          { page: "auth/confirm-signup", authorised: true },
+          { page: "auth/reset-password", authorised: true },
+          { page: "auth/sign-in", authorised: true },
+          { page: "auth/sign-up", authorised: true },
+          { page: "event/current", authorised: true },
+          { page: "event/promotion", authorised: true },
+          { page: "event/results", authorised: true },
+          { page: "event/route", authorised: true },
+          { page: "event/rules", authorised: true },
+        ],
+      },
+      {
+        user: USER_ROLES.USER,
+        pages: [
+          { page: "", authorised: true },
+          { page: "admin", authorised: false },
+          { page: "organiser", authorised: false },
+          { page: "user/account", authorised: true },
+          { page: "user/profile", authorised: true },
+          { page: "auth/confirm-signup", authorised: true },
+          { page: "auth/reset-password", authorised: true },
+          { page: "auth/sign-in", authorised: true },
+          { page: "auth/sign-up", authorised: true },
+          { page: "event/current", authorised: true },
+          { page: "event/promotion", authorised: true },
+          { page: "event/results", authorised: true },
+          { page: "event/route", authorised: true },
+          { page: "event/rules", authorised: true },
+        ],
+      },
+      {
+        user: USER_ROLES.ORGANISER,
+        pages: [
+          { page: "", authorised: true },
+          { page: "admin", authorised: false },
+          { page: "organiser", authorised: true },
+          { page: "user/account", authorised: true },
+          { page: "user/profile", authorised: true },
+          { page: "auth/confirm-signup", authorised: true },
+          { page: "auth/reset-password", authorised: true },
+          { page: "auth/sign-in", authorised: true },
+          { page: "auth/sign-up", authorised: true },
+          { page: "event/current", authorised: true },
+          { page: "event/promotion", authorised: true },
+          { page: "event/results", authorised: true },
+          { page: "event/route", authorised: true },
+          { page: "event/rules", authorised: true },
+        ],
+      },
+      {
+        user: USER_ROLES.ADMIN,
+        pages: [
+          { page: "", authorised: true },
+          { page: "admin", authorised: true },
+          { page: "organiser", authorised: true },
+          { page: "user/account", authorised: true },
+          { page: "user/profile", authorised: true },
+          { page: "auth/confirm-signup", authorised: true },
+          { page: "auth/reset-password", authorised: true },
+          { page: "auth/sign-in", authorised: true },
+          { page: "auth/sign-up", authorised: true },
+          { page: "event/current", authorised: true },
+          { page: "event/promotion", authorised: true },
+          { page: "event/results", authorised: true },
+          { page: "event/route", authorised: true },
+          { page: "event/rules", authorised: true },
+        ],
+      },
+    ];
+
     for (const user of scenarios) {
       for (const page of user.pages) {
         it(`A ${user.user} should ${page.authorised ? "" : "not "}be able to view the ${page.page} page`, () => {
-          // TODO - need to find a way to stub the user
+          // TODO - need to find a way to stub the user - need to do session on the server first
 
           const expectedURL = page.authorised ? page.page : "unauthorised";
           authPage.open(page.page).urlShouldBe(expectedURL);

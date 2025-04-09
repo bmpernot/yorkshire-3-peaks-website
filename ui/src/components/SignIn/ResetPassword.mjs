@@ -25,7 +25,7 @@ function ResetPassword() {
 
   const router = useRouter();
 
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const emailFromParams = searchParams.get("email");
@@ -33,7 +33,7 @@ function ResetPassword() {
       setEmail(emailFromParams);
       router.replace("/auth/reset-password");
     } else {
-      toast.error("Email not found")
+      toast.error("Email not found");
     }
   }, []);
 
@@ -65,20 +65,20 @@ function ResetPassword() {
   };
 
   const handleResendCode = async () => {
-      if (email) {
-        try {
-          setIsLoadingResendCode(true);
-          await handleResetPassword(router, email, true);
-          toast.success(`New code sent to ${email}.`)
-        } catch (error) {
-          console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
-          toast.error(`An Error occurred when trying to confirm your account.`);
-          setSubmissionError(getErrorMessage(error.cause));
-        } finally {
-          setIsLoadingResendCode(false);
-        }
+    if (email) {
+      try {
+        setIsLoadingResendCode(true);
+        await handleResetPassword(router, email, true);
+        toast.success(`New code sent to ${email}.`);
+      } catch (error) {
+        console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
+        toast.error(`An Error occurred when trying to confirm your account.`);
+        setSubmissionError(getErrorMessage(error.cause));
+      } finally {
+        setIsLoadingResendCode(false);
       }
-    };
+    }
+  };
 
   return (
     <ResetPasswordContainer direction="column" justifyContent="space-between">

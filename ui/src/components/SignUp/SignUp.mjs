@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { handleSignUp } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
-import { phone } from 'phone';
+import { phone } from "phone";
 
 function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,12 +59,12 @@ function SignUp() {
       password: data.get("password"),
       options: {
         userAttributes: {
-          phone_number: phone(data.get("number"), {country: "GB"}).phoneNumber,
+          phone_number: phone(data.get("number"), { country: "GB" }).phoneNumber,
           email: data.get("email"),
           given_name: data.get("fname"),
           family_name: data.get("lname"),
           "custom:notify": data.get("notify") === "true" ? "true" : "false",
-          "custom:ice_number": phone(data.get("iceNumber"), {country: "GB"}).phoneNumber,
+          "custom:ice_number": phone(data.get("iceNumber"), { country: "GB" }).phoneNumber,
         },
       },
     };
@@ -322,11 +322,13 @@ const validateInputs = (setErrors) => {
     },
     {
       validation: () => !number.value,
-      errorMessage: "Number is required",
+      errorMessage: "Number is required.",
       field: "number",
     },
     {
-      validation: () => !phone(number, {country: "GB"}).isValid,
+      validation: () => {
+        return !phone(number.value, { country: "GB" }).isValid;
+      },
       errorMessage: "Number needs to be a valid GB mobile number, landlines not accepted.",
       field: "number",
     },
@@ -341,8 +343,8 @@ const validateInputs = (setErrors) => {
       field: "lname",
     },
     {
-      validation: () => !iceNumber.value || iceNumber.value.length !== 11 || !iceNumber.value.startsWith("0"),
-      errorMessage: "ICE number is required. (local UK numbers only)",
+      validation: () => !iceNumber.value,
+      errorMessage: "ICE number is required.",
       field: "iceNumber",
     },
     {
@@ -352,7 +354,7 @@ const validateInputs = (setErrors) => {
     },
 
     {
-      validation: () => !phone(iceNumber, {country: "GB"}).isValid,
+      validation: () => !phone(iceNumber.value, { country: "GB" }).isValid,
       errorMessage: "ICE number needs to be a valid GB mobile number, landlines not accepted.",
       field: "iceNumber",
     },

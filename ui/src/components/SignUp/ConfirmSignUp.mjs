@@ -21,8 +21,8 @@ function ConfirmSignUp() {
   const [email, setEmail] = useState("");
 
   const router = useRouter();
-  const searchParams = useSearchParams()
-  
+  const searchParams = useSearchParams();
+
   const { updateUser } = useUser();
 
   useEffect(() => {
@@ -65,7 +65,7 @@ function ConfirmSignUp() {
       try {
         setIsLoadingResendCode(true);
         await handleSendEmailVerificationCode(email);
-        toast.success(`New code sent to ${email}.`)
+        toast.success(`New code sent to ${email}.`);
       } catch (error) {
         console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
         toast.error(`An Error occurred when trying to confirm your account.`);

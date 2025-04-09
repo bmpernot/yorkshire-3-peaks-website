@@ -1,6 +1,6 @@
 import { authConfig } from "@/src/app/amplify-cognito-config";
 import { createServerRunner } from "@aws-amplify/adapter-nextjs";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth/server";
+import { fetchAuthSession } from "aws-amplify/auth/server";
 import { USER_ROLES } from "../lib/constants.mjs";
 import { getHighestUserGroup } from "../lib/commonFunctionsServer.mjs";
 
@@ -21,10 +21,7 @@ export async function authenticatedUser(context) {
           return { role: USER_ROLES.GUEST };
         }
 
-        const user = {
-          ...(await getCurrentUser(contextSpec)),
-          role: USER_ROLES.USER,
-        };
+        const user = { role: USER_ROLES.USER };
         const groups = session.tokens.accessToken.payload["cognito:groups"];
         user.role = getHighestUserGroup(groups);
 

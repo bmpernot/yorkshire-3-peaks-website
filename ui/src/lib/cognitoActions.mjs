@@ -43,14 +43,14 @@ export async function handleSendEmailVerificationCode(email) {
 }
 
 export async function handleConfirmSignUp(router, formData, updateUser) {
-  let confirmSignUpResponse
+  let confirmSignUpResponse;
   try {
     confirmSignUpResponse = await confirmSignUp(formData);
   } catch (error) {
     throw new Error("An error has occurred when trying to confirm your account", { cause: error });
   }
 
-  if(confirmSignUpResponse.nextStep === "COMPLETE_AUTO_SIGN_IN"){
+  if (confirmSignUpResponse.nextStep === "COMPLETE_AUTO_SIGN_IN") {
     try {
       await autoSignIn();
     } catch (error) {
@@ -60,7 +60,7 @@ export async function handleConfirmSignUp(router, formData, updateUser) {
     }
 
     await updateUser();
-    
+
     try {
       router.push("/user/account");
     } catch (error) {
@@ -125,8 +125,8 @@ export async function handleResetPassword(router, email, onPage = false) {
       cause: error,
     });
   }
-  
-  if(!onPage){
+
+  if (!onPage) {
     try {
       router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
     } catch (error) {
