@@ -221,7 +221,7 @@ describe("Authorisation", () => {
     });
   });
 
-  describe("Confirm sign up page", () => {
+  describe.only("Confirm sign up page", () => {
     it("Should be able to allow the user to confirm there account via their email confirmation code", () => {});
 
     it("Should validate input correctly", () => {});
@@ -273,7 +273,7 @@ describe("Authorisation", () => {
     });
   });
 
-  describe.only("Unauthorised page", () => {
+  describe("Unauthorised page", () => {
     const scenarios = [
       {
         user: USER_ROLES.GUEST,
@@ -353,10 +353,10 @@ describe("Authorisation", () => {
       },
     ];
 
-    for (const user of scenarios) {
-      for (const page of user.pages) {
-        it(`A ${user.user} should ${page.authorised ? "" : "not "}be able to view the ${page.page} page`, () => {
-          // TODO - need to find a way to stub the user - need to do session on the server first
+    for (const scenario of scenarios) {
+      for (const page of scenario.pages) {
+        it(`A ${scenario.user} should ${page.authorised ? "" : "not "}be able to view the ${page.page} page`, () => {
+          cy.stubUser(scenario.user);
 
           const expectedURL = page.authorised ? page.page : "unauthorised";
           authPage.open(page.page).urlShouldBe(expectedURL);
