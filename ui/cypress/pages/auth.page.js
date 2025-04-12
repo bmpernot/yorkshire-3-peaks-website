@@ -1,6 +1,15 @@
+import userObjects from "../fixtures/userObjects.js";
+
 export default class authPage {
-  open(page) {
-    cy.visit(`${Cypress.env("ui_base_url")}/${page}`);
+  open(page, user) {
+    cy.visit(`${Cypress.env("ui_base_url")}/${page}`, {
+      onBeforeLoad(win) {
+        const userObject = userObjects[user];
+        if (userObject) {
+          win.__CYPRESS_TEST_USER__ = userObject;
+        }
+      },
+    });
     return this;
   }
 

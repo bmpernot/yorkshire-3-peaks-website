@@ -47,12 +47,30 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    fetchUser();
+    const testing = typeof window !== "undefined" && window.Cypress;
+
+    if (testing) {
+      if (window.__CYPRESS_TEST_USER__) {
+        setUser(window.__CYPRESS_TEST_USER__);
+        setLoading(false);
+      } else {
+        setUser({ role: USER_ROLES.GUEST });
+        setLoading(false);
+      }
+    } else {
+      fetchUser();
+    }
   }, [fetchUser]);
 
   const userContext = useMemo(() => {
     const updateUser = async () => {
-      await fetchUser();
+      const testing = typeof window !== "undefined" && window.Cypress;
+
+      if (testing) {
+          setUser({ role: USER_ROLES.GUEST });
+      } else {
+        await fetchUser();
+      }
     };
 
     return { user, setUser, fetchUser, loading, updateUser };
