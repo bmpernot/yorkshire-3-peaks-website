@@ -185,7 +185,7 @@ const UserMenu = memo(function UserMenu({ user, updateUser, anchorElUser, setAnc
       >
         {settings.map((setting) => (
           <MenuItem
-            data-cy={`user-settings-dropdown-${setting.link}`}
+            data-cy={`user-settings-dropdown-${setting.label.toLowerCase()}`}
             key={setting.label}
             onClick={async () => {
               setAnchorElUser(null);
@@ -313,7 +313,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
           if (page.link && shouldUserViewPage(user.role, page.role)) {
             return (
               <MenuItem
-                data-cy={`${page.link}`}
+                data-cy={`${page.label.toLowerCase()}`}
                 key={page.link}
                 onClick={() => {
                   setAnchorElNavMenu(null);
@@ -362,7 +362,7 @@ const SmallPageNavBarMenu = memo(function SmallPageNavBarMenu({
                 >
                   {page.links.map((link) => (
                     <MenuItem
-                      data-cy={`${page.label.toLowerCase()}-dropdown-${link.link}`}
+                      data-cy={`${page.label.toLowerCase()}-dropdown-${link.label.toLowerCase()}`}
                       key={link.link}
                       onClick={() => {
                         setAnchorElInternalNavMenu(null);
@@ -395,7 +395,7 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
         if (page.link && shouldUserViewPage(user.role, page.role)) {
           return (
             <Button
-              data-cy={`${page.link}`}
+              data-cy={`${page.label.toLowerCase()}`}
               key={page.link}
               onClick={() => router.push(page.link)}
               sx={styles.navMenu.itemList.button}
@@ -444,7 +444,7 @@ const LargePageNavBarMenu = memo(function LargePageNavBarMenu({
                     return (
                       <MenuItem
                         key={link.link}
-                        data-cy={`${page.label.toLowerCase()}-dropdown-${link.link}`}
+                        data-cy={`${page.label.toLowerCase()}-dropdown-${link.label.toLowerCase()}`}
                         onClick={() => {
                           setAnchorElInternalNavMenu(null);
                           router.push(link.link);
