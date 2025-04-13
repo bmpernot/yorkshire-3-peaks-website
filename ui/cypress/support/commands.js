@@ -29,7 +29,7 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
       statusCode: 200,
       body: { username: "testuser" },
     },
-    resetPassword: {
+    forgotPassword: {
       statusCode: 200,
       body: {},
     },
@@ -45,7 +45,7 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
       statusCode: 200,
       body: {},
     },
-    confirmResetPassword: {
+    confirmForgotPassword: {
       statusCode: 200,
       body: {},
     },
@@ -108,6 +108,79 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
     },
     getUser: {
       statusCode: 200,
+      body: {
+        UserAttributes: [
+          {
+            Name: "email",
+            Value: "jon.snow@yorkshire3peaks.com",
+          },
+          {
+            Name: "email_verified",
+            Value: "true",
+          },
+          {
+            Name: "phone_number",
+            Value: "+441234567890",
+          },
+          {
+            Name: "phone_number_verified",
+            Value: "false",
+          },
+          {
+            Name: "family_name",
+            Value: "Snow",
+          },
+          {
+            Name: "given_name",
+            Value: "Jon",
+          },
+          {
+            Name: "custom:ice_number",
+            Value: "+44123456789",
+          },
+          {
+            Name: "custom:notify",
+            Value: "true",
+          },
+          {
+            Name: "sub",
+            Value: "76420294-00e1-700b-74d6-a22a780eeae1",
+          },
+        ],
+        Username: "76420294-00e1-700b-74d6-a22a780eeae1",
+      },
+    },
+    initiateAuth: {
+      statusCode: 200,
+      body: {
+        ChallengeName: "PASSWORD_VERIFIER",
+        ChallengeParameters: {
+          SALT: "a616f717519fe1438d639bacb116954e",
+          SECRET_BLOCK: "AgV4mQQ085mpw6sbXHT3mQbWzn8hcRZpOpHbtHRG923M0GkAewAC",
+          SRP_B: "5491d3a8cc546329cf27c254569e3748e36bea3498db054f23d5e938e58",
+          USERNAME: "76420294-00e1-700b-74d6-a22a780eeaed",
+          USER_ID_FOR_SRP: "76420294-00e1-700b-74d6-a22a780eeaed",
+        },
+      },
+    },
+    respondToAuthChallenge: {
+      statusCode: 200,
+      body: {
+        AuthenticationResult: {
+          AccessToken:
+            "eyJraWQiOiJNanpzNncva3NZZ01YSzRuYTFFYjczTFY3S2lZVXZBUm5Pak9IUGd5U2djPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI3NjQyMDI5NC0wMGUxLTcwMGItNzRkNi1hMjJhNzgwZWVhZWQiLCJpc3MiOiJodHRwczovL2NvZ25pdG8taWRwLmV1LXdlc3QtMi5hbWF6b25hd3MuY29tL2V1LXdlc3QtMl9VN2lQZTZPbXoiLCJjbGllbnRfaWQiOiI3ZzJnMm03Nzh0Y2ptNWdjb290YzJqbTBqZSIsIm9yaWdpbl9qdGkiOiI4MGU2YWE0YS1lODIzLTRmNjctODJmYi04ZDk4NDJkMmFkNTciLCJldmVudF9pZCI6IjcwYWI1M2QyLTYzNTgtNGE5MS1hNzYzLTMyMjVhZjc4ZWM3NiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIiLCJhdXRoX3RpbWUiOjE3NDQ1NTM3MTAsImV4cCI6MTc0NDU1NzMxMCwiaWF0IjoxNzQ0NTUzNzEwLCJqdGkiOiJlN2Q1ODZjNS03ODYwLTQ3YTktYmI5YS1jNDgyNjFmNzE2YTQiLCJ1c2VybmFtZSI6Ijc2NDIwMjk0LTAwZTEtNzAwYi03NGQ2LWEyMmE3ODBlZWFlZCJ9.F-L-HL-nZVCGLgjuewy-ATDNFL12Agsity_c25INpHhraBceaIgFe5VKO7vHih65a9cgoOtNvaZOwpg5sQhZ1H1ecS-bIFgMl668fb8S0gHyv293IfZBMHwWJ36EI8E3hmJp2g2z3ingLkgAkmX_MHCgFwHjtT_8eItmMLS7X06qzfVRmsv4MxJscNmTK7lYPzIOUeBMVgzupkOJTiSdea3fVactMO7atEXey4keEhYlOnYpyFPgmW_vRy0K-80FqGjOI8Pzy6U8NBVcK-r0ueTb4OVXiHRxD8L8M7htKR5TtbvFZODicvcMVPHjpFUDv6XOoPkVb2Z1BSlBJ4FB7g",
+          ExpiresIn: 3600,
+          IdToken:
+            "eyJraWQiOiJiK0VjVE1IZzNCQzNXQk8vTFpNUTJxd1hDZUlQelArS3ZuemdxOUV3ZUZVPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI3NjQyMDI5NC0wMGUxLTcwMGItNzRkNi1hMjJhNzgwZWVhZWQiLCJjdXN0b206aWNlX251bWJlciI6Iis0NDEyMzQ1Njc4OTAiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImlzcyI6Imh0dHBzOi8vY29nbml0by1pZHAuZXUtd2VzdC0yLmFtYXpvbmF3cy5jb20vZXUtd2VzdC0yX1U3aVBlNk5yZCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiI3NjQyMDI5NC0wMGUxLTcwMGItNzRkNi1hMjJhNzgwZWVkZmUiLCJnaXZlbl9uYW1lIjoiQm9iIiwiY3VzdG9tOm5vdGlmeSI6ImZhbHNlIiwib3JpZ2luX2p0aSI6IjgwZTZhYTRhLWU4MjMtNGY2Ny04MmZiLThkOTg0MmQyYWQ1NyIsImF1ZCI6IjdnMmcybTc3OHRjam01Z2Nvb3RjMmptMGplIiwiZXZlbnRfaWQiOiI3MGFiNTNkMi02MzU4LTRhOTEtYTc2My0zMjI1YWY3OGVjNzYiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTc0NDU1MzcxMCwicGhvbmVfbnVtYmVyIjoiKzQ0MTIzNDU2Nzg5MCIsImV4cCI6MTc0NDU1NzMxMCwiaWF0IjoxNzQ0NTUzNzEwLCJmYW1pbHlfbmFtZSI6Ik1hcmxleSIsImp0aSI6IjJlZmQxNzQyLTQ0YzUtNDQ2Mi1hOTlhLWYyMmI5OTZmYmIyYyIsImVtYWlsIjoiYm9iLm1hcmxleUBnbWFpbC5jb20ifQ.agTBSVAkEMgzFHU3FnSiGqDdVdpNKD5S4rIr4W9vX8g4JWXu3_hXNABeLWBkKgRrg8x4CV4rqZ1-ey0kKH0o-wO8yae6x9ix-faNvp4gjEospkFzZbUAU7ZHL0F9blIi0emnbcaAqQci2PRI1GBncW5K6QLtezqKJADEkyIZAWufkxqEgDBGVFAMl6QQoiMVGC9Nq4XQBsIC5lhCFTbb_qjXkSMB6x8qrFdYt2FFRBcY2BCfSaG2NGb5F8Be-MIVN9bLj_6mDaSRsrQPJ9sPezGs79Mj9hUAdXsm_ZQyiuqRP5OWkFtYjV2eUx5sGLvjvaLjhuq7t998evbgLIujiA",
+          RefreshToken:
+            "eyJraWQiOiJiK0VjVE1IZzNCQzNXQk8vTFpNUTJxd1hDZUlQelArS3ZuemdxOUV3ZUZVPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI3NjQyMDI5NC0wMGUxLTcwMGItNzRkNi1hMjJhNzgwZWVhZWQiLCJjdXN0b206aWNlX251bWJlciI6Iis0NDEyMzQ1Njc4OTAiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImlzcyI6Imh0dHBzOi8vY29nbml0by1pZHAuZXUtd2VzdC0yLmFtYXpvbmF3cy5jb20vZXUtd2VzdC0yX1U3aVBlNk5yZCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiI3NjQyMDI5NC0wMGUxLTcwMGItNzRkNi1hMjJhNzgwZWVkZmUiLCJnaXZlbl9uYW1lIjoiQm9iIiwiY3VzdG9tOm5vdGlmeSI6ImZhbHNlIiwib3JpZ2luX2p0aSI6IjgwZTZhYTRhLWU4MjMtNGY2Ny04MmZiLThkOTg0MmQyYWQ1NyIsImF1ZCI6IjdnMmcybTc3OHRjam01Z2Nvb3RjMmptMGplIiwiZXZlbnRfaWQiOiI3MGFiNTNkMi02MzU4LTRhOTEtYTc2My0zMjI1YWY3OGVjNzYiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTc0NDU1MzcxMCwicGhvbmVfbnVtYmVyIjoiKzQ0MTIzNDU2Nzg5MCIsImV4cCI6MTc0NDU1NzMxMCwiaWF0IjoxNzQ0NTUzNzEwLCJmYW1pbHlfbmFtZSI6Ik1hcmxleSIsImp0aSI6IjJlZmQxNzQyLTQ0YzUtNDQ2Mi1hOTlhLWYyMmI5OTZmYmIyYyIsImVtYWlsIjoiYm9iLm1hcmxleUBnbWFpbC5jb20ifQ.agTBSVAkEMgzFHU3FnSiGqDdVdpNKD5S4rIr4W9vX8g4JWXu3_hXNABeLWBkKgRrg8x4CV4rqZ1-ey0kKH0o-wO8yae6x9ix-faNvp4gjEospkFzZbUAU7ZHL0F9blIi0emnbcaAqQci2PRI1GBncW5K6QLtezqKJADEkyIZAWufkxqEgDBGVFAMl6QQoiMVGC9Nq4XQBsIC5lhCFTbb_qjXkSMB6x8qrFdYt2FFRBcY2BCfSaG2NGb5F8Be-MIVN9bLj_6mDaSRsrQPJ9sPezGs79Mj9hUAdXsm_ZQyiuqRP5OWkFtYjV2eUx5sGLvjvaLjhuq7t998evbgLIujiA",
+          TokenType: "Bearer",
+        },
+        ChallengeParameters: {},
+      },
+    },
+    resendConfirmationCode: {
+      statusCode: 200,
       body: {},
     },
   };
@@ -151,8 +224,8 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
       case "AWSCognitoIdentityProviderService.UpdatePassword":
         req.reply(mocks.updatePassword);
         break;
-      case "AWSCognitoIdentityProviderService.ConfirmResetPassword":
-        req.reply(mocks.confirmResetPassword);
+      case "AWSCognitoIdentityProviderService.ConfirmForgotPassword":
+        req.reply(mocks.confirmForgotPassword);
         break;
       case "AWSCognitoIdentityProviderService.GetAuthSession":
         req.reply(mocks.fetchAuthSession);
@@ -162,6 +235,18 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
         break;
       case "AWSCognitoIdentityProviderService.GetUser":
         req.reply(mocks.getUser);
+        break;
+      case "AWSCognitoIdentityProviderService.InitiateAuth":
+        req.reply(mocks.initiateAuth);
+        break;
+      case "AWSCognitoIdentityProviderService.RespondToAuthChallenge":
+        req.reply(mocks.respondToAuthChallenge);
+        break;
+      case "AWSCognitoIdentityProviderService.ForgotPassword":
+        req.reply(mocks.forgotPassword);
+        break;
+      case "AWSCognitoIdentityProviderService.ResendConfirmationCode":
+        req.reply(mocks.resendConfirmationCode);
         break;
       default:
         req.reply({ statusCode: 400, body: "Unknown x-amz-target in commands.js" });

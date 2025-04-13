@@ -1,5 +1,3 @@
-import userObjects from "../fixtures/userObjects.js";
-
 const settings = ["profile", "account", "sign out"];
 
 const pages = [
@@ -15,15 +13,8 @@ const pages = [
 const navMenu = ["home", "route", "rules", "current event", "promotion", "results", "organisers", "admin"];
 
 export default class homePage {
-  open(user) {
-    cy.visit(`${Cypress.env("ui_base_url")}/`, {
-      onBeforeLoad(win) {
-        const userObject = userObjects[user];
-        if (userObject) {
-          win.__CYPRESS_TEST_USER__ = userObject;
-        }
-      },
-    });
+  open() {
+    cy.visit(`${Cypress.env("ui_base_url")}/`);
     return this;
   }
 
@@ -176,7 +167,7 @@ export default class homePage {
     return this;
   }
 
-  signOut(){
-    return this
+  signOut() {
+    return this;
   }
 }

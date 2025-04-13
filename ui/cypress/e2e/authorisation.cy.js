@@ -182,49 +182,66 @@ describe("Authorisation", () => {
         .submitForm()
         .waitForThen("@amplifyAuthRequest")
         .urlShouldBe("auth/sign-up")
-        .verifyToast("An Error occurred when trying to sign you up")
-        .verifyFormError("Invalid message");
+        .verifyToast("An error occurred when trying to sign you up")
+        .verifyFormError("Invalid message")
+        .verifyToast("An error occurred when trying to sign you up");
     });
   });
 
   describe("Confirm sign up page", () => {
-    const email = "bruce.wayne@yorkshire3peaks.com"
+    const email = "bruce.wayne@yorkshire3peaks.com";
     beforeEach(() => {
       authPage.open(`auth/confirm-signup?email=${email}`);
     });
 
     it("Should be able to allow the user to confirm there account via their email confirmation code", () => {
-      const code = "123456" 
+      const code = "123456";
 
       authPage
         .fillConfirmSignupForm(code)
         .submitForm()
         .waitForThen("@amplifyAuthRequest", (interception) => {
-          expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.ConfirmSignUp");
+          expect(interception.request.headers["x-amz-target"]).to.equal(
+            "AWSCognitoIdentityProviderService.ConfirmSignUp",
+          );
           expect(interception.request.body).to.include({
             Username: email,
-            ConfirmationCode: code
-          })
+            ConfirmationCode: code,
+          });
         })
         .urlShouldBe("auth/sign-in");
     });
 
+    it("Should be able to allow the user to resend the code", () => {
+      authPage
+        .resendCode()
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal(
+            "AWSCognitoIdentityProviderService.ResendConfirmationCode",
+          );
+          expect(interception.request.body).to.include({
+            Username: email,
+          });
+        })
+        .verifyToast("New code sent to bruce.wayne@yorkshire3peaks.com.");
+    });
+
     it("Should validate input correctly", () => {
       authPage
-      .submitForm()
-      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
-      .fillConfirmSignupForm(" ")
-      .submitForm()
-      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
-      .fillConfirmSignupForm("12345")
-      .submitForm()
-      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
-      .fillConfirmSignupForm("abcdef")
-      .submitForm()
-      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
-      .fillConfirmSignupForm("123456")
-      .submitForm()
-      .urlShouldBe("auth/sign-in");
+        .submitForm()
+        .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+        .fillConfirmSignupForm(" ")
+        .submitForm()
+        .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+        .fillConfirmSignupForm("12345")
+        .submitForm()
+        .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+        .fillConfirmSignupForm("abcdef")
+        .submitForm()
+        .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+        .fillConfirmSignupForm("123456")
+        .submitForm()
+        .urlShouldBe("auth/sign-in");
     });
 
     it("Should handle errors from cognito gracefully", () => {
@@ -237,39 +254,250 @@ describe("Authorisation", () => {
       });
 
       authPage
-      .fillConfirmSignupForm("123456")
-      .submitForm()
-      .waitForThen("@amplifyAuthRequest")
-      .verifyFormError(response.body.message)
-      .urlShouldBe("auth/confirm-signup");
+        .fillConfirmSignupForm("123456")
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest")
+        .verifyFormError(response.body.message)
+        .urlShouldBe("auth/confirm-signup")
+        .verifyToast("An error occurred when trying to confirm your account.");
     });
   });
 
   describe("Sign in page", () => {
-    it("Should be able to should allow the user to sign in", () => {});
+    beforeEach(() => {
+      authPage.open("auth/sign-in");
+    });
 
-    it("Should validate input correctly", () => {});
+    const signinData = {
+      email: "jon.snow@yorkshire3peaks.com",
+      password: "Password1!",
+    };
 
-    it("Should handle errors from cognito gracefully", () => {});
+    it("Should be able to should allow the user to sign in", () => {
+      authPage
+        .fillSigninForm(signinData)
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal(
+            "AWSCognitoIdentityProviderService.InitiateAuth",
+          );
+          expect(interception.request.body.AuthParameters).to.include({
+            USERNAME: signinData.email,
+          });
+        })
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal(
+            "AWSCognitoIdentityProviderService.RespondToAuthChallenge",
+          );
+        })
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.GetUser");
+        })
+        .urlShouldBe("auth/sign-in");
+    });
+
+    it("Should validate input correctly", () => {
+      authPage
+        .submitForm()
+        .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
+        .fillSigninForm({ email: "qwerty", password: "Password!1" })
+        .submitForm()
+        .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
+        .fillSigninForm(signinData)
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest")
+        .waitForThen("@amplifyAuthRequest")
+        .waitForThen("@amplifyAuthRequest")
+        .urlShouldBe("auth/sign-in");
+    });
+
+    it("Should handle errors from cognito gracefully", () => {
+      const response = {
+        statusCode: 400,
+        body: { __type: "Invalid type", message: "Invalid password" },
+      };
+      cy.interceptAmplifyAuth({
+        initiateAuth: response,
+      });
+
+      authPage
+        .fillSigninForm(signinData)
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest")
+        .verifyFormError(response.body.message)
+        .urlShouldBe("auth/sign-in")
+        .verifyToast("An error occurred when trying to sign you in");
+    });
   });
 
-  describe("Reset Password page", () => {
-    it("Should be able to allow the user to request their password to be reset", () => {});
+  describe("Reset password", () => {
+    const email = "jon.snow@yorkshire3peaks.com";
+    const code = "123456";
 
-    it("Should be able to allow the user to use the code from the reset password email to be able to reset their password", () => {});
+    describe("Reset password form", () => {
+      beforeEach(() => {
+        authPage.open("auth/sign-in");
+      });
 
-    it("Should validate input correctly", () => {});
+      it("Should be able to allow the user to request their password to be reset", () => {
+        authPage
+          .fillForgotPasswordForm(true, email)
+          .submitResetPasswordForm()
+          .waitForThen("@amplifyAuthRequest", (interception) => {
+            expect(interception.request.headers["x-amz-target"]).to.equal(
+              "AWSCognitoIdentityProviderService.ForgotPassword",
+            );
+            expect(interception.request.body).to.include({
+              Username: email,
+            });
+          })
+          .urlShouldBe("auth/reset-password")
+          .verifyToast(
+            "We've sent an email to jon.snow@yorkshire3peaks.com with your validation code to reset password",
+          );
+      });
 
-    it("Should handle errors from cognito gracefully", () => {});
+      it("Should validate input correctly", () => {
+        authPage
+          .fillForgotPasswordForm(true)
+          .submitResetPasswordForm()
+          .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
+          .fillForgotPasswordForm(false, "qwerty")
+          .submitResetPasswordForm()
+          .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
+          .fillForgotPasswordForm(false, email)
+          .submitResetPasswordForm()
+          .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
+          .waitForThen("@amplifyAuthRequest")
+          .urlShouldBe("auth/reset-password");
+      });
+
+      it("Should handle errors from cognito gracefully", () => {
+        const response = {
+          statusCode: 400,
+          body: { __type: "Invalid type", message: "Something went wrong" },
+        };
+        cy.interceptAmplifyAuth({
+          forgotPassword: response,
+        });
+
+        authPage
+          .fillForgotPasswordForm(true, email)
+          .submitResetPasswordForm()
+          .waitForThen("@amplifyAuthRequest")
+          .verifyFormError(response.body.message)
+          .urlShouldBe("auth/sign-in")
+          .verifyToast(
+            "An error occurred when trying to send your validation code to reset your password to jon.snow@yorkshire3peaks.com",
+          );
+      });
+    });
+
+    describe("Confirm password rest form", () => {
+      beforeEach(() => {
+        authPage.open(`auth/reset-password?email=${email}`);
+      });
+
+      it("Should be able to allow the user to use the code from the reset password email to be able to reset their password", () => {
+        authPage
+          .fillConfirmResetPasswordForm({ code, password: "Password!1" })
+          .submitForm()
+          .waitForThen("@amplifyAuthRequest", (interception) => {
+            expect(interception.request.headers["x-amz-target"]).to.equal(
+              "AWSCognitoIdentityProviderService.ConfirmForgotPassword",
+            );
+            expect(interception.request.body).to.include({
+              Username: "jon.snow@yorkshire3peaks.com",
+              ConfirmationCode: "123456",
+              Password: "Password!1",
+            });
+          })
+          .urlShouldBe("auth/sign-in");
+      });
+
+      it("Should be able to allow the user to resend the code", () => {
+        authPage
+          .resendCode()
+          .waitForThen("@amplifyAuthRequest", (interception) => {
+            expect(interception.request.headers["x-amz-target"]).to.equal(
+              "AWSCognitoIdentityProviderService.ForgotPassword",
+            );
+            expect(interception.request.body).to.include({
+              Username: email,
+            });
+          })
+          .verifyToast("New code sent to jon.snow@yorkshire3peaks.com.");
+      });
+
+      it("Should validate input correctly", () => {
+        authPage
+          .submitForm()
+          .checkValidationMessages([
+            { field: "code", errors: ["Please enter a valid code."] },
+            {
+              field: "password",
+              errors: [
+                "Password must be at least 8 characters long.",
+                "Password must have a upper case letter.",
+                "Password must have a lower case letter.",
+                "Password must have a number.",
+                "Password must have special characters.",
+              ],
+            },
+            { field: "confirmPassword", errors: ["Passwords do not match."] },
+          ])
+          .fillConfirmResetPasswordForm({ code, password: "Password!1" })
+          .submitForm()
+          .waitForThen("@amplifyAuthRequest")
+          .urlShouldBe("auth/sign-in");
+      });
+
+      it("Should handle errors from cognito gracefully", () => {
+        const response = {
+          statusCode: 400,
+          body: { __type: "Invalid type", message: "Invalid code" },
+        };
+        cy.interceptAmplifyAuth({
+          confirmForgotPassword: response,
+        });
+
+        authPage
+          .fillConfirmResetPasswordForm({ code, password: "Password!1" })
+          .submitForm()
+          .waitForThen("@amplifyAuthRequest")
+          .verifyFormError(response.body.message)
+          .urlShouldBe("auth/reset-password")
+          .verifyToast("An error occurred when trying to reset your password");
+      });
+    });
   });
 
-  describe("Account page", () => {
+  describe.skip("Account page", () => {
+    beforeEach(() => {
+      authPage.open("user/account");
+    });
+
     describe("Update user details", () => {
       it("Should be able to allow the user to update their details", () => {});
 
       it("Should validate input correctly", () => {});
 
-      it("Should handle errors from cognito gracefully", () => {});
+      it("Should handle errors from cognito gracefully", () => {
+        const response = {
+          statusCode: 400,
+          body: { __type: "Invalid type", message: "Invalid code" },
+        };
+        cy.interceptAmplifyAuth({
+          confirmSignUp: response,
+        });
+
+        authPage
+          .fillConfirmSignupForm("123456")
+          .submitForm()
+          .waitForThen("@amplifyAuthRequest")
+          .verifyFormError(response.body.message)
+          .urlShouldBe("auth/confirm-signup");
+      });
     });
 
     describe("Update password", () => {
@@ -277,7 +505,22 @@ describe("Authorisation", () => {
 
       it("Should validate input correctly", () => {});
 
-      it("Should handle errors from cognito gracefully", () => {});
+      it("Should handle errors from cognito gracefully", () => {
+        const response = {
+          statusCode: 400,
+          body: { __type: "Invalid type", message: "Invalid code" },
+        };
+        cy.interceptAmplifyAuth({
+          confirmSignUp: response,
+        });
+
+        authPage
+          .fillConfirmSignupForm("123456")
+          .submitForm()
+          .waitForThen("@amplifyAuthRequest")
+          .verifyFormError(response.body.message)
+          .urlShouldBe("auth/confirm-signup");
+      });
     });
 
     describe("Delete Account", () => {
@@ -285,7 +528,22 @@ describe("Authorisation", () => {
 
       it("Should validate input correctly", () => {});
 
-      it("Should handle errors from cognito gracefully", () => {});
+      it("Should handle errors from cognito gracefully", () => {
+        const response = {
+          statusCode: 400,
+          body: { __type: "Invalid type", message: "Invalid code" },
+        };
+        cy.interceptAmplifyAuth({
+          confirmSignUp: response,
+        });
+
+        authPage
+          .fillConfirmSignupForm("123456")
+          .submitForm()
+          .waitForThen("@amplifyAuthRequest")
+          .verifyFormError(response.body.message)
+          .urlShouldBe("auth/confirm-signup");
+      });
     });
   });
 

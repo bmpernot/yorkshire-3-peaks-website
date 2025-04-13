@@ -1,15 +1,6 @@
-import userObjects from "../fixtures/userObjects.js";
-
 export default class authPage {
-  open(page, user) {
-    cy.visit(`${Cypress.env("ui_base_url")}/${page}`, {
-      onBeforeLoad(win) {
-        const userObject = userObjects[user];
-        if (userObject) {
-          win.__CYPRESS_TEST_USER__ = userObject;
-        }
-      },
-    });
+  open(page) {
+    cy.visit(`${Cypress.env("ui_base_url")}/${page}`);
     return this;
   }
 
@@ -48,6 +39,11 @@ export default class authPage {
 
   submitForm() {
     cy.get("button[type='submit']").click();
+    return this;
+  }
+
+  submitResetPasswordForm() {
+    cy.get("#resetPassword").click();
     return this;
   }
 
@@ -99,9 +95,46 @@ export default class authPage {
     return this;
   }
 
-  fillConfirmSignupForm(code){
-    cy.get('#code').clear()
-    cy.get('#code').type(code)
-    return this
+  fillConfirmSignupForm(code) {
+    cy.get("#code").clear();
+    cy.get("#code").type(code);
+    return this;
+  }
+
+  fillSigninForm({ email, password }) {
+    cy.get("#email").clear();
+    cy.get("#email").type(email);
+
+    cy.get("#password").clear();
+    cy.get("#password").type(password);
+    return this;
+  }
+
+  fillForgotPasswordForm(open, email) {
+    if (open) {
+      cy.get("#forgotPassword").click();
+    }
+    if (email) {
+      cy.get("#reset-password-for-email").clear();
+      cy.get("#reset-password-for-email").type(email);
+    }
+    return this;
+  }
+
+  resendCode() {
+    cy.get("#resendCode").click();
+    return this;
+  }
+
+  fillConfirmResetPasswordForm({ code, password }) {
+    cy.get("#code").clear();
+    cy.get("#code").type(code);
+
+    cy.get("#password").clear();
+    cy.get("#password").type(password);
+
+    cy.get("#confirmPassword").clear();
+    cy.get("#confirmPassword").type(password);
+    return this;
   }
 }
