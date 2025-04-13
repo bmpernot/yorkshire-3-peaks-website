@@ -8,7 +8,8 @@ import { StyledCard, StyledContainer as ResetPasswordContainer } from "../common
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
 import { handleConfirmResetPassword, handleResetPassword } from "../../lib/cognitoActions.mjs";
-import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { useSearchParams } from "next/navigation";
 
@@ -40,7 +41,10 @@ function ResetPassword() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmissionError(null);
-    if (isErrors(errors)) {
+
+    const isValid = validateInputs(setErrors, formValidationsResetPassword);
+
+    if (!isValid) {
       return;
     }
 
@@ -56,8 +60,8 @@ function ResetPassword() {
     try {
       await handleConfirmResetPassword(router, formData);
     } catch (error) {
-      console.error(new Error(`An Error occurred when trying to reset your password`, { cause: error }));
-      toast.error(`An Error occurred when trying to reset your password`);
+      console.error(new Error(`An error occurred when trying to reset your password`, { cause: error }));
+      toast.error(`An error occurred when trying to reset your password`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
       setIsLoadingSubmit(false);
@@ -71,8 +75,8 @@ function ResetPassword() {
         await handleResetPassword(router, email, true);
         toast.success(`New code sent to ${email}.`);
       } catch (error) {
-        console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
-        toast.error(`An Error occurred when trying to confirm your account.`);
+        console.error(new Error(`An error occurred when trying to confirm your account`, { cause: error }));
+        toast.error(`An error occurred when trying to confirm your account.`);
         setSubmissionError(getErrorMessage(error.cause));
       } finally {
         setIsLoadingResendCode(false);
@@ -145,15 +149,7 @@ function ResetPassword() {
               sx={styles.formTextField}
             />
           </FormControl>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            onClick={() => {
-              validateInputs(setErrors);
-            }}
-            disabled={isLoadingSubmit}
-          >
+          <Button type="submit" fullWidth variant="contained" disabled={isLoadingSubmit}>
             Reset Password
           </Button>
           <Button
@@ -163,6 +159,7 @@ function ResetPassword() {
               handleResendCode();
             }}
             disabled={isLoadingResendCode}
+            id="resendCode"
           >
             Resend code
           </Button>
@@ -174,93 +171,61 @@ function ResetPassword() {
 
 export default ResetPassword;
 
-const validateInputs = (setErrors) => {
-  const code = document.getElementById("code");
-  const password = document.getElementById("password");
-  const confirmPassword = document.getElementById("confirmPassword");
-
-  let isValid = true;
-  const formValidations = [
-    {
-      validation: () => {
-        return !code.value || code.value.length !== 6;
-      },
-      errorMessage: "Please enter a valid code.",
-      field: "code",
+const formValidationsResetPassword = [
+  {
+    validation: (code) => {
+      return !code.value || !/\d{6}/.test(code.value);
     },
-    {
-      validation: () => {
-        return !password.value || password.value.length < 8;
-      },
-      errorMessage: "Password must be at least 8 characters long.",
-      field: "password",
+    errorMessage: "Please enter a valid code.",
+    field: "code",
+    element: () => [document.getElementById("code")],
+  },
+  {
+    validation: (password) => {
+      return !password.value || password.value.length < 8;
     },
-    {
-      validation: () => {
-        return !/[A-Z]/.test(password.value);
-      },
-      errorMessage: "Password must have a upper case letter.",
-      field: "password",
+    errorMessage: "Password must be at least 8 characters long.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/[A-Z]/.test(password.value);
     },
-    {
-      validation: () => {
-        return !/[a-z]/.test(password.value);
-      },
-      errorMessage: "Password must have a lower case letter.",
-      field: "password",
+    errorMessage: "Password must have a upper case letter.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/[a-z]/.test(password.value);
     },
-    {
-      validation: () => {
-        return !/\d/.test(password.value);
-      },
-      errorMessage: "Password must have a number.",
-      field: "password",
+    errorMessage: "Password must have a lower case letter.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/\d/.test(password.value);
     },
-    {
-      validation: () => {
-        return !/[^$*.[\]{}()?\\!"@#%&/\\,><':;|_~`+=-]/.test(password.value);
-      },
-      errorMessage: "Password must have special characters.",
-      field: "password",
+    errorMessage: "Password must have a number.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/[^$*.[\]{}()?\\!"@#%&/\\,><':;|_~`+=-]/.test(password.value);
     },
-    {
-      validation: () => {
-        return !confirmPassword.value || confirmPassword.value !== password.value;
-      },
-      errorMessage: "Passwords do not match.",
-      field: "confirmPassword",
+    errorMessage: "Password must have special characters.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password, confirmPassword) => {
+      return !confirmPassword.value || confirmPassword.value !== password.value;
     },
-  ];
-
-  formValidations.forEach((formValidation) => {
-    if (formValidation.validation()) {
-      setErrors((errors) => {
-        let newErrors = { ...errors };
-        if (!errors[formValidation.field].includes(formValidation.errorMessage)) {
-          newErrors = {
-            ...errors,
-            [formValidation.field]: [...errors[formValidation.field], formValidation.errorMessage],
-          };
-        }
-        isValid = errors[formValidation.field].length > 0 ? false : true;
-        return newErrors;
-      });
-    } else {
-      setErrors((errors) => {
-        let newErrors = { ...errors };
-        if (errors[formValidation.field].includes(formValidation.errorMessage)) {
-          const updatedFieldErrors = errors[formValidation.field].filter(
-            (element) => element !== formValidation.errorMessage,
-          );
-          newErrors = {
-            ...errors,
-            [formValidation.field]: updatedFieldErrors,
-          };
-        }
-        return newErrors;
-      });
-    }
-  });
-
-  return isValid;
-};
+    errorMessage: "Passwords do not match.",
+    field: "confirmPassword",
+    element: () => [document.getElementById("password"), document.getElementById("confirmPassword")],
+  },
+];
