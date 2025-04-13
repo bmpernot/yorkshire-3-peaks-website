@@ -55,8 +55,8 @@ function ConfirmSignUp() {
     try {
       await handleConfirmSignUp(router, formData, updateUser);
     } catch (error) {
-      console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
-      toast.error(`An Error occurred when trying to confirm your account.`);
+      console.error(new Error(`An error occurred when trying to confirm your account`, { cause: error }));
+      toast.error(`An error occurred when trying to confirm your account.`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
       setIsLoadingSubmit(false);
@@ -70,8 +70,8 @@ function ConfirmSignUp() {
         await handleSendEmailVerificationCode(email);
         toast.success(`New code sent to ${email}.`);
       } catch (error) {
-        console.error(new Error(`An Error occurred when trying to confirm your account`, { cause: error }));
-        toast.error(`An Error occurred when trying to confirm your account.`);
+        console.error(new Error(`An error occurred when trying to confirm your account`, { cause: error }));
+        toast.error(`An error occurred when trying to confirm your account.`);
         setSubmissionError(getErrorMessage(error.cause));
       } finally {
         setIsLoadingResendCode(false);
@@ -106,12 +106,7 @@ function ConfirmSignUp() {
               sx={styles.signIn.codeInput}
             />
           </FormControl>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            disabled={isLoadingSubmit}
-          >
+          <Button type="submit" fullWidth variant="contained" disabled={isLoadingSubmit}>
             Submit
           </Button>
           <Button
@@ -121,6 +116,7 @@ function ConfirmSignUp() {
               handleResendCode();
             }}
             disabled={isLoadingResendCode}
+            id="resendCode"
           >
             Resend code
           </Button>
@@ -137,7 +133,7 @@ const validateInputs = ({ setCodeErrorMessage }) => {
 
   let isValid = true;
 
-  if (!code|| code.length !== 6 || !/\d{6}/.test(code)) {
+  if (!code || !/\d{6}/.test(code)) {
     setCodeErrorMessage("Please enter a valid code.");
     isValid = false;
   } else {
