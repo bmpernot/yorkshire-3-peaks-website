@@ -9,6 +9,7 @@ function validateInputs(setErrors, formValidations) {
 
   formValidations.forEach((formValidation) => {
     if (formValidation.validation(...formValidation.element())) {
+      isValid = false;
       setErrors((errors) => {
         let newErrors = { ...errors };
         if (!errors[formValidation.field].includes(formValidation.errorMessage)) {
@@ -17,7 +18,6 @@ function validateInputs(setErrors, formValidations) {
             [formValidation.field]: [...errors[formValidation.field], formValidation.errorMessage],
           };
         }
-        isValid = errors[formValidation.field].length > 0 ? false : true;
         return newErrors;
       });
     } else {
