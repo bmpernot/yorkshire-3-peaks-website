@@ -18,5 +18,8 @@
     "prettier.printWidth": 120,
     "cSpell.words": ["apos"],
     "cSpell.language": "en,en-GB",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false,
   },
 }
