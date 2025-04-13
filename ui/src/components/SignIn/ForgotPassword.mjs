@@ -27,7 +27,8 @@ function ForgotPassword({ open, setOpen, router }) {
           event.preventDefault();
           setSubmissionError(null);
 
-          if (!open || emailErrorMessage) {
+          const isValid = validateInputs({ setEmailErrorMessage });
+          if (!open || !isValid) {
             return;
           }
 
@@ -43,12 +44,12 @@ function ForgotPassword({ open, setOpen, router }) {
             setOpen(false);
           } catch (error) {
             console.error(
-              new Error(`An Error occurred when trying to send your validation code to reset password to ${email}`, {
+              new Error(`An error occurred when trying to send your validation code to reset password to ${email}`, {
                 cause: error,
               }),
             );
             toast.error(
-              `An Error occurred when trying to send your validation code to reset your password to ${email}`,
+              `An error occurred when trying to send your validation code to reset your password to ${email}`,
             );
             setSubmissionError(getErrorMessage(error.cause));
           } finally {
@@ -89,14 +90,7 @@ function ForgotPassword({ open, setOpen, router }) {
         >
           Cancel
         </Button>
-        <Button
-          variant="contained"
-          type="submit"
-          onClick={() => {
-            validateInputs({ setEmailErrorMessage });
-          }}
-          disabled={isLoading}
-        >
+        <Button variant="contained" type="submit" id="resetPassword" disabled={isLoading}>
           Reset
         </Button>
       </DialogActions>
