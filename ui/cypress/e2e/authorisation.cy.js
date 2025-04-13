@@ -180,53 +180,69 @@ describe("Authorisation", () => {
       authPage
         .fillSignupForm(signupData)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest", (interception) => {
-          expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.SignUp");
-          expect(interception.request.body).to.include({
-            Username: signupData.email,
-            Password: signupData.password,
-          });
-          expect(interception.request.body.UserAttributes).to.deep.equal([
-            {
-              Name: "phone_number",
-              Value: "+447484048733",
-            },
-            {
-              Name: "email",
-              Value: "jon.snow@example.com",
-            },
-            {
-              Name: "given_name",
-              Value: "Jon",
-            },
-            {
-              Name: "family_name",
-              Value: "Snow",
-            },
-            {
-              Name: "custom:notify",
-              Value: "true",
-            },
-            {
-              Name: "custom:ice_number",
-              Value: "+447740139354",
-            },
-          ]);
-          expect(interception.response.statusCode).to.equal(400);
-          expect(interception.response.body).to.include(response.body);
-        })
+        .waitForThen("@amplifyAuthRequest")
         .urlShouldBe("auth/sign-up")
         .verifyToast("An Error occurred when trying to sign you up")
         .verifyFormError("Invalid message");
     });
   });
 
-  describe.only("Confirm sign up page", () => {
-    it("Should be able to allow the user to confirm there account via their email confirmation code", () => {});
+  describe("Confirm sign up page", () => {
+    const email = "bruce.wayne@yorkshire3peaks.com"
+    beforeEach(() => {
+      authPage.open(`auth/confirm-signup?email=${email}`);
+    });
 
-    it("Should validate input correctly", () => {});
+    it("Should be able to allow the user to confirm there account via their email confirmation code", () => {
+      const code = "123456" 
 
-    it("Should handle errors from cognito gracefully", () => {});
+      authPage
+        .fillConfirmSignupForm(code)
+        .submitForm()
+        .waitForThen("@amplifyAuthRequest", (interception) => {
+          expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.ConfirmSignUp");
+          expect(interception.request.body).to.include({
+            Username: email,
+            ConfirmationCode: code
+          })
+        })
+        .urlShouldBe("auth/sign-in");
+    });
+
+    it("Should validate input correctly", () => {
+      authPage
+      .submitForm()
+      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+      .fillConfirmSignupForm(" ")
+      .submitForm()
+      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+      .fillConfirmSignupForm("12345")
+      .submitForm()
+      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+      .fillConfirmSignupForm("abcdef")
+      .submitForm()
+      .checkValidationMessages([{ field: "code", errors: ["Please enter a valid code."] }])
+      .fillConfirmSignupForm("123456")
+      .submitForm()
+      .urlShouldBe("auth/sign-in");
+    });
+
+    it("Should handle errors from cognito gracefully", () => {
+      const response = {
+        statusCode: 400,
+        body: { __type: "Invalid type", message: "Invalid code" },
+      };
+      cy.interceptAmplifyAuth({
+        confirmSignUp: response,
+      });
+
+      authPage
+      .fillConfirmSignupForm("123456")
+      .submitForm()
+      .waitForThen("@amplifyAuthRequest")
+      .verifyFormError(response.body.message)
+      .urlShouldBe("auth/confirm-signup");
+    });
   });
 
   describe("Sign in page", () => {

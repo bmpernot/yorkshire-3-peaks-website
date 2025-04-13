@@ -11,7 +11,7 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
     },
     confirmSignUp: {
       statusCode: 200,
-      body: "SUCCESS",
+      body: {},
     },
     signIn: {
       statusCode: 200,
@@ -39,7 +39,7 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
     },
     updateUserAttributes: {
       statusCode: 200,
-      body: "SUCCESS",
+      body: {},
     },
     updatePassword: {
       statusCode: 200,
@@ -47,7 +47,7 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
     },
     confirmResetPassword: {
       statusCode: 200,
-      body: "SUCCESS",
+      body: {},
     },
     fetchAuthSession: {
       statusCode: 200,

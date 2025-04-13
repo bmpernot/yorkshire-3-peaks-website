@@ -98,4 +98,10 @@ export default class authPage {
     cy.get("#error-card").should("contain", message);
     return this;
   }
+
+  fillConfirmSignupForm(code){
+    cy.get('#code').clear()
+    cy.get('#code').type(code)
+    return this
+  }
 }

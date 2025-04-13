@@ -39,7 +39,10 @@ function ConfirmSignUp() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmissionError(null);
-    if (codeErrorMessage) {
+
+    const isValid = validateInputs({ setCodeErrorMessage });
+
+    if (!isValid) {
       return;
     }
 
@@ -107,9 +110,6 @@ function ConfirmSignUp() {
             type="submit"
             fullWidth
             variant="contained"
-            onClick={() => {
-              validateInputs({ setCodeErrorMessage });
-            }}
             disabled={isLoadingSubmit}
           >
             Submit
@@ -133,11 +133,11 @@ function ConfirmSignUp() {
 export default ConfirmSignUp;
 
 const validateInputs = ({ setCodeErrorMessage }) => {
-  const code = document.getElementById("code");
+  const code = document.getElementById("code").value;
 
   let isValid = true;
 
-  if (!code.value || code.value.length !== 6) {
+  if (!code|| code.length !== 6 || !/\d{6}/.test(code)) {
     setCodeErrorMessage("Please enter a valid code.");
     isValid = false;
   } else {
