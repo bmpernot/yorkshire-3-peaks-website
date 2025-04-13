@@ -31,14 +31,14 @@ describe("NavBar", () => {
         it("Should show all pieces of information in the navbar", () => {
           cy.stubUser(USER_ROLES.ADMIN);
 
-          homePage.open(USER_ROLES.ADMIN).verifyNavBar();
+          homePage.open().verifyNavBar();
         });
 
         it("Should be able to navigate though all the pages", () => {
           cy.stubUser(USER_ROLES.ADMIN);
 
           homePage
-            .open(USER_ROLES.ADMIN)
+            .open()
             .urlShouldBe("")
             .goToPage("Route")
             .urlShouldBe("event/route")
@@ -59,10 +59,10 @@ describe("NavBar", () => {
             .goToPage("Promotion")
             .urlShouldBe("event/promotion")
             .goToPage("Home")
-            .urlShouldBe("")
-            .open()
-            .goToPage("Sign In")
-            .urlShouldBe("auth/sign-in");
+            .urlShouldBe("");
+
+          cy.stubUser();
+          homePage.open().goToPage("Sign In").urlShouldBe("auth/sign-in");
         });
 
         it("Should not be able to see links to restricted pages", () => {
