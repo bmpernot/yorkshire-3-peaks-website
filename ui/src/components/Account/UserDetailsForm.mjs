@@ -56,8 +56,8 @@ function UserDetailsForm({ user }) {
       await handleUpdateUserAttributes(formData);
       toast.success("Your details have been updated");
     } catch (error) {
-      console.error(new Error("An Error occurred when trying to update your details", { cause: error }));
-      toast.error(`An Error occurred when trying to update your details`);
+      console.error(new Error("An error occurred when trying to update your details", { cause: error }));
+      toast.error(`An error occurred when trying to update your details`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
       setIsLoading(false);

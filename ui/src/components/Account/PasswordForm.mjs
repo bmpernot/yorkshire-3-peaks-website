@@ -42,8 +42,8 @@ function PasswordForm() {
       document.getElementById("newPassword").value = "";
       document.getElementById("confirmNewPassword").value = "";
     } catch (error) {
-      console.error(new Error("An Error occurred when trying to update your password", { cause: error }));
-      toast.error(`An Error occurred when trying to update your password`);
+      console.error(new Error("An error occurred when trying to update your password", { cause: error }));
+      toast.error(`An error occurred when trying to update your password`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
       setIsLoading(false);

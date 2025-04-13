@@ -72,8 +72,8 @@ function SignUp() {
     try {
       await handleSignUp(router, formData);
     } catch (error) {
-      console.error(new Error("An Error occurred when trying to sign you up", { cause: error }));
-      toast.error(`An Error occurred when trying to sign you up`);
+      console.error(new Error("An error occurred when trying to sign you up", { cause: error }));
+      toast.error(`An error occurred when trying to sign you up`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
       setIsLoading(false);

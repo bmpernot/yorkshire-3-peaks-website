@@ -31,8 +31,8 @@ function DeleteAccountForm({ email, updateUser }) {
       await handleDeleteUser(router);
       await updateUser();
     } catch (error) {
-      console.error(new Error("An Error occurred when trying to delete your account", { cause: error }));
-      toast.error(`An Error occurred when trying to delete your account`);
+      console.error(new Error("An error occurred when trying to delete your account", { cause: error }));
+      toast.error(`An error occurred when trying to delete your account`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
       setIsLoading(false);
