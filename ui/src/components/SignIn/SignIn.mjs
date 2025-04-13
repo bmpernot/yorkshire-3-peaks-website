@@ -25,8 +25,10 @@ function SignIn() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmissionError(null);
-    if (emailErrorMessage || isForgotPasswordModelOpen) {
-      event.preventDefault();
+
+    const isValid = validateInputs({ setEmailErrorMessage });
+
+    if (!isValid || isForgotPasswordModelOpen) {
       return;
     }
 
@@ -41,8 +43,8 @@ function SignIn() {
     try {
       await handleSignIn(router, formData, updateUser);
     } catch (error) {
-      console.error(new Error(`An Error occurred when trying to sign you in`, { cause: error }));
-      toast.error(`An Error occurred when trying to sign you in`);
+      console.error(new Error(`An error occurred when trying to sign you in`, { cause: error }));
+      toast.error(`An error occurred when trying to sign you in`);
       setSubmissionError(getErrorMessage(error.cause));
     } finally {
       setIsLoading(false);
@@ -87,6 +89,7 @@ function SignIn() {
                 }}
                 variant="body2"
                 sx={styles.signIn.forgotPasswordButton}
+                id="forgotPassword"
               >
                 Forgot password?
               </Link>
@@ -104,15 +107,7 @@ function SignIn() {
             />
           </FormControl>
           <ForgotPassword open={isForgotPasswordModelOpen} setOpen={setIsForgotPasswordModelOpen} router={router} />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            onClick={() => {
-              validateInputs({ setEmailErrorMessage });
-            }}
-            disabled={isLoading}
-          >
+          <Button type="submit" fullWidth variant="contained" disabled={isLoading}>
             Sign in
           </Button>
           <Typography sx={styles.signIn.signupTitle}>
