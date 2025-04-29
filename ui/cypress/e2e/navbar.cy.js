@@ -66,22 +66,23 @@ describe("NavBar", () => {
         });
 
         it("Should not be able to see links to restricted pages", () => {
-          homePage
-            .open()
-            .verifyRestrictedLinksVisibility({ userProfile: false, organiser: false, admin: false })
-            .open(USER_ROLES.USER)
-            .verifyRestrictedLinksVisibility({ userProfile: true, organiser: false, admin: false })
-            .open(USER_ROLES.ORGANISER)
-            .verifyRestrictedLinksVisibility({ userProfile: true, organiser: true, admin: false })
-            .open(USER_ROLES.ADMIN)
-            .verifyRestrictedLinksVisibility({ userProfile: true, organiser: true, admin: true });
+          homePage.open().verifyRestrictedLinksVisibility({ userProfile: false, organiser: false, admin: false });
+
+          cy.stubUser(USER_ROLES.USER);
+          homePage.open().verifyRestrictedLinksVisibility({ userProfile: true, organiser: false, admin: false });
+
+          cy.stubUser(USER_ROLES.ORGANISER);
+          homePage.open().verifyRestrictedLinksVisibility({ userProfile: true, organiser: true, admin: false });
+
+          cy.stubUser(USER_ROLES.ADMIN);
+          homePage.open().verifyRestrictedLinksVisibility({ userProfile: true, organiser: true, admin: true });
         });
 
         it("Should be able to sign out", () => {
           cy.stubUser(USER_ROLES.USER);
 
           homePage
-            .open(USER_ROLES.USER)
+            .open()
             .goToPage("Account")
             .goToPage("SignOut")
             .urlShouldBe("")
