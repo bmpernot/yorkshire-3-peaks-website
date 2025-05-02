@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Box, Button, FormLabel, FormControl, TextField, Typography } from "@mui/material";
 import { StyledCard, StyledContainer } from "../common/CustomComponents.mjs";
-import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { handleUpdatePassword } from "../../lib/cognitoActions.mjs";
@@ -21,7 +21,8 @@ function PasswordForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmissionError(null);
-    if (isErrors(errors)) {
+
+    if (!validateInputs(setErrors, formValidationsPassword)) {
       return;
     }
 
@@ -107,9 +108,9 @@ function PasswordForm() {
           </FormControl>
           <Button
             type="submit"
+            id="updatePassword"
             fullWidth
             variant="contained"
-            onClick={() => validateInputs(setErrors, formValidationsPassword)}
             disabled={isLoading}
             loading={isLoading}
           >

@@ -393,7 +393,7 @@ describe("Authorisation", () => {
       });
     });
 
-    describe("Confirm password rest form", () => {
+    describe("Confirm password reset form", () => {
       beforeEach(() => {
         authPage.open(`auth/reset-password?email=${email}`);
       });
@@ -472,77 +472,186 @@ describe("Authorisation", () => {
     });
   });
 
-  describe.skip("Account page", () => {
+  describe("Account page", () => {
     beforeEach(() => {
+      cy.stubUser(USER_ROLES.USER);
       authPage.open("user/account");
     });
 
     describe("Update user details", () => {
-      it("Should be able to allow the user to update their details", () => {});
+      it("Should be able to allow the user to update their details", () => {
+        authPage
+          .waitForThen(["@amplifyAuthRequest", "@amplifyAuthRequest"])
+          .fillUpdateDetailsForm({ number: "+447786922681", iceNumber: "+447786922682" })
+          .submitUpdateDetailsForm()
+          .waitForThen("@amplifyAuthRequest", (interception) => {
+            expect(interception.request.headers["x-amz-target"]).to.equal(
+              "AWSCognitoIdentityProviderService.UpdateUserAttributes",
+            );
+            expect(interception.request.body.UserAttributes).to.deep.equal([
+              {
+                Name: "given_name",
+                Value: "Jon",
+              },
+              {
+                Name: "family_name",
+                Value: "Snow",
+              },
+              {
+                Name: "phone_number",
+                Value: "+447786922681",
+              },
+              {
+                Name: "custom:ice_number",
+                Value: "+447786922682",
+              },
+              {
+                Name: "custom:notify",
+                Value: "true",
+              },
+            ]);
+          })
+          .verifyToast("Your details have been updated");
+      });
 
-      it("Should validate input correctly", () => {});
+      it("Should validate input correctly", () => {
+        authPage
+          .fillUpdateDetailsForm({ fname: "", lname: "" })
+          .submitUpdateDetailsForm()
+          .checkValidationMessages([
+            { field: "fname", errors: ["First name is required."] },
+            { field: "lname", errors: ["Last name is required."] },
+            { field: "number", errors: ["Number needs to be a valid GB mobile number, landlines not accepted."] },
+            {
+              field: "iceNumber",
+              errors: ["ICE number needs to be a valid GB mobile number, landlines not accepted."],
+            },
+          ])
+          .verifyNoToast();
+      });
 
       it("Should handle errors from cognito gracefully", () => {
         const response = {
           statusCode: 400,
-          body: { __type: "Invalid type", message: "Invalid code" },
+          body: { __type: "Internal Server Error", message: "Something went wrong in AWS" },
         };
         cy.interceptAmplifyAuth({
-          confirmSignUp: response,
+          updateUserAttributes: response,
         });
 
         authPage
-          .fillConfirmSignupForm("123456")
-          .submitForm()
+          .fillUpdateDetailsForm({ number: "+447786922681", iceNumber: "+447786922682" })
+          .submitUpdateDetailsForm()
           .waitForThen("@amplifyAuthRequest")
           .verifyFormError(response.body.message)
-          .urlShouldBe("auth/confirm-signup");
+          .verifyToast("An error occurred when trying to update your details");
       });
     });
 
     describe("Update password", () => {
-      it("Should be able to allow the user to update their password", () => {});
+      it("Should be able to allow the user to update their password", () => {
+        const oldPassword = "Password!1";
+        const newPassword = "Password!2";
 
-      it("Should validate input correctly", () => {});
+        authPage
+          .waitForThen(["@amplifyAuthRequest", "@amplifyAuthRequest"])
+          .fillUpdatePasswordForm({ oldPassword, newPassword })
+          .submitUpdatePasswordForm()
+          .waitForThen("@amplifyAuthRequest", (interception) => {
+            expect(interception.request.headers["x-amz-target"]).to.equal(
+              "AWSCognitoIdentityProviderService.ChangePassword",
+            );
+
+            expect(interception.request.body.PreviousPassword).to.equal(oldPassword);
+            expect(interception.request.body.ProposedPassword).to.equal(newPassword);
+          })
+          .verifyToast("Password was successfully updated");
+      });
+
+      it("Should validate input correctly", () => {
+        authPage
+          .submitUpdatePasswordForm()
+          .checkValidationMessages([
+            {
+              field: "newPassword",
+              errors: [
+                "Password must be at least 8 characters long.",
+                "Password must have a upper case letter.",
+                "Password must have a lower case letter.",
+                "Password must have a number.",
+                "Password must have special characters.",
+                "New password cannot be the old password.",
+              ],
+            },
+            { field: "confirmNewPassword", errors: ["Passwords do not match."] },
+          ])
+          .verifyNoToast();
+      });
 
       it("Should handle errors from cognito gracefully", () => {
         const response = {
           statusCode: 400,
-          body: { __type: "Invalid type", message: "Invalid code" },
+          body: { __type: "internal server error", message: "Failed to update password" },
         };
         cy.interceptAmplifyAuth({
-          confirmSignUp: response,
+          changePassword: response,
         });
 
         authPage
-          .fillConfirmSignupForm("123456")
-          .submitForm()
+          .fillUpdatePasswordForm({ oldPassword: "Password!1", newPassword: "Password!2" })
+          .submitUpdatePasswordForm()
           .waitForThen("@amplifyAuthRequest")
           .verifyFormError(response.body.message)
-          .urlShouldBe("auth/confirm-signup");
+          .verifyToast("An error occurred when trying to update your password");
       });
     });
 
     describe("Delete Account", () => {
-      it("Should be able to allow the user to delete their details", () => {});
+      it("Should be able to allow the user to delete their details", () => {
+        authPage
+          .waitForThen(["@amplifyAuthRequest", "@amplifyAuthRequest"])
+          .fillDeleteAccountForm({ email: "jon.snow@yorkshire3peaks.com" })
+          .submitDeleteAccountForm()
+          .waitForThen("@amplifyAuthRequest", (interception) => {
+            expect(interception.request.headers["x-amz-target"]).to.equal(
+              "AWSCognitoIdentityProviderService.DeleteUser",
+            );
+          })
+          .waitForThen("@amplifyAuthRequest", (interception) => {
+            expect(interception.request.headers["x-amz-target"]).to.equal(
+              "AWSCognitoIdentityProviderService.RevokeToken",
+            );
+          })
+          .urlShouldBe("")
+          .verifyToast("Account was successfully deleted");
+      });
 
-      it("Should validate input correctly", () => {});
+      it("Should validate input correctly", () => {
+        authPage
+          .submitDeleteAccountForm()
+          .checkValidationMessages([
+            { field: "confirmDeletion", errors: ["Please enter the email address of this account."] },
+          ])
+          .verifyNoToast()
+          .urlShouldBe("user/account");
+      });
 
       it("Should handle errors from cognito gracefully", () => {
         const response = {
           statusCode: 400,
-          body: { __type: "Invalid type", message: "Invalid code" },
+          body: { __type: "internal server error", message: "Failed to delete account" },
         };
         cy.interceptAmplifyAuth({
-          confirmSignUp: response,
+          deleteUser: response,
         });
 
         authPage
-          .fillConfirmSignupForm("123456")
-          .submitForm()
+          .fillDeleteAccountForm({ email: "jon.snow@yorkshire3peaks.com" })
+          .submitDeleteAccountForm()
           .waitForThen("@amplifyAuthRequest")
           .verifyFormError(response.body.message)
-          .urlShouldBe("auth/confirm-signup");
+          .urlShouldBe("user/account")
+          .verifyToast("An error occurred when trying to delete your account");
       });
     });
   });

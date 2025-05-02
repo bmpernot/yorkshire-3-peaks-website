@@ -47,6 +47,21 @@ export default class authPage {
     return this;
   }
 
+  submitUpdateDetailsForm() {
+    cy.get("#updateDetails").click();
+    return this;
+  }
+
+  submitUpdatePasswordForm() {
+    cy.get("#updatePassword").click();
+    return this;
+  }
+
+  submitDeleteAccountForm() {
+    cy.get("#deleteAccount").click();
+    return this;
+  }
+
   waitForThen(item, functionCall = () => {}) {
     cy.wait(item).then(functionCall);
     return this;
@@ -87,6 +102,11 @@ export default class authPage {
 
   verifyToast(message) {
     cy.get(".Toastify__toast-body > :nth-child(2)").should("contain", message);
+    return this;
+  }
+
+  verifyNoToast() {
+    cy.get(".Toastify__toast-body > :nth-child(2)").should("not.exist");
     return this;
   }
 
@@ -135,6 +155,45 @@ export default class authPage {
 
     cy.get("#confirmPassword").clear();
     cy.get("#confirmPassword").type(password);
+    return this;
+  }
+
+  fillUpdateDetailsForm({ fname, lname, number, iceNumber, notify }) {
+    if (fname?.length >= 0) {
+      cy.get("#fname").clear();
+      if (fname.length) {
+        cy.get("#fname").type(fname);
+      }
+    }
+    if (lname?.length >= 0) {
+      cy.get("#lname").clear();
+      if (lname) {
+        cy.get("#lname").type(lname);
+      }
+    }
+    if (number) {
+      cy.get("#number").clear();
+      cy.get("#number").type(number);
+    }
+    if (iceNumber) {
+      cy.get("#iceNumber").clear();
+      cy.get("#iceNumber").type(iceNumber);
+    }
+    if (notify) {
+      cy.get("#notify").click();
+    }
+    return this;
+  }
+
+  fillUpdatePasswordForm({ oldPassword, newPassword, confirmNewPassword }) {
+    cy.get("#oldPassword").type(oldPassword);
+    cy.get("#newPassword").type(newPassword);
+    cy.get("#confirmNewPassword").type(confirmNewPassword ?? newPassword);
+    return this;
+  }
+
+  fillDeleteAccountForm({ email }) {
+    cy.get("#confirmDeletion").type(email);
     return this;
   }
 }

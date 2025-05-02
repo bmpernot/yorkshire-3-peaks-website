@@ -41,7 +41,11 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
       statusCode: 200,
       body: {},
     },
-    updatePassword: {
+    changePassword: {
+      statusCode: 200,
+      body: {},
+    },
+    revokeToken: {
       statusCode: 200,
       body: {},
     },
@@ -221,8 +225,11 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
       case "AWSCognitoIdentityProviderService.UpdateUserAttributes":
         req.reply(mocks.updateUserAttributes);
         break;
-      case "AWSCognitoIdentityProviderService.UpdatePassword":
-        req.reply(mocks.updatePassword);
+      case "AWSCognitoIdentityProviderService.ChangePassword":
+        req.reply(mocks.changePassword);
+        break;
+      case "AWSCognitoIdentityProviderService.RevokeToken":
+        req.reply(mocks.revokeToken);
         break;
       case "AWSCognitoIdentityProviderService.ConfirmForgotPassword":
         req.reply(mocks.confirmForgotPassword);
@@ -283,6 +290,7 @@ Cypress.Commands.add("stubUser", (role) => {
   }[role];
 
   if (!user) {
+    cy.clearAllCookies();
     return;
   }
 

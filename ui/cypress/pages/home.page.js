@@ -130,13 +130,8 @@ export default class homePage {
       },
     };
 
-    if (Cypress.config("viewportWidth") < 900) {
-      cy.get("[data-cy=small-nav-menu]").as("nav-menu");
-      if (navMenu.includes(page.toLowerCase())) {
-        cy.get("[data-cy=small-nav-menu] [data-cy=button]").click();
-      }
-    } else {
-      cy.get("[data-cy=large-nav-menu]").as("nav-menu");
+    if (Cypress.config("viewportWidth") < 900 && navMenu.includes(page.toLowerCase())) {
+      cy.get("[data-cy=small-nav-menu] [data-cy=button]").click();
     }
 
     if (settings.includes(page.toLowerCase())) {

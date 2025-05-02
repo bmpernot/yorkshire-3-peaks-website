@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Box, Button, FormLabel, FormControl, TextField, Typography } from "@mui/material";
 import { StyledCard, StyledContainer } from "../common/CustomComponents.mjs";
-import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { useRouter } from "next/navigation";
@@ -21,7 +21,8 @@ function DeleteAccountForm({ email, updateUser }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmissionError(null);
-    if (isErrors(errors)) {
+
+    if (!validateInputs(setErrors, formValidationsDeleteAccount)) {
       return;
     }
 
@@ -30,6 +31,7 @@ function DeleteAccountForm({ email, updateUser }) {
     try {
       await handleDeleteUser(router);
       await updateUser();
+      toast.success("Account was successfully deleted");
     } catch (error) {
       console.error(new Error("An error occurred when trying to delete your account", { cause: error }));
       toast.error(`An error occurred when trying to delete your account`);
@@ -68,13 +70,7 @@ function DeleteAccountForm({ email, updateUser }) {
               sx={styles.formTextField}
             />
           </FormControl>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            onClick={() => validateInputs(setErrors, formValidationsDeleteAccount)}
-            disabled={isLoading}
-          >
+          <Button type="submit" id="deleteAccount" fullWidth variant="contained" disabled={isLoading}>
             Delete Account
           </Button>
         </Box>

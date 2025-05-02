@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Box, Button, Checkbox, FormLabel, FormControlLabel, FormControl, TextField, Typography } from "@mui/material";
 import { StyledCard, StyledContainer } from "../common/CustomComponents.mjs";
-import { isErrors, getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
+import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { handleUpdateUserAttributes } from "../../lib/cognitoActions.mjs";
@@ -36,7 +36,7 @@ function UserDetailsForm({ user }) {
     event.preventDefault();
     setSubmissionError(null);
 
-    if (isErrors(errors)) {
+    if (!validateInputs(setErrors, formValidationsUserDetails)) {
       return;
     }
 
@@ -169,9 +169,9 @@ function UserDetailsForm({ user }) {
           />
           <Button
             type="submit"
+            id="updateDetails"
             fullWidth
             variant="contained"
-            onClick={() => validateInputs(setErrors, formValidationsUserDetails)}
             disabled={isLoading}
             loading={isLoading}
           >
