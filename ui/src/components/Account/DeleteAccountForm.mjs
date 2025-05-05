@@ -61,7 +61,7 @@ function DeleteAccountForm({ email, updateUser }) {
               error={errors.confirmDeletion.length > 0}
               helperText={
                 errors.confirmDeletion.length === 0
-                  ? "Please enter you email to confirm deletion of the account."
+                  ? "Please enter your email to confirm deletion of the account."
                   : errors.confirmDeletion
                       .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
                       .slice(0, -1)
