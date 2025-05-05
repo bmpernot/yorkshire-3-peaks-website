@@ -8,13 +8,14 @@ import { StyledCard, StyledContainer as ConfirmSignUpContainer } from "../common
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
 import { handleConfirmSignUp, handleSendEmailVerificationCode } from "../../lib/cognitoActions.mjs";
+import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { useUser } from "@/src/utils/userContext";
 import { useSearchParams } from "next/navigation";
 
 function ConfirmSignUp() {
-  const [codeErrorMessage, setCodeErrorMessage] = useState(null);
+  const [errors, setErrors] = useState({ code: [] });
   const [submissionError, setSubmissionError] = useState(null);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isLoadingResendCode, setIsLoadingResendCode] = useState(false);
@@ -40,9 +41,7 @@ function ConfirmSignUp() {
     event.preventDefault();
     setSubmissionError(null);
 
-    const isValid = validateInputs({ setCodeErrorMessage });
-
-    if (!isValid) {
+    if (!validateInputs(setErrors, formValidationConfirmSignUp)) {
       return;
     }
 
@@ -50,14 +49,18 @@ function ConfirmSignUp() {
 
     const data = new FormData(event.currentTarget);
 
-    try {
-      await handleConfirmSignUp(router, email, data.get("code"), updateUser);
-    } catch (error) {
-      console.error(new Error(`An error occurred when trying to confirm your account`, { cause: error }));
-      toast.error(`An error occurred when trying to confirm your account.`);
-      setSubmissionError(getErrorMessage(error.cause));
-    } finally {
-      setIsLoadingSubmit(false);
+    if (email) {
+      try {
+        await handleConfirmSignUp(router, email, data.get("code"), updateUser);
+      } catch (error) {
+        console.error(new Error(`An error occurred when trying to confirm your account`, { cause: error }));
+        toast.error(`An error occurred when trying to confirm your account.`);
+        setSubmissionError(getErrorMessage(error.cause));
+      } finally {
+        setIsLoadingSubmit(false);
+      }
+    } else {
+      toast.error("Email not found please try to sign in again to confirm account.");
     }
   };
 
@@ -74,6 +77,8 @@ function ConfirmSignUp() {
       } finally {
         setIsLoadingResendCode(false);
       }
+    } else {
+      toast.error("Email not found please try to sign in again to confirm account.");
     }
   };
 
@@ -89,8 +94,10 @@ function ConfirmSignUp() {
           <FormControl>
             <FormLabel htmlFor="code">Confirmation code</FormLabel>
             <TextField
-              error={codeErrorMessage ? true : false}
-              helperText={codeErrorMessage}
+              error={errors.code.length > 0}
+              helperText={errors.code
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
               id="code"
               type="code"
               name="code"
@@ -100,7 +107,7 @@ function ConfirmSignUp() {
               required
               fullWidth
               variant="outlined"
-              color={codeErrorMessage ? "error" : "primary"}
+              color={errors.code.length > 0 ? "error" : "primary"}
               sx={styles.signIn.codeInput}
             />
           </FormControl>
@@ -126,17 +133,13 @@ function ConfirmSignUp() {
 
 export default ConfirmSignUp;
 
-const validateInputs = ({ setCodeErrorMessage }) => {
-  const code = document.getElementById("code").value;
-
-  let isValid = true;
-
-  if (!code || !/\d{6}/.test(code)) {
-    setCodeErrorMessage("Please enter a valid code.");
-    isValid = false;
-  } else {
-    setCodeErrorMessage(null);
-  }
-
-  return isValid;
-};
+const formValidationConfirmSignUp = [
+  {
+    validation: (code) => {
+      return !code || !/\d{6}/.test(code.value);
+    },
+    errorMessage: "Please enter a valid code.",
+    field: "code",
+    element: () => [document.getElementById("code")],
+  },
+];

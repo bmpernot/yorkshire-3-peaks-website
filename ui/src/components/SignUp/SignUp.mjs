@@ -18,6 +18,7 @@ import {
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { Info as InfoIcon } from "@mui/icons-material";
 import { LogoTitle } from "../common/CustomIcons.mjs";
+import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { styles } from "../../styles/signUp.mui.styles.mjs";
 import { useRouter } from "next/navigation";
@@ -46,8 +47,7 @@ function SignUp() {
     event.preventDefault();
     setSubmissionError(null);
 
-    const isValid = validateInputs(setErrors);
-    if (!isValid) {
+    if (!validateInputs(setErrors, formValidationSignUp)) {
       return;
     }
 
@@ -259,112 +259,117 @@ function SignUp() {
 
 export default SignUp;
 
-const validateInputs = (setErrors) => {
-  const email = document.getElementById("email");
-  const password = document.getElementById("password");
-  const fname = document.getElementById("fname");
-  const lname = document.getElementById("lname");
-  const number = document.getElementById("number");
-  const iceNumber = document.getElementById("iceNumber");
-  const confirmPassword = document.getElementById("confirmPassword");
-
-  let isValid = true;
-  const newErrors = {
-    email: [],
-    password: [],
-    fname: [],
-    lname: [],
-    number: [],
-    iceNumber: [],
-    confirmPassword: [],
-  };
-
-  const formValidations = [
-    {
-      validation: () => !email.value || !/\S+@\S+\.\S+/.test(email.value),
-      errorMessage: "Please enter a valid email address.",
-      field: "email",
+const formValidationSignUp = [
+  {
+    validation: (email) => {
+      return !email.value || !/\S+@\S+\.\S+/.test(email.value);
     },
-    {
-      validation: () => !password.value || password.value.length < 8,
-      errorMessage: "Password must be at least 8 characters long.",
-      field: "password",
+    errorMessage: "Please enter a valid email address.",
+    field: "email",
+    element: () => [document.getElementById("email")],
+  },
+  {
+    validation: (number) => {
+      return !number.value;
     },
-    {
-      validation: () => !/[A-Z]/.test(password.value),
-      errorMessage: "Password must have a upper case letter.",
-      field: "password",
+    errorMessage: "Number is required.",
+    field: "number",
+    element: () => [document.getElementById("number")],
+  },
+  {
+    validation: (fname) => {
+      return !fname.value || fname.value.length < 1;
     },
-    {
-      validation: () => !/[a-z]/.test(password.value),
-      errorMessage: "Password must have a lower case letter.",
-      field: "password",
+    errorMessage: "First name is required.",
+    field: "fname",
+    element: () => [document.getElementById("fname")],
+  },
+  {
+    validation: (lname) => {
+      return !lname.value || lname.value.length < 1;
     },
-    {
-      validation: () => !/\d/.test(password.value),
-      errorMessage: "Password must have a number.",
-      field: "password",
+    errorMessage: "Last name is required.",
+    field: "lname",
+    element: () => [document.getElementById("lname")],
+  },
+  {
+    validation: (iceNumber) => {
+      return !iceNumber.value;
     },
-    {
-      validation: () => !/[^$*.[\]{}()?\\!"@#%&/\\,><':;|_~`+=-]/.test(password.value),
-      errorMessage: "Password must have special characters.",
-      field: "password",
+    errorMessage: "ICE number is required.",
+    field: "iceNumber",
+    element: () => [document.getElementById("iceNumber")],
+  },
+  {
+    validation: (iceNumber, number) => {
+      return iceNumber.value === number.value;
     },
-    {
-      validation: () => !confirmPassword.value || confirmPassword.value !== password.value,
-      errorMessage: "Passwords do not match.",
-      field: "confirmPassword",
+    errorMessage: "ICE number cannot be your own.",
+    field: "iceNumber",
+    element: () => [document.getElementById("iceNumber"), document.getElementById("number")],
+  },
+  {
+    validation: (number) => {
+      return !phone(number.value, { country: "GB" }).isValid;
     },
-    {
-      validation: () => !number.value,
-      errorMessage: "Number is required.",
-      field: "number",
+    errorMessage: "Number needs to be a valid GB mobile number, landlines not accepted.",
+    field: "number",
+    element: () => [document.getElementById("number")],
+  },
+  {
+    validation: (iceNumber) => {
+      return !phone(iceNumber.value, { country: "GB" }).isValid;
     },
-    {
-      validation: () => {
-        return !phone(number.value, { country: "GB" }).isValid;
-      },
-      errorMessage: "Number needs to be a valid GB mobile number, landlines not accepted.",
-      field: "number",
+    errorMessage: "ICE number needs to be a valid GB mobile number, landlines not accepted.",
+    field: "iceNumber",
+    element: () => [document.getElementById("iceNumber")],
+  },
+  {
+    validation: (password) => {
+      return !password.value || password.value.length < 8;
     },
-    {
-      validation: () => !fname.value || fname.value.length < 1,
-      errorMessage: "First name is required.",
-      field: "fname",
+    errorMessage: "Password must be at least 8 characters long.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/[A-Z]/.test(password.value);
     },
-    {
-      validation: () => !lname.value || lname.value.length < 1,
-      errorMessage: "Last name is required.",
-      field: "lname",
+    errorMessage: "Password must have a upper case letter.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/[a-z]/.test(password.value);
     },
-    {
-      validation: () => !iceNumber.value,
-      errorMessage: "ICE number is required.",
-      field: "iceNumber",
+    errorMessage: "Password must have a lower case letter.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/\d/.test(password.value);
     },
-    {
-      validation: () => iceNumber.value === number.value,
-      errorMessage: "ICE number cannot be your own.",
-      field: "iceNumber",
+    errorMessage: "Password must have a number.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (password) => {
+      return !/[^$*.[\]{}()?\\!"@#%&/\\,><':;|_~`+=-]/.test(password.value);
     },
-
-    {
-      validation: () => !phone(iceNumber.value, { country: "GB" }).isValid,
-      errorMessage: "ICE number needs to be a valid GB mobile number, landlines not accepted.",
-      field: "iceNumber",
+    errorMessage: "Password must have special characters.",
+    field: "password",
+    element: () => [document.getElementById("password")],
+  },
+  {
+    validation: (confirmPassword, password) => {
+      return !confirmPassword.value || confirmPassword.value !== password.value;
     },
-  ];
-
-  formValidations.forEach(({ validation, errorMessage, field }) => {
-    if (validation()) {
-      if (!newErrors[field].includes(errorMessage)) {
-        newErrors[field].push(errorMessage);
-      }
-      isValid = false;
-    }
-  });
-
-  setErrors(newErrors);
-
-  return isValid;
-};
+    errorMessage: "Passwords do not match.",
+    field: "confirmPassword",
+    element: () => [document.getElementById("confirmPassword"), document.getElementById("password")],
+  },
+];

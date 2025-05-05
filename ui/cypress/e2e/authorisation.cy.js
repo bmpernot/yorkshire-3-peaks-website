@@ -361,13 +361,16 @@ describe("Authorisation", () => {
         authPage
           .fillForgotPasswordForm(true)
           .submitResetPasswordForm()
-          .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
+          .checkValidationMessages([
+            { field: "reset-password-for-email", errors: ["Please enter a valid email address."] },
+          ])
           .fillForgotPasswordForm(false, "qwerty")
           .submitResetPasswordForm()
-          .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
+          .checkValidationMessages([
+            { field: "reset-password-for-email", errors: ["Please enter a valid email address."] },
+          ])
           .fillForgotPasswordForm(false, email)
           .submitResetPasswordForm()
-          .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
           .waitForThen("@amplifyAuthRequest")
           .urlShouldBe("auth/reset-password");
       });

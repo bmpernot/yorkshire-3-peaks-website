@@ -5,12 +5,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { styles } from "../../styles/signIn.mui.styles.mjs";
 import { toast } from "react-toastify";
 import { handleResetPassword } from "../../lib/cognitoActions.mjs";
+import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 
 function ForgotPassword({ open, setOpen, router }) {
   const [submissionError, setSubmissionError] = useState(null);
-  const [emailErrorMessage, setEmailErrorMessage] = useState(null);
+  const [errors, setErrors] = useState({ "reset-password-for-email": [] });
   const [isLoading, setIsLoading] = useState(false);
 
   return (
@@ -18,7 +19,7 @@ function ForgotPassword({ open, setOpen, router }) {
       open={open}
       onClose={() => {
         setSubmissionError(null);
-        setEmailErrorMessage(null);
+        setErrors({ email: [] });
         setOpen(false);
       }}
       PaperProps={{
@@ -27,7 +28,7 @@ function ForgotPassword({ open, setOpen, router }) {
           event.preventDefault();
           setSubmissionError(null);
 
-          if (!open || !validateInputs({ setEmailErrorMessage })) {
+          if (!open || !validateInputs(setErrors, formValidationForgotPassword)) {
             return;
           }
 
@@ -73,9 +74,11 @@ function ForgotPassword({ open, setOpen, router }) {
           placeholder="Email address"
           type="email"
           fullWidth={true}
-          error={emailErrorMessage ? true : false}
-          helperText={emailErrorMessage}
-          color={emailErrorMessage ? "error" : "primary"}
+          error={errors["reset-password-for-email"].length > 0}
+          helperText={errors["reset-password-for-email"]
+            .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+            .slice(0, -1)}
+          color={errors["reset-password-for-email"].length > 0 ? "error" : "primary"}
           sx={styles.signIn.emailInput}
         />
       </DialogContent>
@@ -83,7 +86,7 @@ function ForgotPassword({ open, setOpen, router }) {
         <Button
           onClick={() => {
             setSubmissionError(null);
-            setEmailErrorMessage(null);
+            setErrors({ email: [] });
             setOpen(false);
           }}
         >
@@ -99,16 +102,13 @@ function ForgotPassword({ open, setOpen, router }) {
 
 export default ForgotPassword;
 
-const validateInputs = ({ setEmailErrorMessage }) => {
-  const email = document.getElementById("reset-password-for-email");
-  let isValid = true;
-
-  if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-    setEmailErrorMessage("Please enter a valid email address.");
-    isValid = false;
-  } else {
-    setEmailErrorMessage(null);
-  }
-
-  return isValid;
-};
+const formValidationForgotPassword = [
+  {
+    validation: (email) => {
+      return !email.value || !/\S+@\S+\.\S+/.test(email.value);
+    },
+    errorMessage: "Please enter a valid email address.",
+    field: "reset-password-for-email",
+    element: () => [document.getElementById("reset-password-for-email")],
+  },
+];

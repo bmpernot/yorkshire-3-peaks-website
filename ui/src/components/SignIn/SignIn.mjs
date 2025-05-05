@@ -10,11 +10,12 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { handleSignIn } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
+import { validateInputs } from "../../lib/commonFunctionsClient.mjs";
 import { getErrorMessage } from "../../lib/commonFunctionsServer.mjs";
 import { useUser } from "@/src/utils/userContext";
 
 function SignIn() {
-  const [emailErrorMessage, setEmailErrorMessage] = useState(null);
+  const [errors, setErrors] = useState({ email: [] });
   const [submissionError, setSubmissionError] = useState(null);
   const [isForgotPasswordModelOpen, setIsForgotPasswordModelOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,9 +27,7 @@ function SignIn() {
     event.preventDefault();
     setSubmissionError(null);
 
-    const isValid = validateInputs({ setEmailErrorMessage });
-
-    if (!isValid || isForgotPasswordModelOpen) {
+    if (isForgotPasswordModelOpen || !validateInputs(setErrors, formValidationSignIn)) {
       return;
     }
 
@@ -59,8 +58,10 @@ function SignIn() {
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
-              error={emailErrorMessage ? true : false}
-              helperText={emailErrorMessage}
+              error={errors.email.length > 0}
+              helperText={errors.email
+                .reduce((accumulator, currentValue) => accumulator.concat(currentValue, "\n"), "")
+                .slice(0, -1)}
               id="email"
               type="email"
               name="email"
@@ -70,7 +71,7 @@ function SignIn() {
               required
               fullWidth
               variant="outlined"
-              color={emailErrorMessage ? "error" : "primary"}
+              color={errors.email.length > 0 ? "error" : "primary"}
               sx={styles.signIn.emailInput}
             />
           </FormControl>
@@ -128,17 +129,13 @@ function SignIn() {
 
 export default SignIn;
 
-const validateInputs = ({ setEmailErrorMessage }) => {
-  const email = document.getElementById("email");
-
-  let isValid = true;
-
-  if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-    setEmailErrorMessage("Please enter a valid email address.");
-    isValid = false;
-  } else {
-    setEmailErrorMessage(null);
-  }
-
-  return isValid;
-};
+const formValidationSignIn = [
+  {
+    validation: (email) => {
+      return !email.value || !/\S+@\S+\.\S+/.test(email.value);
+    },
+    errorMessage: "Please enter a valid email address.",
+    field: "email",
+    element: () => [document.getElementById("email")],
+  },
+];
