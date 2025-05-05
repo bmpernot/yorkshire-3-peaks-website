@@ -35,13 +35,9 @@ function SignIn() {
     setIsLoading(true);
 
     const data = new FormData(event.currentTarget);
-    const formData = {
-      username: data.get("email"),
-      password: data.get("password"),
-    };
 
     try {
-      await handleSignIn(router, formData, updateUser);
+      await handleSignIn(router, data.get("email"), data.get("password"), updateUser);
     } catch (error) {
       console.error(new Error(`An error occurred when trying to sign you in`, { cause: error }));
       toast.error(`An error occurred when trying to sign you in`);

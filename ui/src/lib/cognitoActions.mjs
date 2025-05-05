@@ -12,15 +12,28 @@ import {
   confirmResetPassword,
 } from "aws-amplify/auth";
 
-export async function handleSignUp(router, formData) {
+export async function handleSignUp(router, email, password, firstName, lastName, number, iceNumber, notify) {
   try {
-    await signUp(formData);
+    await signUp({
+      username: email,
+      password,
+      options: {
+        userAttributes: {
+          phone_number: number,
+          email,
+          given_name: firstName,
+          family_name: lastName,
+          "custom:notify": notify,
+          "custom:ice_number": iceNumber,
+        },
+      },
+    });
   } catch (error) {
     throw new Error("An error occurred when trying to sign the user up", { cause: error });
   }
 
   try {
-    router.push(`/auth/confirm-signup?email=${encodeURIComponent(formData.username)}`);
+    router.push(`/auth/confirm-signup?email=${encodeURIComponent(email)}`);
   } catch (error) {
     throw new Error("An error occurred when trying to redirect you to the confirm-signup page", {
       cause: error,
@@ -42,10 +55,10 @@ export async function handleSendEmailVerificationCode(email) {
   return response;
 }
 
-export async function handleConfirmSignUp(router, formData, updateUser) {
+export async function handleConfirmSignUp(router, email, code, updateUser) {
   let confirmSignUpResponse;
   try {
-    confirmSignUpResponse = await confirmSignUp(formData);
+    confirmSignUpResponse = await confirmSignUp({ username: email, confirmationCode: code });
   } catch (error) {
     throw new Error("An error has occurred when trying to confirm your account", { cause: error });
   }
@@ -75,16 +88,19 @@ export async function handleConfirmSignUp(router, formData, updateUser) {
   }
 }
 
-export async function handleSignIn(router, formData, updateUser) {
+export async function handleSignIn(router, email, password, updateUser) {
   let redirectLink = "/user/account";
 
   try {
-    const { nextStep } = await signIn(formData);
+    const { nextStep } = await signIn({
+      username: email,
+      password,
+    });
     if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
       await resendSignUpCode({
-        username: formData.username,
+        username: email,
       });
-      redirectLink = `/auth/confirm-signup?email=${encodeURIComponent(formData.username)}`;
+      redirectLink = `/auth/confirm-signup?email=${encodeURIComponent(email)}`;
     }
   } catch (error) {
     throw new Error("An error occurred when trying to log you in", { cause: error });
@@ -137,9 +153,13 @@ export async function handleResetPassword(router, email, onPage = false) {
   }
 }
 
-export async function handleConfirmResetPassword(router, formData) {
+export async function handleConfirmResetPassword(router, email, code, password) {
   try {
-    await confirmResetPassword(formData);
+    await confirmResetPassword({
+      confirmationCode: code,
+      newPassword: password,
+      username: email,
+    });
   } catch (error) {
     throw new Error("An error occurred when trying to reset your password", { cause: error });
   }
@@ -165,19 +185,27 @@ export async function handleDeleteUser(router) {
   }
 }
 
-export async function handleUpdateUserAttributes(formData) {
+export async function handleUpdateUserAttributes(firstName, lastName, number, iceNumber, notify) {
+  const userAttributes = {
+    given_name: firstName,
+    family_name: lastName,
+    phone_number: number,
+    "custom:ice_number": iceNumber,
+    "custom:notify": notify,
+  };
+
   try {
     await updateUserAttributes({
-      userAttributes: formData,
+      userAttributes,
     });
   } catch (error) {
     throw new Error("An error occurred when trying to modify your account", { cause: error });
   }
 }
 
-export async function handleUpdatePassword(formData) {
+export async function handleUpdatePassword(oldPassword, newPassword) {
   try {
-    await updatePassword(formData);
+    await updatePassword({ oldPassword, newPassword });
   } catch (error) {
     throw new Error("An error occurred when trying to update your password", { cause: error });
   }

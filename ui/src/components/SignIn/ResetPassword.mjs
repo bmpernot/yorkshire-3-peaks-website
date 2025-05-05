@@ -44,21 +44,17 @@ function ResetPassword() {
 
     const isValid = validateInputs(setErrors, formValidationsResetPassword);
 
-    if (!isValid) {
+    if (email && !isValid) {
+      toast.error("Email not found, please go to the reset password request form on the sign in page and try again.");
       return;
     }
 
     setIsLoadingSubmit(true);
 
     const data = new FormData(event.currentTarget);
-    const formData = {
-      confirmationCode: data.get("code"),
-      newPassword: data.get("password"),
-      username: email,
-    };
 
     try {
-      await handleConfirmResetPassword(router, formData);
+      await handleConfirmResetPassword(router, email, data.get("code"), data.get("password"));
     } catch (error) {
       console.error(new Error(`An error occurred when trying to reset your password`, { cause: error }));
       toast.error(`An error occurred when trying to reset your password`);
@@ -81,6 +77,8 @@ function ResetPassword() {
       } finally {
         setIsLoadingResendCode(false);
       }
+    } else {
+      toast.error("Email not found, please go to the reset password request form on the sign in page and try again.");
     }
   };
 

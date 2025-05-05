@@ -29,13 +29,8 @@ function PasswordForm() {
     setIsLoading(true);
 
     const data = new FormData(event.currentTarget);
-    const formData = {
-      oldPassword: data.get("oldPassword"),
-      newPassword: data.get("newPassword"),
-    };
-
     try {
-      await handleUpdatePassword(formData);
+      await handleUpdatePassword(data.get("oldPassword"), data.get("newPassword"));
 
       toast.success("Password was successfully updated");
 

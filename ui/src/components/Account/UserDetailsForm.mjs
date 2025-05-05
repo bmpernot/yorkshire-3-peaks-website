@@ -44,16 +44,14 @@ function UserDetailsForm({ user }) {
 
     const data = new FormData(event.currentTarget);
 
-    const formData = {
-      given_name: data.get("fname"),
-      family_name: data.get("lname"),
-      phone_number: phone(data.get("number"), { country: "GB" }).phoneNumber,
-      "custom:ice_number": phone(data.get("iceNumber"), { country: "GB" }).phoneNumber,
-      "custom:notify": data.get("notify") ? "true" : "false",
-    };
-
     try {
-      await handleUpdateUserAttributes(formData);
+      await handleUpdateUserAttributes(
+        data.get("fname"),
+        data.get("lname"),
+        phone(data.get("number"), { country: "GB" }).phoneNumber,
+        phone(data.get("iceNumber"), { country: "GB" }).phoneNumber,
+        data.get("notify") ? "true" : "false",
+      );
       toast.success("Your details have been updated");
     } catch (error) {
       console.error(new Error("An error occurred when trying to update your details", { cause: error }));

@@ -27,8 +27,7 @@ function ForgotPassword({ open, setOpen, router }) {
           event.preventDefault();
           setSubmissionError(null);
 
-          const isValid = validateInputs({ setEmailErrorMessage });
-          if (!open || !isValid) {
+          if (!open || !validateInputs({ setEmailErrorMessage })) {
             return;
           }
 

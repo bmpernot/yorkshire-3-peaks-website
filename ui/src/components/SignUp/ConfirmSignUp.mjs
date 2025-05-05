@@ -50,10 +50,8 @@ function ConfirmSignUp() {
 
     const data = new FormData(event.currentTarget);
 
-    const formData = { username: email, confirmationCode: data.get("code") };
-
     try {
-      await handleConfirmSignUp(router, formData, updateUser);
+      await handleConfirmSignUp(router, email, data.get("code"), updateUser);
     } catch (error) {
       console.error(new Error(`An error occurred when trying to confirm your account`, { cause: error }));
       toast.error(`An error occurred when trying to confirm your account.`);
