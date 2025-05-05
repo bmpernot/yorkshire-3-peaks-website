@@ -69,7 +69,7 @@ describe("User functions", function () {
         });
 
         const event = generateGetAllUsersEvent({
-          fields: "phone_number,given_name,family_name,email_verified,phone_number_verified,ice_number,custom:notify",
+          fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
           userRole: userRole,
         });
 
@@ -85,7 +85,6 @@ describe("User functions", function () {
             family_name: "Smith0",
             given_name: "Alice0",
             phone_number: "01234567000",
-            phone_number_verified: "true",
             sub: "12345678-1234-1234-1234-123456789000",
           },
         ]);
@@ -100,7 +99,7 @@ describe("User functions", function () {
       });
 
       const event = generateGetAllUsersEvent({
-        fields: "phone_number,given_name,family_name,email_verified,phone_number_verified,ice_number,custom:notify",
+        fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
       });
 
       const response = await getAllUsers(event);

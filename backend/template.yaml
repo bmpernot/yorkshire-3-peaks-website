@@ -169,7 +169,6 @@ Resources:
         - given_name
         - family_name
         - email_verified
-        - phone_number_verified
       UserPoolId: !Ref CognitoUserPool
       WriteAttributes:
         - custom:ice_number

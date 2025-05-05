@@ -7,15 +7,7 @@ const userPoolId = process.env.COGNITO_USER_POOL_ID;
 
 const defaultFields = ["sub", "email"];
 
-const cognitoDefaultAttributes = [
-  "sub",
-  "email",
-  "phone_number",
-  "given_name",
-  "family_name",
-  "email_verified",
-  "phone_number_verified",
-];
+const cognitoDefaultAttributes = ["sub", "email", "phone_number", "given_name", "family_name", "email_verified"];
 
 const getAllUsers = async (fields = []) => {
   let allUsers = [];

@@ -127,10 +127,6 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
             Value: "+441234567890",
           },
           {
-            Name: "phone_number_verified",
-            Value: "false",
-          },
-          {
             Name: "family_name",
             Value: "Snow",
           },
