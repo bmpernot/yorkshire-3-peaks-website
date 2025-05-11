@@ -25,15 +25,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Cache npm and node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Install deps
         run: npm ci
       - name: Install cypress binaries
@@ -42,7 +33,7 @@ jobs:
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
         with:
-          start: next run dev:ci
+          start: npm run dev -- --port 5000
           working-directory: ui
           wait-on: "http://localhost:5000"
           env: ui_base_url=http://localhost:5000
