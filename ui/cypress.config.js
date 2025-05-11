@@ -1,3 +1,5 @@
+require("dotenv").config({ path: ".env.local" });
+
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
@@ -17,10 +19,17 @@ module.exports = defineConfig({
     runMode: 2,
     openMode: 0,
   },
-
   e2e: {
-    // setupNodeEvents(on, config) {
-    //   // implement node event listeners here
-    // },
+    setupNodeEvents(on, config) {
+      config.env = {
+        ...process.env,
+        ...config.env,
+      };
+
+      return config;
+    },
+
+    viewportWidth: 1600,
+    viewportHeight: 800,
   },
 });

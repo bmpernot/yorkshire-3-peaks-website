@@ -19,111 +19,25 @@ Resources:
       Timeout: 100
       Description: A function to grab all users' information
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "cognito-idp:ListUsers"
+            Resource: !GetAtt CognitoUserPool.Arn
       Events:
         Api:
           Type: Api
           Properties:
             Path: /user/
             Method: GET
-
-  getUserById:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/getUserById.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to grab the user's information by id
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
       Environment:
         Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/{id}
-            Method: GET
+          COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+  ##### User Resources #####
 
-  addUser:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/addUser.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to add a user to the user table
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/
-            Method: POST
+  ##### Event Resources #####
 
-  updateUser:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/updateUser.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to update the user's information
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/{id}
-            Method: PUT
-
-  deleteUser:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/users/deleteUser.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: a function to delete the user's information
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UserTable
-      Environment:
-        Variables:
-          USER_TABLE: !Ref UserTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /user/{id}
-            Method: DELETE
-
-  UserTable:
+  EventsTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
       PrimaryKey:
@@ -133,9 +47,166 @@ Resources:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
 
-##### User Resources #####
+  TeamsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+  ##### Event Resources #####
+
+  ##### Information Resources #####
+  ##### Information Resources #####
+
+  ##### Cognito User Pool #####
+
+  CognitoUserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: yorkshire-3-peaks-user-pool
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Priority: 1
+            Name: verified_email
+      UsernameConfiguration:
+        CaseSensitive: false
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      EmailConfiguration:
+        SourceArn: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/yorkshirepeaks@gmail.com
+        # manually verified the email via AWS console so we don't have the ARN reference
+        ReplyToEmailAddress: yorkshirepeaks@gmail.com
+        EmailSendingAccount: DEVELOPER
+        From: The Yorkshire 3 Peaks Team <yorkshirepeaks@gmail.com>
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailMessage: >-
+          Here is your code: {####}
+        EmailSubject: Yorkshire 3 Peaks Account Code
+      UserAttributeUpdateSettings:
+        AttributesRequireVerificationBeforeUpdate:
+          - email
+      MfaConfiguration: "OFF"
+      DeletionProtection: ACTIVE
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          TemporaryPasswordValidityDays: 7
+      Schema:
+        - Name: phone_number
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: "ice_number"
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: "notify"
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: email
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: given_name
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: family_name
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: yorkshire-3-peaks-user-pool-app-client
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      ReadAttributes:
+        - custom:ice_number
+        - custom:notify
+        - email
+        - phone_number
+        - given_name
+        - family_name
+        - email_verified
+      UserPoolId: !Ref CognitoUserPool
+      WriteAttributes:
+        - custom:ice_number
+        - custom:notify
+        - email
+        - phone_number
+        - given_name
+        - family_name
+
+  UserPoolGroupORGANISER:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      GroupName: Organiser
+      Precedence: 20
+      Description: A group of volunteers that want to help organiser the future events
+
+  UserPoolGroupADMIN:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      GroupName: Admin
+      Precedence: 10
+      Description: A group people trained to look after the data in the db
+
+##### Cognito User Pool #####
+
+##### API Gateway #####
+
+Globals:
+  Api:
+    Auth:
+      Authorizers:
+        CognitoAuthorizer:
+          UserPoolArn: !GetAtt CognitoUserPool.Arn
 
 Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+##### API Gateway #####

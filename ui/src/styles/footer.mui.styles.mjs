@@ -8,6 +8,9 @@ export const styles = {
     },
     normal: { textAlign: "center", py: 1, color: "white", fontSize: 13 },
   },
-  appBar: { top: "auto", bottom: 0 },
-  button: { display: "flex", mx: "auto", color: "white" },
+  appBar: { top: "auto", bottom: 0, minWidth: "fit-content" },
+  button: {
+    icon: { display: "flex", mx: "auto", color: "white" },
+    box: { display: "flex", alignItems: "center", justifyContent: "center" },
+  },
 };

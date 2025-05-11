@@ -1,0 +1,11 @@
+like to do:
+
+TODO - acceptance tests
+
+        setup https://github.com/maitojepoy/cognito-local-docker to be able to run the application locally for testing
+        https://medium.com/@freonius/test-an-aws-api-gateway-locally-b869249090f6
+        move current local stuff to the main folder
+
+        do a combination of local stack and jagregory/cognito-local:latest
+
+TODO - need to make a new branch on aws for testing purposes so that i can manual test there with the actual services if need be

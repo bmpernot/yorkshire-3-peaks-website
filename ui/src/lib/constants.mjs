@@ -1,0 +1,16 @@
+const USER_ROLES = {
+  GUEST: "Guest",
+  USER: "User",
+  ORGANISER: "Organiser",
+  ADMIN: "Admin",
+};
+const USER_ROLES_IN_ORDER_OF_PRECEDENCE = [USER_ROLES.ADMIN, USER_ROLES.ORGANISER, USER_ROLES.USER, USER_ROLES.GUEST];
+const RESTRICTED_PAGES = {
+  "/user/account": USER_ROLES.USER,
+  "/user/profile": USER_ROLES.USER,
+  "/event/register": USER_ROLES.USER,
+  "/organiser": USER_ROLES.ORGANISER,
+  "/admin": USER_ROLES.ADMIN,
+};
+
+export { USER_ROLES, USER_ROLES_IN_ORDER_OF_PRECEDENCE, RESTRICTED_PAGES };

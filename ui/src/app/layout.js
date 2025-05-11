@@ -1,44 +1,36 @@
-"use client";
-
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
-import { ThemeProvider, createTheme, Container } from "@mui/material";
-import { globalThemeOptions } from "../styles/globalThemeOptions.mjs";
-import { useEffect, useState } from "react";
-import App from "./page.js";
+import { Container } from "@mui/material";
+import styles from "@/src/styles/page.module.css";
 
-import Navbar from "../utils/Navbar.mjs";
-import Footer from "../utils/Footer.mjs";
+import Navbar from "@/src/components/common/Navbar.mjs";
+import Footer from "@/src/components/common/Footer.mjs";
+import ClientThemeProvider from "@/src/components/common/ClientThemeProvider.mjs";
+import ConfigureAmplifyClientSide from "@/src/app/amplify-cognito-config";
+import { UserProvider } from "@/src/utils/userContext";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout() {
-  const theme = createTheme(globalThemeOptions);
-
-  const [pageView, setPageView] = useState("home");
-  const [user, setUser] = useState({
-    firstName: "Bruce",
-    lastName: "Wayne",
-    email: "bruce.wayne@waynecorp.com",
-    number: "01234567890",
-    iceNumber: "01234567891",
-    role: "admin",
-  });
-
-  useEffect(() => {
-    globalThis.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [pageView]);
-
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider theme={theme}>
-          <Navbar user={user} setPageView={setPageView} />
-          <Container maxWidth="xl">
-            <App user={user} setUser={setUser} pageView={pageView} />
-          </Container>
-          <Footer />
-        </ThemeProvider>
+        <ClientThemeProvider>
+          <ToastContainer position="bottom-right" />
+          <UserProvider>
+            <Navbar />
+            <ConfigureAmplifyClientSide />
+            <Container maxWidth="xl">
+              <main data-cy="body" className={styles.main}>
+                {children}
+              </main>
+            </Container>
+            <Footer />
+          </UserProvider>
+        </ClientThemeProvider>
       </body>
     </html>
   );

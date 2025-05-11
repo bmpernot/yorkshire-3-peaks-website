@@ -1,14 +1,11 @@
-const settings = ["profile", "account", "logout"];
+const settings = ["profile", "account", "sign out"];
 
 const pages = [
   "home",
-  "route",
-  "rules",
   {
-    label: "events",
-    links: ["event", "promotion"],
+    label: "event",
+    links: ["current event", "route", "rules", "results", "promotion"],
   },
-  "results",
   "organisers",
   "admin",
 ];
@@ -57,20 +54,20 @@ export default class homePage {
 
     pages.forEach((page) => {
       if (typeof page === "object") {
-        cy.get(`@nav-menu`).find(`[data-cy=${page.label}] [data-cy=button]`).should("be.visible").click();
+        cy.get(`@nav-menu`).find(`[data-cy="${page.label}"] [data-cy=button]`).should("be.visible").click();
         page.links.forEach((link) => {
-          cy.get(`[data-cy=${page.label}-dropdown-${link}]`).should("be.visible");
+          cy.get(`[data-cy="${page.label}-dropdown-${link}"]`).should("be.visible");
         });
 
         // close the drop down
         if (Cypress.config("viewportWidth") < 900) {
-          cy.get(`[data-cy=${page.label}-dropdown]`).click(200, 100);
+          cy.get(`[data-cy="${page.label}-dropdown"]`).click(200, 100);
           cy.get("[data-cy=small-nav-menu] [data-cy=button]").click();
         } else {
-          cy.get(`[data-cy=${page.label}-dropdown]`).click();
+          cy.get(`[data-cy="${page.label}-dropdown"]`).click();
         }
       } else {
-        cy.get(`@nav-menu`).find(`[data-cy=${page}]`).should("be.visible");
+        cy.get(`@nav-menu`).find(`[data-cy="${page}"]`).should("be.visible");
       }
     });
 
@@ -82,7 +79,7 @@ export default class homePage {
     cy.get("[data-cy=user-settings]").should("be.visible");
     cy.get("[data-cy=user-settings] [data-cy=button]").click();
     settings.forEach((setting) => {
-      cy.get(`[data-cy=user-settings-dropdown-${setting}]`).should("be.visible");
+      cy.get(`[data-cy="user-settings-dropdown-${setting}"]`).should("be.visible");
     });
 
     return this;
@@ -94,13 +91,16 @@ export default class homePage {
         cy.get("[data-cy=home]").click();
       },
       Route: () => {
-        cy.get("[data-cy=route]").click();
+        cy.get("[data-cy=event] [data-cy=button]").click();
+        cy.get("[data-cy=event-dropdown-route]").click();
       },
       Rules: () => {
-        cy.get("[data-cy=rules]").click();
+        cy.get("[data-cy=event] [data-cy=button]").click();
+        cy.get("[data-cy=event-dropdown-rules]").click();
       },
       Results: () => {
-        cy.get("[data-cy=results]").click();
+        cy.get("[data-cy=event] [data-cy=button]").click();
+        cy.get("[data-cy=event-dropdown-results]").click();
       },
       Organisers: () => {
         cy.get("[data-cy=organisers]").click();
@@ -108,8 +108,8 @@ export default class homePage {
       Admin: () => {
         cy.get("[data-cy=admin]").click();
       },
-      Logout: () => {
-        cy.get("[data-cy=user-settings-dropdown-logout]").click();
+      SignOut: () => {
+        cy.get('[data-cy="user-settings-dropdown-sign out"]').click();
       },
       Profile: () => {
         cy.get("[data-cy=user-settings-dropdown-profile]").click();
@@ -118,22 +118,20 @@ export default class homePage {
         cy.get("[data-cy=user-settings-dropdown-account]").click();
       },
       "Current Event": () => {
-        cy.get("[data-cy=events]").click();
-        cy.get('[data-cy="events-dropdown-event"]').click();
+        cy.get("[data-cy=event] [data-cy=button]").click();
+        cy.get('[data-cy="event-dropdown-current event"]').click();
       },
       Promotion: () => {
-        cy.get("[data-cy=events]").click();
-        cy.get('[data-cy="events-dropdown-promotion"]').click();
+        cy.get("[data-cy=event] [data-cy=button]").click();
+        cy.get('[data-cy="event-dropdown-promotion"]').click();
+      },
+      "Sign In": () => {
+        cy.get('[data-cy="signIn-button"]').click();
       },
     };
 
-    if (Cypress.config("viewportWidth") < 900) {
-      cy.get("[data-cy=small-nav-menu]").as("nav-menu");
-      if (navMenu.includes(page.toLowerCase())) {
-        cy.get("[data-cy=small-nav-menu] [data-cy=button]").click();
-      }
-    } else {
-      cy.get("[data-cy=large-nav-menu]").as("nav-menu");
+    if (Cypress.config("viewportWidth") < 900 && navMenu.includes(page.toLowerCase())) {
+      cy.get("[data-cy=small-nav-menu] [data-cy=button]").click();
     }
 
     if (settings.includes(page.toLowerCase())) {
@@ -145,8 +143,26 @@ export default class homePage {
     return this;
   }
 
-  verifyPage(page) {
-    cy.get("[data-cy=body]").should("contain", page);
+  urlShouldBe(page) {
+    cy.url().should("equal", `${Cypress.env("ui_base_url")}/${page}`);
+    return this;
+  }
+
+  verifyRestrictedLinksVisibility({ userProfile, organiser, admin }) {
+    if (userProfile) {
+      cy.get('[data-cy="user-settings"]').should("be.visible");
+    } else {
+      cy.get('[data-cy="signIn-button"]').should("be.visible");
+    }
+    if (Cypress.config("viewportWidth") < 900) {
+      cy.get("[data-cy=small-nav-menu] [data-cy=button]").click();
+    }
+    cy.get('[data-cy="organisers"]').should(organiser ? "be.visible" : "not.exist");
+    cy.get('[data-cy="admin"]').should(admin ? "be.visible" : "not.exist");
+    return this;
+  }
+
+  signOut() {
     return this;
   }
 }

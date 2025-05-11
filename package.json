@@ -19,5 +19,20 @@
     "install:all": "concurrently -m 3 --names \"yorkshire-3-peaks-website,ui,backend\" \"npm install\" \"npm --prefix ui install\" \"npm --prefix backend install\" || echo \"npm install failed, check above for which one\"",
     "lint": "eslint .$DIRECTORY/",
     "lint:fix": "npm run lint -- --fix"
+  },
+  "jest": {
+    "testMatch": [
+      "/__tests__/**/*.[jt]s?(x)",
+      "/?(*.)+(spec|test).[jt]s?(x)",
+      "/__tests__/**/*.mjs?(x)",
+      "/?(*.)+(spec|test).mjs?(x)"
+    ],
+    "moduleFileExtensions": [
+      "mjs",
+      "js"
+    ],
+    "testPathIgnorePatterns": [
+      "**/__tests__/utils"
+    ]
   }
 }

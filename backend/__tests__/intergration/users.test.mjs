@@ -1,337 +1,153 @@
-// import { addUser, getAllUsers, getUserById, updateUser, deleteUser } from "../../../src/handlers/users.mjs";
-import addUser from "../../src/handlers/users/addUser.mjs";
 import getAllUsers from "../../src/handlers/users/getAllUsers.mjs";
-import getUserById from "../../src/handlers/users/getUserById.mjs";
-import updateUser from "../../src/handlers/users/updateUser.mjs";
-import deleteUser from "../../src/handlers/users/deleteUser.mjs";
-import {
-  DynamoDBDocumentClient,
-  PutCommand,
-  ScanCommand,
-  GetCommand,
-  UpdateCommand,
-  DeleteCommand,
-} from "@aws-sdk/lib-dynamodb";
+import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { mockClient } from "aws-sdk-client-mock";
+import { generateUsers, generateGetAllUsersEvent } from "../utils/helperFunctions";
 
 describe("User functions", function () {
-  const ddbMock = mockClient(DynamoDBDocumentClient);
+  const cognitoMock = mockClient(CognitoIdentityProviderClient);
 
   beforeEach(() => {
-    ddbMock.reset();
-  });
-
-  describe("Test addUser", function () {
-    it("Should be able to add a user if the user object is complete", async () => {
-      const userObject = {
-        id: "1",
-        firstName: "Bruce",
-        lastName: "Wayne",
-        email: "bruce.wayne@waynecorp.com",
-        number: "01234567890",
-        iceNumber: "01234567891",
-        role: "user",
-      };
-
-      ddbMock.on(PutCommand).resolves({});
-
-      const event = {
-        httpMethod: "POST",
-        body: JSON.stringify(userObject),
-      };
-
-      const response = await addUser(event);
-
-      expect(response.statusCode).toEqual(201);
-    });
-
-    it("Should not be able to add a user if the user object is not complete", async () => {
-      const event = {
-        httpMethod: "POST",
-        body: JSON.stringify({ id: "id1", name: "name1" }),
-      };
-
-      const response = await addUser(event);
-
-      expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(new Error(`An error occurred when tring to add a user`));
-      expect(response.body.cause).toEqual(new Error(`addUser only accepts the certain data`));
-    });
-
-    it("Should be able to handle errors", async () => {
-      const userObject = {
-        id: "1",
-        firstName: "Bruce",
-        lastName: "Wayne",
-        email: "bruce.wayne@waynecorp.com",
-        number: "01234567890",
-        iceNumber: "01234567891",
-        role: "user",
-      };
-
-      const rejectedValue = new Error("Generic error");
-      ddbMock.on(PutCommand).rejects(rejectedValue);
-
-      const event = {
-        httpMethod: "POST",
-        body: JSON.stringify(userObject),
-      };
-
-      const response = await addUser(event);
-      expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(new Error(`An error occurred when tring to add a user`));
-      expect(response.body.cause).toEqual(new Error(`An error occurred when tring to add a user`));
-      expect(response.body.cause.cause).toEqual(rejectedValue);
-    });
-
-    it("Should reject incorrect http methods", async () => {
-      const event = {
-        httpMethod: "GET",
-      };
-
-      const response = await addUser(event);
-
-      expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(new Error(`addUser only accepts POST method, you tried: ${event.httpMethod}`));
-    });
-  });
-
-  describe("Test getUserById", () => {
-    it("Should get a specific item using id", async () => {
-      const item = { id: "id1" };
-
-      ddbMock.on(GetCommand).resolves({
-        Item: item,
-      });
-
-      const event = {
-        httpMethod: "GET",
-        pathParameters: {
-          id: "id1",
-        },
-      };
-
-      const response = await getUserById(event);
-
-      expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual(item);
-    });
-
-    it("Should be able to handle errors", async () => {
-      const rejectedValue = new Error("Generic error");
-      ddbMock.on(GetCommand).rejects(rejectedValue);
-
-      const id = 1234567890;
-
-      const event = {
-        httpMethod: "GET",
-        pathParameters: {
-          id: id,
-        },
-      };
-
-      const response = await getUserById(event);
-      expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(new Error(`An error occurred when tring to get the user with the id of: ${id}`));
-      expect(response.body.cause).toEqual(
-        new Error(`An error occurred when tring to get the user with the id of: ${id}`),
-      );
-      expect(response.body.cause.cause).toEqual(rejectedValue);
-    });
-
-    it("Should reject incorrect http methods", async () => {
-      const event = {
-        httpMethod: "POST",
-      };
-
-      const response = await getUserById(event);
-
-      expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(new Error(`getUserById only accepts GET method, you tried: ${event.httpMethod}`));
-    });
+    cognitoMock.reset();
   });
 
   describe("Test getAllUsers", () => {
     it("Should return a list of ids", async () => {
-      const items = [{ id: "id1" }, { id: "id2" }];
+      const users = generateUsers(1);
 
-      ddbMock.on(ScanCommand).resolves({
-        Items: items,
+      cognitoMock.on(ListUsersCommand).resolves({
+        Users: users,
       });
 
-      const event = {
-        httpMethod: "GET",
-      };
+      const event = generateGetAllUsersEvent({});
 
       const response = await getAllUsers(event);
 
       expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual(items);
+      expect(JSON.parse(response.body)).toEqual([
+        {
+          sub: "12345678-1234-1234-1234-123456789000",
+          email: "user0@example.com",
+        },
+      ]);
     });
 
     it("Should be able to handle errors", async () => {
       const rejectedValue = new Error("Generic error");
-      ddbMock.on(ScanCommand).rejects(rejectedValue);
+      cognitoMock.on(ListUsersCommand).rejects(rejectedValue);
 
-      const event = {
-        httpMethod: "GET",
-      };
+      const event = generateGetAllUsersEvent({});
 
       const response = await getAllUsers(event);
 
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(new Error("An error occurred when tring to get all users"));
-      expect(response.body.cause).toEqual(new Error("An error occurred when tring to get all users"));
-      expect(response.body.cause.cause).toEqual(rejectedValue);
+      expect(response.body).toEqual("Failed to get all users");
     });
 
-    it("Should reject incorrect http methods", async () => {
-      const event = {
-        httpMethod: "POST",
-      };
+    it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "POST", "PATCH", "CONNECT"])(
+      "Should reject incorrect http methods: %s",
+      async (httpMethod) => {
+        const event = generateGetAllUsersEvent({
+          eventOverrides: {
+            httpMethod,
+          },
+        });
 
-      const response = await getAllUsers(event);
+        const response = await getAllUsers(event);
 
-      expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(new Error(`getAllUsers only accepts GET method, you tried: ${event.httpMethod}`));
-    });
-  });
+        expect(response.statusCode).toEqual(405);
+        expect(response.body).toEqual(`getAllUsers only accepts GET method, you tried: ${httpMethod}`);
+      },
+    );
 
-  describe("Test updateUser", () => {
-    it("Should modify the user", async () => {
-      const userObject = {
-        id: "1",
-        firstName: "Bruce",
-        lastName: "Wayne",
-        email: "bruce.wayne@waynecorp.com",
-        number: "01234567890",
-        iceNumber: "01234567891",
-        role: "user",
-      };
+    it.each(["Organiser", "Admin"])(
+      "Should be able to pass in extra fields for the user object if you are an %s",
+      async (userRole) => {
+        const users = generateUsers(1);
 
-      ddbMock.on(UpdateCommand).resolves({
-        Attributes: userObject,
+        cognitoMock.on(ListUsersCommand).resolves({
+          Users: users,
+        });
+
+        const event = generateGetAllUsersEvent({
+          fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
+          userRole: userRole,
+        });
+
+        const response = await getAllUsers(event);
+
+        expect(response.statusCode).toEqual(200);
+        expect(JSON.parse(response.body)).toEqual([
+          {
+            "custom:ice_number": "01234567000",
+            "custom:notify": "true",
+            email: "user0@example.com",
+            email_verified: "true",
+            family_name: "Smith0",
+            given_name: "Alice0",
+            phone_number: "01234567000",
+            sub: "12345678-1234-1234-1234-123456789000",
+          },
+        ]);
+      },
+    );
+
+    it("Should not be able to pass in extra fields for the user object if you are not an admin", async () => {
+      const users = generateUsers(1);
+
+      cognitoMock.on(ListUsersCommand).resolves({
+        Users: users,
       });
 
-      const event = {
-        httpMethod: "PUT",
-        pathParameters: {
-          id: "id1",
-        },
-        body: JSON.stringify(userObject),
-      };
+      const event = generateGetAllUsersEvent({
+        fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
+      });
 
-      const response = await updateUser(event);
+      const response = await getAllUsers(event);
+
+      expect(response.statusCode).toEqual(403);
+      expect(response.body).toEqual("Unauthorized to get more fields");
+    });
+
+    it("Should be able to handle getting more than 200 users at a time", async () => {
+      const totalUsers = 200;
+      const usersBatch1 = generateUsers(60);
+      const usersBatch2 = generateUsers(60, 60);
+      const usersBatch3 = generateUsers(60, 120);
+      const usersBatch4 = generateUsers(20, 180);
+
+      cognitoMock
+        .on(ListUsersCommand)
+        .resolvesOnce({
+          Users: usersBatch1,
+          PaginationToken: "token1",
+        })
+        .resolvesOnce({
+          Users: usersBatch2,
+          PaginationToken: "token2",
+        })
+        .resolvesOnce({
+          Users: usersBatch3,
+          PaginationToken: "token3",
+        })
+        .resolvesOnce({
+          Users: usersBatch4,
+          PaginationToken: null,
+        });
+      const event = generateGetAllUsersEvent({});
+
+      const response = await getAllUsers(event);
 
       expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual(userObject);
-    });
-
-    it("Should not update a user if no usable fields are passed into the body", async () => {
-      const event = {
-        httpMethod: "PUT",
-        pathParameters: {
-          id: "id1",
-        },
-        body: JSON.stringify({
-          random: "value",
-        }),
-      };
-
-      const response = await updateUser(event);
-
-      expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(new Error("An error occurred when tring to update a user"));
-      expect(response.body.cause).toEqual(new Error(`updateUser needs acceptable data for it to update the user`));
-    });
-
-    it("Should be able to handle errors", async () => {
-      const rejectedValue = new Error("Generic error");
-      ddbMock.on(UpdateCommand).rejects(rejectedValue);
-
-      const event = {
-        httpMethod: "PUT",
-        pathParameters: {
-          id: "id1",
-        },
-        body: JSON.stringify({
-          firstName: "Bruce",
-          lastName: "Wayne",
-          email: "bruce.wayne@waynecorp.com",
-          number: "01234567890",
-          iceNumber: "01234567891",
-          role: "user",
-        }),
-      };
-
-      const response = await updateUser(event);
-
-      expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(new Error("An error occurred when tring to update a user"));
-      expect(response.body.cause).toEqual(new Error(`An error occurred when tring to update the user`));
-      expect(response.body.cause.cause).toEqual(rejectedValue);
-    });
-
-    it("Should reject incorrect http methods", async () => {
-      const event = {
-        httpMethod: "POST",
-      };
-
-      const response = await updateUser(event);
-
-      expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(new Error(`updateUser only accepts PUT method, you tried: ${event.httpMethod}`));
-    });
-  });
-
-  describe("Test deleteUser", () => {
-    it("Should return a list of ids", async () => {
-      ddbMock.on(DeleteCommand).resolves({});
-
-      const id = "12345678";
-
-      const event = {
-        httpMethod: "DELETE",
-        pathParameters: {
-          id: id,
-        },
-      };
-
-      const response = await deleteUser(event);
-
-      expect(response.statusCode).toEqual(204);
-    });
-
-    it("Should be able to handle errors", async () => {
-      const rejectedValue = new Error("Generic error");
-      ddbMock.on(DeleteCommand).rejects(rejectedValue);
-
-      const id = "12345678";
-
-      const event = {
-        httpMethod: "DELETE",
-        pathParameters: {
-          id: id,
-        },
-      };
-
-      const response = await deleteUser(event);
-
-      expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual(new Error(`An error occurred when tring delete user with id: ${id}`));
-      expect(response.body.cause).toEqual(new Error(`An error occurred when tring delete user with id: ${id}`));
-      expect(response.body.cause.cause).toEqual(rejectedValue);
-    });
-
-    it("Should reject incorrect http methods", async () => {
-      const event = {
-        httpMethod: "GET",
-      };
-
-      const response = await deleteUser(event);
-
-      expect(response.statusCode).toEqual(405);
-      expect(response.body).toEqual(new Error(`deleteUser only accepts DELETE method, you tried: ${event.httpMethod}`));
+      const responseBody = JSON.parse(response.body);
+      expect(responseBody.length).toEqual(totalUsers);
+      expect(responseBody[0]).toEqual({
+        sub: "12345678-1234-1234-1234-123456789000",
+        email: "user0@example.com",
+      });
+      expect(responseBody[199]).toEqual({
+        sub: "12345678-1234-1234-1234-123456789199",
+        email: "user199@example.com",
+      });
     });
   });
 });

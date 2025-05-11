@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
     "@aws-sdk/client-dynamodb": "^3.398.0",
     "@aws-sdk/lib-dynamodb": "^3.398.0"
   },
@@ -28,6 +29,9 @@
     "moduleFileExtensions": [
       "mjs",
       "js"
+    ],
+    "testPathIgnorePatterns": [
+      "__tests__/utils"
     ]
   }
 }
