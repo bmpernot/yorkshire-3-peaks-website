@@ -20,8 +20,8 @@ jobs:
 
   test-ui:
     runs-on: self-hosted
-    needs:
-      - format-and-validate-checks
+    # needs:
+    #   - format-and-validate-checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
