@@ -28,7 +28,7 @@ describe("Authorisation", () => {
       authPage
         .fillSignupForm(signupData)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest", (interception) => {
+        .waitForThen("@amplifyAuthRequest-SignUp", (interception) => {
           expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.SignUp");
           expect(interception.request.body).to.include({
             Username: signupData.email,
@@ -67,7 +67,7 @@ describe("Authorisation", () => {
     it("Should validate inputs correctly", () => {
       authPage
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkValidationMessages([
           { field: "fname", errors: ["First name is required."] },
           { field: "lname", errors: ["Last name is required."] },
@@ -98,41 +98,41 @@ describe("Authorisation", () => {
         ])
         .fillSignupForm({ firstName: signupData.firstName })
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkNoValidationMessages(["fname"])
         .clearInputs(["fname"])
         .fillSignupForm({ lastName: signupData.lastName })
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkNoValidationMessages(["lname"])
         .clearInputs(["lname"])
         .fillSignupForm({ number: signupData.number })
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkNoValidationMessages(["number"])
         .clearInputs(["number"])
         .fillSignupForm({ iceNumber: signupData.iceNumber })
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkNoValidationMessages(["iceNumber"])
         .clearInputs(["iceNumber"])
         .fillSignupForm({ email: signupData.email })
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkNoValidationMessages(["email"])
         .clearInputs(["email"])
         .fillSignupForm({ password: signupData.password })
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkNoValidationMessages(["password"])
         .fillSignupForm({ confirmPassword: signupData.confirmPassword })
         .submitForm()
-        .verifyIfApiHasBeenCalled("@amplifyAuthRequest", false)
+        .urlShouldBe("auth/sign-up")
         .checkNoValidationMessages(["confirmPassword"])
         .clearInputs(["password", "confirmPassword"])
         .fillSignupForm(signupData)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest", (interception) => {
+        .waitForThen("@amplifyAuthRequest-SignUp", (interception) => {
           expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.SignUp");
           expect(interception.request.body).to.include({
             Username: signupData.email,
@@ -180,7 +180,7 @@ describe("Authorisation", () => {
       authPage
         .fillSignupForm(signupData)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest")
+        .waitForThen("@amplifyAuthRequest-SignUp")
         .urlShouldBe("auth/sign-up")
         .verifyToast("An error occurred when trying to sign you up")
         .verifyFormError("Invalid message")
@@ -191,7 +191,7 @@ describe("Authorisation", () => {
   describe("Confirm sign up page", () => {
     const email = "bruce.wayne@yorkshire3peaks.com";
     beforeEach(() => {
-      authPage.open(`auth/confirm-signup?email=${email}`);
+      authPage.open(`auth/confirm-signup?email=${email}`).urlShouldBe("auth/confirm-signup");
     });
 
     it("Should be able to allow the user to confirm there account via their email confirmation code", () => {
@@ -200,7 +200,7 @@ describe("Authorisation", () => {
       authPage
         .fillConfirmSignupForm(code)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest", (interception) => {
+        .waitForThen("@amplifyAuthRequest-ConfirmSignUp", (interception) => {
           expect(interception.request.headers["x-amz-target"]).to.equal(
             "AWSCognitoIdentityProviderService.ConfirmSignUp",
           );
@@ -215,7 +215,7 @@ describe("Authorisation", () => {
     it("Should be able to allow the user to resend the code", () => {
       authPage
         .resendCode()
-        .waitForThen("@amplifyAuthRequest", (interception) => {
+        .waitForThen("@amplifyAuthRequest-ResendConfirmationCode", (interception) => {
           expect(interception.request.headers["x-amz-target"]).to.equal(
             "AWSCognitoIdentityProviderService.ResendConfirmationCode",
           );
@@ -256,7 +256,7 @@ describe("Authorisation", () => {
       authPage
         .fillConfirmSignupForm("123456")
         .submitForm()
-        .waitForThen("@amplifyAuthRequest")
+        .waitForThen("@amplifyAuthRequest-ConfirmSignUp")
         .verifyFormError(response.body.message)
         .urlShouldBe("auth/confirm-signup")
         .verifyToast("An error occurred when trying to confirm your account.");
@@ -277,7 +277,7 @@ describe("Authorisation", () => {
       authPage
         .fillSigninForm(signinData)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest", (interception) => {
+        .waitForThen("@amplifyAuthRequest-InitiateAuth", (interception) => {
           expect(interception.request.headers["x-amz-target"]).to.equal(
             "AWSCognitoIdentityProviderService.InitiateAuth",
           );
@@ -285,12 +285,12 @@ describe("Authorisation", () => {
             USERNAME: signinData.email,
           });
         })
-        .waitForThen("@amplifyAuthRequest", (interception) => {
+        .waitForThen("@amplifyAuthRequest-RespondToAuthChallenge", (interception) => {
           expect(interception.request.headers["x-amz-target"]).to.equal(
             "AWSCognitoIdentityProviderService.RespondToAuthChallenge",
           );
         })
-        .waitForThen("@amplifyAuthRequest", (interception) => {
+        .waitForThen("@amplifyAuthRequest-GetUser", (interception) => {
           expect(interception.request.headers["x-amz-target"]).to.equal("AWSCognitoIdentityProviderService.GetUser");
         })
         .urlShouldBe("auth/sign-in");
@@ -305,9 +305,9 @@ describe("Authorisation", () => {
         .checkValidationMessages([{ field: "email", errors: ["Please enter a valid email address."] }])
         .fillSigninForm(signinData)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest")
-        .waitForThen("@amplifyAuthRequest")
-        .waitForThen("@amplifyAuthRequest")
+        .waitForThen("@amplifyAuthRequest-InitiateAuth")
+        .waitForThen("@amplifyAuthRequest-RespondToAuthChallenge")
+        .waitForThen("@amplifyAuthRequest-GetUser")
         .urlShouldBe("auth/sign-in");
     });
 
@@ -323,7 +323,7 @@ describe("Authorisation", () => {
       authPage
         .fillSigninForm(signinData)
         .submitForm()
-        .waitForThen("@amplifyAuthRequest")
+        .waitForThen("@amplifyAuthRequest-InitiateAuth")
         .verifyFormError(response.body.message)
         .urlShouldBe("auth/sign-in")
         .verifyToast("An error occurred when trying to sign you in");
@@ -343,7 +343,7 @@ describe("Authorisation", () => {
         authPage
           .fillForgotPasswordForm(true, email)
           .submitResetPasswordForm()
-          .waitForThen("@amplifyAuthRequest", (interception) => {
+          .waitForThen("@amplifyAuthRequest-ForgotPassword", (interception) => {
             expect(interception.request.headers["x-amz-target"]).to.equal(
               "AWSCognitoIdentityProviderService.ForgotPassword",
             );
@@ -371,7 +371,7 @@ describe("Authorisation", () => {
           ])
           .fillForgotPasswordForm(false, email)
           .submitResetPasswordForm()
-          .waitForThen("@amplifyAuthRequest")
+          .waitForThen("@amplifyAuthRequest-ForgotPassword")
           .urlShouldBe("auth/reset-password");
       });
 
@@ -387,7 +387,7 @@ describe("Authorisation", () => {
         authPage
           .fillForgotPasswordForm(true, email)
           .submitResetPasswordForm()
-          .waitForThen("@amplifyAuthRequest")
+          .waitForThen("@amplifyAuthRequest-ForgotPassword")
           .verifyFormError(response.body.message)
           .urlShouldBe("auth/sign-in")
           .verifyToast(
@@ -398,14 +398,14 @@ describe("Authorisation", () => {
 
     describe("Confirm password reset form", () => {
       beforeEach(() => {
-        authPage.open(`auth/reset-password?email=${email}`);
+        authPage.open(`auth/reset-password?email=${email}`).urlShouldBe("auth/reset-password");
       });
 
       it("Should be able to allow the user to use the code from the reset password email to be able to reset their password", () => {
         authPage
           .fillConfirmResetPasswordForm({ code, password: "Password!1" })
           .submitForm()
-          .waitForThen("@amplifyAuthRequest", (interception) => {
+          .waitForThen("@amplifyAuthRequest-ConfirmForgotPassword", (interception) => {
             expect(interception.request.headers["x-amz-target"]).to.equal(
               "AWSCognitoIdentityProviderService.ConfirmForgotPassword",
             );
@@ -421,7 +421,7 @@ describe("Authorisation", () => {
       it("Should be able to allow the user to resend the code", () => {
         authPage
           .resendCode()
-          .waitForThen("@amplifyAuthRequest", (interception) => {
+          .waitForThen("@amplifyAuthRequest-ForgotPassword", (interception) => {
             expect(interception.request.headers["x-amz-target"]).to.equal(
               "AWSCognitoIdentityProviderService.ForgotPassword",
             );
@@ -451,7 +451,7 @@ describe("Authorisation", () => {
           ])
           .fillConfirmResetPasswordForm({ code, password: "Password!1" })
           .submitForm()
-          .waitForThen("@amplifyAuthRequest")
+          .waitForThen("@amplifyAuthRequest-ConfirmForgotPassword")
           .urlShouldBe("auth/sign-in");
       });
 
@@ -467,7 +467,7 @@ describe("Authorisation", () => {
         authPage
           .fillConfirmResetPasswordForm({ code, password: "Password!1" })
           .submitForm()
-          .waitForThen("@amplifyAuthRequest")
+          .waitForThen("@amplifyAuthRequest-ConfirmForgotPassword")
           .verifyFormError(response.body.message)
           .urlShouldBe("auth/reset-password")
           .verifyToast("An error occurred when trying to reset your password");
@@ -484,10 +484,9 @@ describe("Authorisation", () => {
     describe("Update user details", () => {
       it("Should be able to allow the user to update their details", () => {
         authPage
-          .waitForThen(["@amplifyAuthRequest", "@amplifyAuthRequest"])
           .fillUpdateDetailsForm({ number: "+447786922681", iceNumber: "+447786922682" })
           .submitUpdateDetailsForm()
-          .waitForThen("@amplifyAuthRequest", (interception) => {
+          .waitForThen("@amplifyAuthRequest-UpdateUserAttributes", (interception) => {
             expect(interception.request.headers["x-amz-target"]).to.equal(
               "AWSCognitoIdentityProviderService.UpdateUserAttributes",
             );
@@ -545,7 +544,7 @@ describe("Authorisation", () => {
         authPage
           .fillUpdateDetailsForm({ number: "+447786922681", iceNumber: "+447786922682" })
           .submitUpdateDetailsForm()
-          .waitForThen("@amplifyAuthRequest")
+          .waitForThen("@amplifyAuthRequest-UpdateUserAttributes")
           .verifyFormError(response.body.message)
           .verifyToast("An error occurred when trying to update your details");
       });
@@ -557,10 +556,9 @@ describe("Authorisation", () => {
         const newPassword = "Password!2";
 
         authPage
-          .waitForThen(["@amplifyAuthRequest", "@amplifyAuthRequest"])
           .fillUpdatePasswordForm({ oldPassword, newPassword })
           .submitUpdatePasswordForm()
-          .waitForThen("@amplifyAuthRequest", (interception) => {
+          .waitForThen("@amplifyAuthRequest-ChangePassword", (interception) => {
             expect(interception.request.headers["x-amz-target"]).to.equal(
               "AWSCognitoIdentityProviderService.ChangePassword",
             );
@@ -603,7 +601,7 @@ describe("Authorisation", () => {
         authPage
           .fillUpdatePasswordForm({ oldPassword: "Password!1", newPassword: "Password!2" })
           .submitUpdatePasswordForm()
-          .waitForThen("@amplifyAuthRequest")
+          .waitForThen("@amplifyAuthRequest-ChangePassword")
           .verifyFormError(response.body.message)
           .verifyToast("An error occurred when trying to update your password");
       });
@@ -612,15 +610,14 @@ describe("Authorisation", () => {
     describe("Delete Account", () => {
       it("Should be able to allow the user to delete their details", () => {
         authPage
-          .waitForThen(["@amplifyAuthRequest", "@amplifyAuthRequest"])
           .fillDeleteAccountForm({ email: "jon.snow@yorkshire3peaks.com" })
           .submitDeleteAccountForm()
-          .waitForThen("@amplifyAuthRequest", (interception) => {
+          .waitForThen("@amplifyAuthRequest-DeleteUser", (interception) => {
             expect(interception.request.headers["x-amz-target"]).to.equal(
               "AWSCognitoIdentityProviderService.DeleteUser",
             );
           })
-          .waitForThen("@amplifyAuthRequest", (interception) => {
+          .waitForThen("@amplifyAuthRequest-RevokeToken", (interception) => {
             expect(interception.request.headers["x-amz-target"]).to.equal(
               "AWSCognitoIdentityProviderService.RevokeToken",
             );
@@ -651,7 +648,7 @@ describe("Authorisation", () => {
         authPage
           .fillDeleteAccountForm({ email: "jon.snow@yorkshire3peaks.com" })
           .submitDeleteAccountForm()
-          .waitForThen("@amplifyAuthRequest")
+          .waitForThen("@amplifyAuthRequest-DeleteUser")
           .verifyFormError(response.body.message)
           .urlShouldBe("user/account")
           .verifyToast("An error occurred when trying to delete your account");

@@ -90,16 +90,6 @@ export default class authPage {
     return this;
   }
 
-  verifyIfApiHasBeenCalled(apiCall, boolean) {
-    if (boolean) {
-      // TODO - doesn't work yet
-      cy.get(apiCall).should(`have.been.called`);
-    } else {
-      cy.get(apiCall).should("equal", null);
-    }
-    return this;
-  }
-
   verifyToast(message) {
     cy.get(".Toastify__toast-body > :nth-child(2)").should("contain", message);
     return this;

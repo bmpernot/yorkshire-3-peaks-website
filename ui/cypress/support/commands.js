@@ -195,66 +195,86 @@ Cypress.Commands.add("interceptAmplifyAuth", (overrides = {}) => {
     // Mock responses based on the x-amz-target header value
     switch (target) {
       case "AWSCognitoIdentityProviderService.SignUp":
+        req.alias = `amplifyAuthRequest-SignUp`;
         req.reply(mocks.signUp);
         break;
       case "AWSCognitoIdentityProviderService.ConfirmSignUp":
+        req.alias = `amplifyAuthRequest-ConfirmSignUp`;
         req.reply(mocks.confirmSignUp);
         break;
       case "AWSCognitoIdentityProviderService.SignIn":
+        req.alias = `amplifyAuthRequest-SignIn`;
         req.reply(mocks.signIn);
         break;
       case "AWSCognitoIdentityProviderService.SignOut":
+        req.alias = `amplifyAuthRequest-SignOut`;
         req.reply(mocks.signOut);
         break;
       case "AWSCognitoIdentityProviderService.ResendSignUpCode":
+        req.alias = `amplifyAuthRequest-ResendSignUpCode`;
         req.reply(mocks.resendSignUpCode);
         break;
       case "AWSCognitoIdentityProviderService.AutoSignIn":
+        req.alias = `amplifyAuthRequest-AutoSignIn`;
         req.reply(mocks.autoSignIn);
         break;
       case "AWSCognitoIdentityProviderService.ResetPassword":
+        req.alias = `amplifyAuthRequest-ResetPassword`;
         req.reply(mocks.resetPassword);
         break;
       case "AWSCognitoIdentityProviderService.DeleteUser":
+        req.alias = `amplifyAuthRequest-DeleteUser`;
         req.reply(mocks.deleteUser);
         break;
       case "AWSCognitoIdentityProviderService.UpdateUserAttributes":
+        req.alias = `amplifyAuthRequest-UpdateUserAttributes`;
         req.reply(mocks.updateUserAttributes);
         break;
       case "AWSCognitoIdentityProviderService.ChangePassword":
+        req.alias = `amplifyAuthRequest-ChangePassword`;
         req.reply(mocks.changePassword);
         break;
       case "AWSCognitoIdentityProviderService.RevokeToken":
+        req.alias = `amplifyAuthRequest-RevokeToken`;
         req.reply(mocks.revokeToken);
         break;
       case "AWSCognitoIdentityProviderService.ConfirmForgotPassword":
+        req.alias = `amplifyAuthRequest-ConfirmForgotPassword`;
         req.reply(mocks.confirmForgotPassword);
         break;
       case "AWSCognitoIdentityProviderService.GetAuthSession":
+        req.alias = `amplifyAuthRequest-GetAuthSession`;
         req.reply(mocks.fetchAuthSession);
         break;
       case "AWSCognitoIdentityProviderService.FetchUserAttributes":
+        req.alias = `amplifyAuthRequest-FetchUserAttributes`;
         req.reply(mocks.fetchUserAttributes);
         break;
       case "AWSCognitoIdentityProviderService.GetUser":
+        req.alias = `amplifyAuthRequest-GetUser`;
         req.reply(mocks.getUser);
         break;
       case "AWSCognitoIdentityProviderService.InitiateAuth":
+        req.alias = `amplifyAuthRequest-InitiateAuth`;
         req.reply(mocks.initiateAuth);
         break;
       case "AWSCognitoIdentityProviderService.RespondToAuthChallenge":
+        req.alias = `amplifyAuthRequest-RespondToAuthChallenge`;
         req.reply(mocks.respondToAuthChallenge);
         break;
       case "AWSCognitoIdentityProviderService.ForgotPassword":
+        req.alias = `amplifyAuthRequest-ForgotPassword`;
         req.reply(mocks.forgotPassword);
         break;
       case "AWSCognitoIdentityProviderService.ResendConfirmationCode":
+        req.alias = `amplifyAuthRequest-ResendConfirmationCode`;
         req.reply(mocks.resendConfirmationCode);
         break;
       default:
+        req.alias = `amplifyAuthRequest-unknown`;
         req.reply({ statusCode: 400, body: "Unknown x-amz-target in commands.js" });
     }
-  }).as("amplifyAuthRequest");
+  });
 });
 
 Cypress.Commands.add("stubUser", (role) => {
