@@ -22,6 +22,11 @@ jobs:
     runs-on: self-hosted
     # needs:
     #   - format-and-validate-checks
+    env:
+      NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_ID }}
+      NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_CLIENT_ID }}
+      NEXT_PUBLIC_AWS_REGION: ${{ secrets.NEXT_PUBLIC_AWS_REGION }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,9 +34,11 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           build: npm run build
-          start: npm run start
+          start: npm run start -- --port 5000
           working-directory: ui
-          wait-on: "http://localhost:3000"
+          wait-on: "http://localhost:5000"
+          env: 
+            ui_base_url=http://localhost:5000
 
   test-backend:
     runs-on: self-hosted
