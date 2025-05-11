@@ -20,8 +20,8 @@ jobs:
 
   test-ui:
     runs-on: self-hosted
-    # needs:
-    #   - format-and-validate-checks
+    needs:
+      - format-and-validate-checks
     env:
       NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_ID }}
       NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_CLIENT_ID }}
