@@ -42,7 +42,7 @@ jobs:
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
         with:
-          start: next dev --port 5000
+          start: next run dev:ci
           working-directory: ui
           wait-on: "http://localhost:5000"
           env: ui_base_url=http://localhost:5000
