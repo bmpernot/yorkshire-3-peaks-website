@@ -28,9 +28,8 @@ jobs:
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
         with:
-          start: |
-            npm run build
-            npm run start -- --port 5000
+          build: npm run build
+          start: npm run start -- --port 5000
           working-directory: ui
           wait-on: "http://localhost:5000"
           env: ui_base_url=http://localhost:5000
