@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { Box, Button, FormControl, FormLabel, TextField, Typography } from "@mui/material";
 import { LogoTitle } from "../common/CustomIcons.mjs";
@@ -167,7 +167,15 @@ function ResetPassword() {
   );
 }
 
-export default ResetPassword;
+function SuspendResetPassword() {
+  return (
+    <Suspense>
+      <ResetPassword />
+    </Suspense>
+  );
+}
+
+export default SuspendResetPassword;
 
 const formValidationsResetPassword = [
   {

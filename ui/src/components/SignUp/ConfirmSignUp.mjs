@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { Box, Button, FormControl, FormLabel, TextField, Typography } from "@mui/material";
 import { LogoTitle } from "../common/CustomIcons.mjs";
@@ -131,7 +131,15 @@ function ConfirmSignUp() {
   );
 }
 
-export default ConfirmSignUp;
+function SuspendConfirmSignUp() {
+  return (
+    <Suspense>
+      <ConfirmSignUp />
+    </Suspense>
+  );
+}
+
+export default SuspendConfirmSignUp;
 
 const formValidationConfirmSignUp = [
   {
