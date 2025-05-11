@@ -24,7 +24,7 @@ describe("Authorisation", () => {
       notify: true,
     };
 
-    it("Should allow the user to sign up", () => {
+    it.only("Should allow the user to sign up", () => {
       authPage
         .fillSignupForm(signupData)
         .submitForm()

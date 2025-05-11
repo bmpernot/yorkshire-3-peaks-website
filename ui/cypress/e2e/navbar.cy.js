@@ -29,7 +29,7 @@ describe("NavBar", () => {
         viewportHeight: screenSize.viewportHeight,
       },
       () => {
-        it("Should show all pieces of information in the navbar", () => {
+        it.only("Should show all pieces of information in the navbar", () => {
           cy.stubUser(USER_ROLES.ADMIN);
 
           homePage.open().verifyNavBar();
