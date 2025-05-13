@@ -10,7 +10,6 @@ import ConfigureAmplifyClientSide from "@/src/app/amplify-cognito-config";
 import { UserProvider } from "@/src/utils/userContext";
 
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

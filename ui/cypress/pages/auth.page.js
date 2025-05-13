@@ -91,12 +91,12 @@ export default class authPage {
   }
 
   verifyToast(message) {
-    cy.get(".Toastify__toast-body > :nth-child(2)").should("contain", message);
+    cy.get(".Toastify__toast").should("contain", message);
     return this;
   }
 
   verifyNoToast() {
-    cy.get(".Toastify__toast-body > :nth-child(2)").should("not.exist");
+    cy.get(".Toastify__toast").should("not.exist");
     return this;
   }
 

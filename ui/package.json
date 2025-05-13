@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cy:open": "cypress open",
+    "cy:open": "cypress open --e2e --browser electron",
     "cy:run": "cypress run"
   },
   "dependencies": {
