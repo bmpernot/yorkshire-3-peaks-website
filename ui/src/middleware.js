@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { authenticatedUser } from "./utils/amplify-server.js";
-import { RESTRICTED_PAGES, USER_ROLES_IN_ORDER_OF_PRECEDENCE } from "./lib/constants.mjs";
+import { RESTRICTED_PAGES, USER_ROLES_IN_ORDER_OF_PRECEDENCE, USER_ROLES } from "./lib/constants.mjs";
 import { getHighestUserGroup } from "./lib/commonFunctionsServer.mjs";
-import { USER_ROLES } from "./lib/constants.mjs";
 
 export async function middleware(request) {
   const response = NextResponse.next();
@@ -13,6 +12,7 @@ export async function middleware(request) {
   if (!pageRestrictions) {
     return response;
   }
+
   const clientId = process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID;
   const username = request.cookies.get(`CognitoIdentityServiceProvider.${clientId}.LastAuthUser`)?.value;
   const accessToken = request.cookies.get(`CognitoIdentityServiceProvider.${clientId}.${username}.accessToken`)?.value;

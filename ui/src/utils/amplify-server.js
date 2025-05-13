@@ -1,10 +1,10 @@
-import { authConfig } from "@/src/app/amplify-cognito-config";
+import { authConfig } from "@/src/app/auth-variables";
 import { createServerRunner } from "@aws-amplify/adapter-nextjs";
-import { fetchAuthSession } from "aws-amplify/auth/server";
-import { USER_ROLES } from "../lib/constants.mjs";
-import { getHighestUserGroup } from "../lib/commonFunctionsServer.mjs";
+import { fetchAuthSession } from "@aws-amplify/auth/server";
+import { USER_ROLES } from "@/src/lib/constants.mjs";
+import { getHighestUserGroup } from "@/src/lib/commonFunctionsServer.mjs";
 
-export const { runWithAmplifyServerContext } = createServerRunner({
+export const { runWithAmplifyServerContext, createAuthRouteHandlers } = createServerRunner({
   config: {
     Auth: authConfig,
   },
@@ -27,7 +27,7 @@ export async function authenticatedUser(context) {
 
         return user;
       } catch (error) {
-        console.error(new Error("An error occurred when ", { cause: error }));
+        console.error(new Error("An error occurred when trying to authenticate user", { cause: error }));
       }
     },
   });
