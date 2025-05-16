@@ -15,6 +15,10 @@
   "remoteEnv": {
     "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
   },
+  "containerEnv": {
+    "FORCE_COLOR": "true",
+    "DISPLAY": "${localEnv:WSL_IP}:0"
+  },
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
     "source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket,type=bind",
