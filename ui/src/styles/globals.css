@@ -27,6 +27,7 @@
   --gradient-primary: linear-gradient(45deg, #8dc550 0%, #48aaff 135%);
   --gradient-secondary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   --gradient-hero: linear-gradient(135deg, #eeeeee 0%, #f1f5f9 100%);
+  --gradient-cta: linear-gradient(0deg, #8dc550 0%, #48aaff 135%);
 
   --shadow-color: #0000001a;
 
@@ -46,9 +47,6 @@
     --text-secondary: #d1d5db;
     --text-tertiary: #9ca3af;
 
-    --accent-primary: #10b981;
-    --accent-secondary: #3b82f6;
-
     --gradient-secondary: linear-gradient(135deg, #334155 0%, #1e293b 100%);
     --gradient-hero: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);
 
@@ -67,6 +65,7 @@ body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 a {
@@ -78,11 +77,10 @@ a {
 .page-container {
   background: var(--bg-primary);
   color: var(--text-primary);
-  overflow-x: hidden;
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
-  min-width: 100vw;
+  width: 100vw;
 }
 
 /* Hero Section */
@@ -346,7 +344,7 @@ a {
 /* CTA Section */
 .cta-section {
   padding: 5rem 1rem;
-  background: var(--gradient-primary);
+  background: var(--gradient-cta);
 }
 
 .cta-container {

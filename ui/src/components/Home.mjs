@@ -15,12 +15,7 @@ function Home() {
 
       {/* Event Details Section */}
       <section className="details-section">
-        <div
-          className="details-background"
-          style={{
-            transform: `translateY(20px)`,
-          }}
-        />
+        <div className="details-background" />
         <div className="details-container">
           <h2 className="section-title">Next Event: TBD</h2>
 
@@ -134,7 +129,6 @@ function Home() {
           </div>
 
           <button className="btn-primary">Register Now</button>
-          <p className="cta-note">Early bird pricing until August 1st</p>
         </div>
       </section>
     </div>
