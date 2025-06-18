@@ -1,8 +1,8 @@
 export const globalThemeOptions = {
   palette: {
-    mode: "light",
     primary: {
       main: "#8dc550",
+      contrastText: "#ffffff",
     },
     secondary: {
       main: "#48aaff",

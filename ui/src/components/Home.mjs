@@ -1,3 +1,5 @@
+import { Button } from "@mui/material";
+
 function Home() {
   return (
     <div className="page-container">
@@ -8,7 +10,9 @@ function Home() {
           <h1 className="hero-title">Yorkshire Three Peaks</h1>
           <p className="hero-subtitle">Conquer Pen-y-ghent, Whernside & Ingleborough in one epic day</p>
           <div className="hero-buttons">
-            <button className="btn-primary">Register Now</button>
+            <Button href="/event/current" variant="contained" size="large">
+              Register Now
+            </Button>
           </div>
         </div>
       </section>
@@ -118,7 +122,7 @@ function Home() {
                 <div className="stat-label">Participants</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">£50k+</div>
+                <div className="stat-number">£5k+</div>
                 <div className="stat-label">Raised</div>
               </div>
               <div className="stat-item">
@@ -128,7 +132,9 @@ function Home() {
             </div>
           </div>
 
-          <button className="btn-primary">Register Now</button>
+          <Button href="/event/current" variant="contained" size="large">
+            Register Now
+          </Button>
         </div>
       </section>
     </div>

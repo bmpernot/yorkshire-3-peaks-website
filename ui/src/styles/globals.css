@@ -36,9 +36,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
+    --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-end-rgb: 45, 45, 45;
 
     --bg-primary: #1a202c;
     --bg-secondary: #334155;
@@ -66,6 +66,7 @@ body {
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
   line-height: 1.6;
   overflow-x: hidden;
+  padding-top: 40px;
 }
 
 a {
