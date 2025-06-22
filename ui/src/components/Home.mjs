@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 function Home() {
   return (
     <div className="page-container">
-      {/* Hero Section with Parallax */}
+      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-image" />
         <div className="hero-content">
@@ -34,15 +34,15 @@ function Home() {
               <ul className="details-list">
                 <li className="details-item">
                   <span className="bullet"></span>
-                  24.5 miles total distance
+                  24.6 miles total distance
                 </li>
                 <li className="details-item">
                   <span className="bullet"></span>
-                  1,585m total ascent
+                  4650 feet total ascent
                 </li>
                 <li className="details-item">
                   <span className="bullet"></span>
-                  Target time: 12 hours
+                  Target time: 10 hours
                 </li>
                 <li className="details-item">
                   <span className="bullet"></span>
@@ -156,4 +156,8 @@ const charities = [
   "Diabetes UK",
   "The Prince's Trust",
   "Help for Heroes",
+  "Mountain Rescue England and Wales",
+  "Raynet-UK",
+  "Scouts",
+  "Horton Playing Fields Association",
 ];
