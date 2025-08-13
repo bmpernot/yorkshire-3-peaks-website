@@ -2,10 +2,10 @@ import { Button } from "@mui/material";
 
 function Rules() {
   return (
-    <main class="content-holder">
-      <h1 class="page-title">Rules</h1>
+    <main className="content-holder">
+      <h1 className="page-title">Rules</h1>
 
-      <section class="rule-section">
+      <section className="rule-section">
         <h2>Team Composition</h2>
         <ul>
           <li>
@@ -21,7 +21,7 @@ function Rules() {
         </ul>
       </section>
 
-      <section class="rule-section">
+      <section className="rule-section">
         <h2>Race</h2>
         <ul>
           <li>
@@ -36,7 +36,7 @@ function Rules() {
         </ul>
       </section>
 
-      <section class="rule-section">
+      <section className="rule-section">
         <h2>Event</h2>
         <ul>
           <li>
@@ -51,7 +51,7 @@ function Rules() {
         </ul>
       </section>
 
-      <section class="rule-section">
+      <section className="rule-section">
         <h2>Safety</h2>
         <ul>
           <li>
@@ -62,7 +62,7 @@ function Rules() {
         <h3>Retirements</h3>
         <ul>
           <li>If a member cannot continue, the team must help them reach a retirement checkpoint:</li>
-          <ul class="nested-list">
+          <ul className="nested-list">
             <li>
               <strong>Ribblehead</strong> (before 2nd peak)
             </li>
@@ -80,7 +80,7 @@ function Rules() {
           <li>
             Teams will be <strong>forced to retire</strong> if they don’t reach:
           </li>
-          <ul class="nested-list">
+          <ul className="nested-list">
             <li>
               Ribblehead by <strong>12:30</strong>
             </li>
@@ -92,7 +92,7 @@ function Rules() {
         </ul>
       </section>
 
-      <section class="rule-section">
+      <section className="rule-section">
         <h2>Conduct</h2>
         <ul>
           <li>
@@ -104,7 +104,7 @@ function Rules() {
         </ul>
       </section>
 
-      <section class="rule-section">
+      <section className="rule-section">
         <h2>Equipment</h2>
 
         <h3>Per Person</h3>
@@ -116,7 +116,7 @@ function Rules() {
           <li>Rucksack</li>
           <li>Food for 12 hours</li>
           <li>Clothing (must pass inspection):</li>
-          <ul class="nested-list">
+          <ul className="nested-list">
             <li>
               <strong>Hot weather:</strong> Sun hat, T-shirt, Shorts
             </li>
@@ -135,7 +135,7 @@ function Rules() {
         </ul>
       </section>
 
-      <section class="rule-section">
+      <section className="rule-section">
         <h2>Generic Rules</h2>
         <ul>
           <li>
