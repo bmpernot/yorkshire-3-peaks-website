@@ -1,6 +1,5 @@
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
-import { Container } from "@mui/material";
 import styles from "@/src/styles/page.module.css";
 
 import Navbar from "@/src/components/common/Navbar.mjs";
@@ -22,11 +21,9 @@ export default function RootLayout({ children }) {
           <UserProvider>
             <Navbar />
             <ConfigureAmplifyClientSide />
-            <Container maxWidth="xl">
-              <main data-cy="body" className={styles.main}>
-                {children}
-              </main>
-            </Container>
+            <main data-cy="body" className={styles.main}>
+              {children}
+            </main>
             <Footer />
           </UserProvider>
         </ClientThemeProvider>

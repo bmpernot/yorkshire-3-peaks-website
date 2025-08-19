@@ -7,4 +7,4 @@ cache
 *.toml
 **/backend/.aws-sam/**
 **/backend/.data/**
-**/ui/build/**
+**/ui/.next/**
