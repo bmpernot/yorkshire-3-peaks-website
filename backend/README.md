@@ -58,3 +58,56 @@ You can find more information and examples about filtering Lambda function logs 
 For an introduction to the AWS SAM specification, the AWS SAM CLI, and serverless application concepts, see the [AWS SAM Developer Guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html).
 
 Next, you can use the AWS Serverless Application Repository to deploy ready-to-use apps that go beyond Hello World samples and learn how authors developed their applications. For more information, see the [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/) and the [AWS Serverless Application Repository Developer Guide](https://docs.aws.amazon.com/serverlessrepo/latest/devguide/what-is-serverlessrepo.html).
+
+## DB Table Layout
+
+Due to how Dynamo DB is a NoSql DB and we are trying to use it as one as it is in the free tier, everything that is not the id of the table will be in the data object. All data entries must strictly follow the specification. If specification changes all data must be updated accordingly.
+
+### Events Table:
+
+| Column Name        | Type     | Relationship |
+| ------------------ | -------- | ------------ |
+| eventId            | string   | Primary Key  |
+| ------------------ | -------- | ------------ |
+| startDate          | dateTime | Required     |
+| endDate            | dateTime | Required     |
+| requiredWalkers    | integer  | Required     |
+| requiredVolunteers | integer  | Required     |
+| earlyBirdPrice     | integer  | Required     |
+| price              | integer  | Required     |
+
+### Teams Table:
+
+| Column Name          | Type   | Relationship |
+| -------------------- | ------ | ------------ |
+| teamId               | string | Primary Key  |
+| -------------------- | ------ | ------------ |
+| teamName             | string | Required     |
+| fieldArea (Meters^2) | float  | Required     |
+
+### Team Members Table:
+
+| Column Name            | Type                      | Relationship  |
+| ---------------------- | ------------------------- | ------------- |
+| teamId                 | string                    | Primary Key   |
+| memberId               | string                    | Secondary Key |
+| ---------------------- | ------------------------- | ------------- |
+| additionalRequirements | string                    | Optional      |
+| paid                   | boolean                   | Required      |
+
+### Entries Table:
+
+| Column Name | Type     | Relationship  |
+| ----------- | -------- | ------------- |
+| eventId     | string   | Primary Key   |
+| teamsId     | string   | Secondary Key |
+| ----------- | -------  | ------------- |
+| start       | dateTime | Required      |
+| checkpoint1 | dateTime | Optional      |
+| checkpoint2 | dateTime | Optional      |
+| checkpoint3 | dateTime | Optional      |
+| checkpoint4 | dateTime | Optional      |
+| checkpoint5 | dateTime | Optional      |
+| checkpoint6 | dateTime | Optional      |
+| checkpoint7 | dateTime | Optional      |
+| end         | dateTime | Required      |
