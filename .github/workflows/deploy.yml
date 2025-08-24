@@ -1,16 +1,14 @@
 name: Y3P CI/CD deploy pipeline
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types:
-      - closed
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
     runs-on: self-hosted
+    environment: Production
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
