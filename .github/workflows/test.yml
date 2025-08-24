@@ -23,10 +23,10 @@ jobs:
     needs:
       - format-and-validate-checks
     env:
-      NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_ID }}
-      NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_CLIENT_ID }}
-      NEXT_PUBLIC_AWS_REGION: ${{ secrets.NEXT_PUBLIC_AWS_REGION }}
-      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL}}
+      NEXT_PUBLIC_USER_POOL_ID: ${{ vars.NEXT_PUBLIC_USER_POOL_ID }}
+      NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ vars.NEXT_PUBLIC_USER_POOL_CLIENT_ID }}
+      NEXT_PUBLIC_AWS_REGION: ${{ vars.NEXT_PUBLIC_AWS_REGION }}
+      NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
