@@ -34,5 +34,8 @@
     "testPathIgnorePatterns": [
       "**/__tests__/utils"
     ]
+  },
+  "engines": {
+    "node": "~20.17.0"
   }
 }
