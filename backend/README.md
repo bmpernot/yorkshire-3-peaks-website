@@ -61,7 +61,10 @@ Next, you can use the AWS Serverless Application Repository to deploy ready-to-u
 
 ## DB Table Layout
 
-Due to how Dynamo DB is a NoSql DB and we are trying to use it as one as it is in the free tier, everything that is not the id of the table will be in the data object. All data entries must strictly follow the specification. If specification changes all data must be updated accordingly.
+Due to how Dynamo DB is a NoSql DB and we are trying to use it as one as it is in the free tier. All data entries must strictly follow the specification. If specification changes all data must be updated accordingly.
+
+Ids are generated using uuid version 4 for randomness
+dateTimes are nodes new Date() class output `2024-06-07T12:00:00.000Z`
 
 ### Events Table:
 
@@ -74,6 +77,7 @@ Due to how Dynamo DB is a NoSql DB and we are trying to use it as one as it is i
 | requiredWalkers    | integer  | Required     |
 | requiredVolunteers | integer  | Required     |
 | earlyBirdPrice     | integer  | Required     |
+| earlyBirdCutoff    | integer  | Required     |
 | price              | integer  | Required     |
 
 ### Teams Table:
@@ -83,7 +87,6 @@ Due to how Dynamo DB is a NoSql DB and we are trying to use it as one as it is i
 | teamId               | string | Primary Key  |
 | -------------------- | ------ | ------------ |
 | teamName             | string | Required     |
-| fieldArea (Meters^2) | float  | Required     |
 
 ### Team Members Table:
 
@@ -93,21 +96,22 @@ Due to how Dynamo DB is a NoSql DB and we are trying to use it as one as it is i
 | memberId               | string                    | Secondary Key |
 | ---------------------- | ------------------------- | ------------- |
 | additionalRequirements | string                    | Optional      |
-| paid                   | boolean                   | Required      |
 
 ### Entries Table:
+
+do not enter a value if there is no data for the times
+enter as many times as there are checkpoints but follow the format
 
 | Column Name | Type     | Relationship  |
 | ----------- | -------- | ------------- |
 | eventId     | string   | Primary Key   |
-| teamsId     | string   | Secondary Key |
+| teamId      | string   | Secondary Key |
 | ----------- | -------  | ------------- |
-| start       | dateTime | Required      |
+| cost        | integer  | Required      |
+| paid        | integer  | Required      |
+| start       | dateTime | Optional      |
 | checkpoint1 | dateTime | Optional      |
 | checkpoint2 | dateTime | Optional      |
 | checkpoint3 | dateTime | Optional      |
-| checkpoint4 | dateTime | Optional      |
-| checkpoint5 | dateTime | Optional      |
-| checkpoint6 | dateTime | Optional      |
-| checkpoint7 | dateTime | Optional      |
-| end         | dateTime | Required      |
+| checkpointX | dateTime | Optional      |
+| end         | dateTime | Optional      |
