@@ -9,7 +9,7 @@ const defaultFields = ["sub", "email"];
 
 const cognitoDefaultAttributes = ["sub", "email", "phone_number", "given_name", "family_name", "email_verified"];
 
-const getAllUsers = async (fields = []) => {
+const getUsers = async (fields = []) => {
   let allUsers = [];
   let paginationToken;
 
@@ -47,7 +47,7 @@ const getAllUsers = async (fields = []) => {
   }
 };
 
-export default getAllUsers;
+export default getUsers;
 
 function ensureCustomPrefix(fields, defaultFields) {
   return fields.map((field) => {

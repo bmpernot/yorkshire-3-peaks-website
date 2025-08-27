@@ -1,10 +1,10 @@
-import getAllUsersFunction from "../../services/users/getAllUsers.mjs";
+import getUsersFunction from "../../services/users/getUsers.mjs";
 
-const getAllUsers = async (event) => {
+const getUsers = async (event) => {
   if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
-      body: `getAllUsers only accepts GET method, you tried: ${event.httpMethod}`,
+      body: `getUsers only accepts GET method, you tried: ${event.httpMethod}`,
     };
   }
 
@@ -20,7 +20,7 @@ const getAllUsers = async (event) => {
         body: "Unauthorized to get more fields",
       };
     } else {
-      const users = await getAllUsersFunction(fields);
+      const users = await getUsersFunction(fields);
 
       return {
         statusCode: 200,
@@ -37,4 +37,4 @@ const getAllUsers = async (event) => {
   }
 };
 
-export default getAllUsers;
+export default getUsers;

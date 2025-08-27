@@ -2,7 +2,7 @@
 
 import { API } from "aws-amplify";
 
-export async function getAllUsers() {
+export async function getUsers() {
   try {
     return await API.get("api", "/user/");
   } catch (error) {

@@ -1,4 +1,4 @@
-import getAllUsers from "../../src/handlers/users/getAllUsers.mjs";
+import getUsers from "../../src/handlers/users/getUsers.mjs";
 import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { mockClient } from "aws-sdk-client-mock";
 import { generateUsers, generateGetAllUsersEvent } from "../utils/helperFunctions";
@@ -10,7 +10,7 @@ describe("User functions", function () {
     cognitoMock.reset();
   });
 
-  describe("Test getAllUsers", () => {
+  describe("Test getUsers", () => {
     it("Should return a list of ids", async () => {
       const users = generateUsers(1);
 
@@ -20,7 +20,7 @@ describe("User functions", function () {
 
       const event = generateGetAllUsersEvent({});
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(200);
       expect(JSON.parse(response.body)).toEqual([
@@ -37,7 +37,7 @@ describe("User functions", function () {
 
       const event = generateGetAllUsersEvent({});
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(500);
       expect(response.body).toEqual("Failed to get all users");
@@ -52,10 +52,10 @@ describe("User functions", function () {
           },
         });
 
-        const response = await getAllUsers(event);
+        const response = await getUsers(event);
 
         expect(response.statusCode).toEqual(405);
-        expect(response.body).toEqual(`getAllUsers only accepts GET method, you tried: ${httpMethod}`);
+        expect(response.body).toEqual(`getUsers only accepts GET method, you tried: ${httpMethod}`);
       },
     );
 
@@ -73,7 +73,7 @@ describe("User functions", function () {
           userRole: userRole,
         });
 
-        const response = await getAllUsers(event);
+        const response = await getUsers(event);
 
         expect(response.statusCode).toEqual(200);
         expect(JSON.parse(response.body)).toEqual([
@@ -102,7 +102,7 @@ describe("User functions", function () {
         fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
       });
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(403);
       expect(response.body).toEqual("Unauthorized to get more fields");
@@ -135,7 +135,7 @@ describe("User functions", function () {
         });
       const event = generateGetAllUsersEvent({});
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(200);
       const responseBody = JSON.parse(response.body);
