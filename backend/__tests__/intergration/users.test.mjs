@@ -3,7 +3,7 @@ import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client
 import { mockClient } from "aws-sdk-client-mock";
 import { generateUsers, generateGetAllUsersEvent } from "../utils/helperFunctions";
 
-describe("User functions", function () {
+describe("User functions", () => {
   const cognitoMock = mockClient(CognitoIdentityProviderClient);
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe("User functions", function () {
       const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual("Failed to get all users");
+      expect(response.body).toEqual("Failed to get users");
     });
 
     it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "POST", "PATCH", "CONNECT"])(

@@ -43,7 +43,7 @@ const getUsers = async (fields = []) => {
 
     return filteredUsers;
   } catch (error) {
-    throw new Error("An error occurred when trying to get all users from Cognito", { cause: error });
+    throw new Error("An error occurred when trying to get users from Cognito", { cause: error });
   }
 };
 

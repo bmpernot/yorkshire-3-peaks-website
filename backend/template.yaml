@@ -17,7 +17,7 @@ Resources:
         - x86_64
       MemorySize: 128
       Timeout: 100
-      Description: A function to grab all users' information
+      Description: A function to grab users' information
       Policies:
         - Statement:
             Effect: "Allow"
@@ -33,6 +33,62 @@ Resources:
       Environment:
         Variables:
           COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+
+  getEvents:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/getEvents.default
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: A function to grab events
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+            Resource: !GetAtt EventsTable.Arn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /event/
+            Method: GET
+      Environment:
+        Variables:
+          EVENT_TABLE_ID: !Ref EventsTable
+
+  getEntries:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/getEntries.default
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: A function to grab event entries
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+            Resource: !GetAtt EntriesTable.Arn
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /event/entries/
+            Method: GET
+      Environment:
+        Variables:
+          ENTRIES_TABLE_ID: !Ref EntriesTable
 
   ##### User Resources #####
 

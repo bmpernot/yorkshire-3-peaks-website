@@ -24,6 +24,7 @@ const getUsers = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(users),
       };
     }
@@ -32,7 +33,7 @@ const getUsers = async (event) => {
 
     return {
       statusCode: 500,
-      body: "Failed to get all users",
+      body: "Failed to get users",
     };
   }
 };
