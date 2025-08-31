@@ -8,8 +8,17 @@ const getEntries = async (event) => {
     };
   }
 
+  if (!event.queryStringParameters.eventId) {
+    return {
+      statusCode: 400,
+      body: `getEntries requires a filter of eventId`,
+    };
+  }
+
   try {
-    const entries = await getEntriesFunction();
+    const eventId = event.queryStringParameters.eventId;
+
+    const entries = await getEntriesFunction(eventId);
 
     return {
       statusCode: 200,

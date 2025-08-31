@@ -3,7 +3,7 @@ import { CognitoIdentityProviderConfig } from "../../utils/infrastructureConfig.
 
 const client = new CognitoIdentityProviderClient(CognitoIdentityProviderConfig);
 
-const userPoolId = process.env.COGNITO_USER_POOL_ID;
+const userPoolId = process.env.COGNITO_USER_POOL_NAME;
 
 const defaultFields = ["sub", "email"];
 
