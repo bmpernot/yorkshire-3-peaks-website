@@ -30,6 +30,7 @@ Resources:
           Properties:
             Path: /user/
             Method: GET
+            RestApiId: !Ref APIGateway
       Environment:
         Variables:
           COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
@@ -58,6 +59,9 @@ Resources:
           Properties:
             Path: /event/
             Method: GET
+            RestApiId: !Ref APIGateway
+            Auth:
+              Authorizer: NONE
       Environment:
         Variables:
           EVENTS_TABLE_NAME: !Ref EventsTable
@@ -66,11 +70,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/users/getEntries.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
+
       Description: A function to grab event entries
       Policies:
         - Statement:
@@ -86,6 +86,9 @@ Resources:
           Properties:
             Path: /event/entries/
             Method: GET
+            RestApiId: !Ref APIGateway
+            Auth:
+              Authorizer: NONE
       Environment:
         Variables:
           EVENTS_TABLE_NAME: !Ref EntriesTable
@@ -153,9 +156,6 @@ Resources:
           KeyType: RANGE
 
   ##### Event Resources #####
-
-  ##### Information Resources #####
-  ##### Information Resources #####
 
   ##### Cognito User Pool #####
 
@@ -289,9 +289,19 @@ Resources:
       Precedence: 10
       Description: A group people trained to look after the data in the db
 
-##### Cognito User Pool #####
+  ##### Cognito User Pool #####
 
-##### API Gateway #####
+  ##### API Gateway #####
+
+  APIGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Domain:
+        DomainName: api.yorkshirepeaks.co.uk
+        CertificateArn: !Sub arn:aws:acm:{AWS::Region}:${AWS::AccountId}:certificate/4f068f57-af87-4721-b205-df7275fbbe25
+        # cert created via console hence why we don't have the ARN reference
+        EndpointConfiguration: EDGE
 
 Globals:
   Api:
@@ -299,9 +309,16 @@ Globals:
       Authorizers:
         CognitoAuthorizer:
           UserPoolArn: !GetAtt CognitoUserPool.Arn
+        DefaultAuthorizer: CognitoAuthorizer
+  Function:
+    Runtime: nodejs20.x
+    Architectures:
+      - x86_64
+    MemorySize: 128
+    Timeout: 100
 
 Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Value: !Sub "https://api.yorkshirepeaks.co.uk/"
 ##### API Gateway #####
