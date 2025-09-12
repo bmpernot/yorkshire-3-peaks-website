@@ -25,12 +25,12 @@ Resources:
               - "cognito-idp:ListUsers"
             Resource: !GetAtt CognitoUserPool.Arn
       Events:
-        Api:
-          Type: Api
+        HttpApiEvent:
+          Type: HttpApi
           Properties:
             Path: /user/
             Method: GET
-            RestApiId: !Ref APIGateway
+            ApiId: !Ref HttpApiGateway
       Environment:
         Variables:
           COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
@@ -54,12 +54,12 @@ Resources:
               - "dynamodb:Scan"
             Resource: !GetAtt EventsTable.Arn
       Events:
-        Api:
-          Type: Api
+        HttpApiEvent:
+          Type: HttpApi
           Properties:
             Path: /event/
             Method: GET
-            RestApiId: !Ref APIGateway
+            ApiId: !Ref HttpApiGateway
             Auth:
               Authorizer: NONE
       Environment:
@@ -70,7 +70,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/users/getEntries.default
-
       Description: A function to grab event entries
       Policies:
         - Statement:
@@ -81,12 +80,12 @@ Resources:
               - "dynamodb:Scan"
             Resource: !GetAtt EntriesTable.Arn
       Events:
-        Api:
-          Type: Api
+        HttpApiEvent:
+          Type: HttpApi
           Properties:
             Path: /event/entries/
             Method: GET
-            RestApiId: !Ref APIGateway
+            ApiId: !Ref HttpApiGateway
             Auth:
               Authorizer: NONE
       Environment:
@@ -293,23 +292,25 @@ Resources:
 
   ##### API Gateway #####
 
-  APIGateway:
-    Type: AWS::Serverless::Api
+  HttpApiGateway:
+    Type: AWS::Serverless::HttpApi
     Properties:
       StageName: Prod
       Domain:
         DomainName: api.yorkshirepeaks.co.uk
-        CertificateArn: !Sub arn:aws:acm:{AWS::Region}:${AWS::AccountId}:certificate/4f068f57-af87-4721-b205-df7275fbbe25
-        # cert created via console hence why we don't have the ARN reference
-        EndpointConfiguration: EDGE
+        CertificateArn: !Sub arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/4f068f57-af87-4721-b205-df7275fbbe25
+        EndpointConfiguration: REGIONAL
+      Auth:
+        Authorizers:
+          OAuth2Authorizer:
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}"
+              audience:
+                - !Ref UserPoolClient
+            IdentitySource: "$request.header.Authorization"
+        DefaultAuthorizer: OAuth2Authorizer
 
 Globals:
-  Api:
-    Auth:
-      Authorizers:
-        CognitoAuthorizer:
-          UserPoolArn: !GetAtt CognitoUserPool.Arn
-        DefaultAuthorizer: CognitoAuthorizer
   Function:
     Runtime: nodejs20.x
     Architectures:

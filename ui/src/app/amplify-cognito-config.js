@@ -17,7 +17,7 @@ export const apiConfig = {
           return {};
         }
 
-        const jtwToken = session?.tokens?.accessToken;
+        const jtwToken = session?.tokens?.accessToken?.jwtToken;
         return { Authorization: `Bearer ${jtwToken}` };
       },
     },
