@@ -6,7 +6,7 @@ Transform:
   - AWS::Serverless-2016-10-31
 
 Resources:
-  ##### User Resources #####
+  ##### API Resources #####
 
   getUsers:
     Type: AWS::Serverless::Function
@@ -23,7 +23,7 @@ Resources:
         HttpApiEvent:
           Type: HttpApi
           Properties:
-            Path: /user/
+            Path: /users
             Method: GET
             ApiId: !Ref HttpApiGateway
       Environment:
@@ -47,7 +47,7 @@ Resources:
         HttpApiEvent:
           Type: HttpApi
           Properties:
-            Path: /event/
+            Path: /events
             Method: GET
             ApiId: !Ref HttpApiGateway
             Auth:
@@ -73,7 +73,7 @@ Resources:
         HttpApiEvent:
           Type: HttpApi
           Properties:
-            Path: /event/entries/
+            Path: /events/entries
             Method: GET
             ApiId: !Ref HttpApiGateway
             Auth:
@@ -82,9 +82,9 @@ Resources:
         Variables:
           EVENTS_TABLE_NAME: !Ref EntriesTable
 
-  ##### User Resources #####
+  ##### API Resources #####
 
-  ##### Event Resources #####
+  ##### DB Resources #####
 
   ### View README.md for the table data layouts ###
 
@@ -144,7 +144,7 @@ Resources:
         - AttributeName: teamId
           KeyType: RANGE
 
-  ##### Event Resources #####
+  ##### DB Resources #####
 
   ##### Cognito User Pool #####
 
