@@ -1,10 +1,10 @@
 import getTeamsFunction from "../../services/events/getTeams.mjs";
 
 const getTeams = async (event) => {
-  if (event.httpMethod !== "GET") {
+  if (event.requestContext.http.method !== "GET") {
     return {
       statusCode: 405,
-      body: `getTeams only accepts GET method, you tried: ${event.httpMethod}`,
+      body: `getTeams only accepts GET method, you tried: ${event.requestContext.http.method}`,
     };
   }
 

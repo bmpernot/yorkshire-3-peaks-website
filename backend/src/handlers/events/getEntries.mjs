@@ -1,10 +1,10 @@
 import getEntriesFunction from "../../services/events/getEntries.mjs";
 
 const getEntries = async (event) => {
-  if (event.httpMethod !== "GET") {
+  if (event.requestContext.http.method !== "GET") {
     return {
       statusCode: 405,
-      body: `getEntries only accepts GET method, you tried: ${event.httpMethod}`,
+      body: `getEntries only accepts GET method, you tried: ${event.requestContext.http.method}`,
     };
   }
 
