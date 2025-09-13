@@ -22,7 +22,7 @@ const getEvents = async () => {
       const data = await ddbDocClient.send(new ScanCommand(params));
 
       if (data.Items) {
-        allEvents.PushManager(...data.Items);
+        allEvents.push(...data.Items);
       }
 
       lastEvaluatedKey = data.LastEvaluatedKey;
