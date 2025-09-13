@@ -17,6 +17,11 @@ import { get } from "aws-amplify/api";
 import Loading from "./common/Loading.mjs";
 import ErrorCard from "./common/ErrorCard.mjs";
 
+// TODO - sort error handling and refresh buttons
+// TODO - reinstate ui
+// TODO - make sure headers are added to call
+// TODO - allow CORS to localhost 3000
+
 function Results() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEventId] = useState(null);
@@ -28,7 +33,7 @@ function Results() {
     try {
       setLoadingMessage("Getting events");
 
-      const { body } = await get({ apiName: "api", path: "/event", options: {} }).response;
+      const { body } = await get({ apiName: "api", path: "event", options: {} }).response;
       const data = await body.json();
       setEvents(data);
 
@@ -52,7 +57,7 @@ function Results() {
 
       setLoadingMessage(`Getting entries for ${new Date(startDate).getFullYear()}`);
       try {
-        const { body } = await get({ apiName: "api", path: `/event/entries?eventId=${eventId}`, options: {} }).response;
+        const { body } = await get({ apiName: "api", path: `event/entries?eventId=${eventId}`, options: {} }).response;
         const data = await body.json();
         // TODO - sort entries based on time finished
         setEntriesCache((prev) => ({ ...prev, [eventId]: data }));
