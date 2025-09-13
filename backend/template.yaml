@@ -12,11 +12,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/users/getUsers.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
       Description: A function to grab users' information
       Policies:
         - Statement:
@@ -38,12 +33,7 @@ Resources:
   getEvents:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users/getEvents.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
+      Handler: src/handlers/events/getEvents.default
       Description: A function to grab events
       Policies:
         - Statement:
@@ -69,7 +59,7 @@ Resources:
   getEntries:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users/getEntries.default
+      Handler: src/handlers/events/getEntries.default
       Description: A function to grab event entries
       Policies:
         - Statement:
@@ -292,13 +282,17 @@ Resources:
 
   ##### API Gateway #####
 
+  # 2 Certs request manually:
+  # - one in us-east-1 for the amplify application - 4f068f57-af87-4721-b205-df7275fbbe25
+  # - one in eu-west-2 for the http-api - aec5a927-bae6-45a0-9ccf-ae918431df25
+
   HttpApiGateway:
     Type: AWS::Serverless::HttpApi
     Properties:
       StageName: Prod
       Domain:
         DomainName: api.yorkshirepeaks.co.uk
-        CertificateArn: !Sub arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/4f068f57-af87-4721-b205-df7275fbbe25
+        CertificateArn: !Sub arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/aec5a927-bae6-45a0-9ccf-ae918431df25
         EndpointConfiguration: REGIONAL
       Auth:
         Authorizers:
