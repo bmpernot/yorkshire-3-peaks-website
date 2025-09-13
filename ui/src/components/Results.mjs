@@ -86,7 +86,7 @@ function Results() {
   }
 
   if (error && error.location === "Page") {
-    return <ErrorCard message={error.message} />;
+    return <ErrorCard error={error.message} />;
   }
 
   // return (
@@ -107,7 +107,7 @@ function Results() {
   //         ))}
   //       </Select>
   //     </FormControl>
-  //      {error && error.location === "Table" ? (<ErrorCard message={error.message}/>) : (
+  //      {error && error.location === "Table" ? (<ErrorCard error={error.message}/>) : (
   //     <Table>
   //       <TableHead>
   //         <TableRow>
