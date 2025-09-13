@@ -305,6 +305,22 @@ Resources:
                 - !Ref UserPoolClient
             IdentitySource: "$request.header.Authorization"
         DefaultAuthorizer: OAuth2Authorizer
+      CorsConfiguration:
+        AllowHeaders:
+          - Authorization
+          - Content-Type
+        AllowOrigins:
+          - http://localhost:3000
+          - https://yorkshirepeaks.co.uk
+          - https://www.yorkshirepeaks.co.uk
+        AllowMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          - PUT
+          - DELETE
+          - POST
+          - PATCH
 
 Globals:
   Function:
@@ -317,5 +333,5 @@ Globals:
 Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod"
-    Value: !Sub "https://api.yorkshirepeaks.co.uk/"
+    Value: "https://api.yorkshirepeaks.co.uk/"
 ##### API Gateway #####
