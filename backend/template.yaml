@@ -286,6 +286,8 @@ Resources:
   # - one in us-east-1 for the amplify application - 4f068f57-af87-4721-b205-df7275fbbe25
   # - one in eu-west-2 for the http-api - aec5a927-bae6-45a0-9ccf-ae918431df25
 
+  # 1 CNAME DNS recorded added to api.yorkshirepeaks.co.uk to api gateway
+
   HttpApiGateway:
     Type: AWS::Serverless::HttpApi
     Properties:
