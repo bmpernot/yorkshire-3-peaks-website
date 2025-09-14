@@ -30,6 +30,30 @@ Resources:
         Variables:
           COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
 
+  getTeams:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/getTeams.default
+      Description: A function to grab teams' information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+            Resource: !GetAtt TeamsTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams
+            Method: GET
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          TEAMS_TABLE_NAME: !Ref TeamsTable
+
   getEvents:
     Type: AWS::Serverless::Function
     Properties:
@@ -68,7 +92,9 @@ Resources:
               - "dynamodb:GetItem"
               - "dynamodb:Query"
               - "dynamodb:Scan"
-            Resource: !GetAtt EntriesTable.Arn
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt TeamsTable.Arn
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -80,7 +106,8 @@ Resources:
               Authorizer: NONE
       Environment:
         Variables:
-          EVENTS_TABLE_NAME: !Ref EntriesTable
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAMS_TABLE_NAME: !Ref TeamsTable
 
   ##### API Resources #####
 
@@ -309,6 +336,14 @@ Resources:
         AllowHeaders:
           - Authorization
           - Content-Type
+          - Access-Control-Allow-Methods
+          - Access-Control-Allow-Origin
+          - Access-Control-Allow-Headers
+          - Accept
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-Requested-With
         AllowOrigins:
           - http://localhost:3000
           - https://yorkshirepeaks.co.uk
