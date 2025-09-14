@@ -9,7 +9,7 @@ const getUsers = async (event) => {
   }
 
   const queryParams = event.queryStringParameters || {};
-  const fields = queryParams.fields.length > 0 ? queryParams.fields.split(",") : undefined;
+  const fields = queryParams.fields && queryParams.fields.length > 0 ? queryParams.fields.split(",") : undefined;
   const claims = event.requestContext.authorizer.jwt.claims;
   const userRole = claims["cognito:groups"] ?? "User";
 

@@ -24,41 +24,62 @@ function generateUsers(numberOfUsers, offset = 0) {
   return users;
 }
 
-function generateGetUsersEvent({ fields = "", userRole, eventOverrides }) {
+function generateTeams(numberOfUsers, offset = 0) {
+  return {};
+}
+
+function generateEntries(numberOfUsers, offset = 0) {
+  return {};
+}
+
+function generateEvent(numberOfUsers, offset = 0) {
+  return {};
+}
+
+function generateHttpApiEvent({
+  queryStringParameters,
+  method = "GET",
+  userRole,
+  eventOverrides,
+  userSignedIn = true,
+}) {
   const event = {
-    queryStringParameters: { fields },
+    queryStringParameters: queryStringParameters || {},
     requestContext: {
-      http: { method: "GET" },
-      authorizer: {
-        jwt: {
-          claims: {
-            sub: "12345678-1234-1234-1234-123456789012",
-            email: "user@example.com",
-            email_verified: "true",
-            "custom:ice_number": "01234567890",
-            "custom:notify": "true",
-            given_name: "John",
-            family_name: "Doe",
-            phone_number: "01234567890",
-            aud: "client_id_abc123",
-            event_id: "a12bc34d-567e-89fa-bc12-3456789defgh",
-            token_use: "id",
-            auth_time: "1700000000",
-            exp: "1700100000",
-            iss: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ABCDEFGHI",
-            iat: "1700000000",
-            username: "user@example.com",
-          },
-        },
-      },
+      http: { method },
     },
   };
 
-  if (userRole) {
-    event.requestContext.authorizer.jwt.claims["cognito:groups"] = userRole;
+  if (userSignedIn) {
+    event.requestContext.authorizer = {
+      jwt: {
+        claims: {
+          sub: "12345678-1234-1234-1234-123456789012",
+          email: "user@example.com",
+          email_verified: "true",
+          "custom:ice_number": "01234567890",
+          "custom:notify": "true",
+          given_name: "John",
+          family_name: "Doe",
+          phone_number: "01234567890",
+          aud: "client_id_abc123",
+          event_id: "a12bc34d-567e-89fa-bc12-3456789defgh",
+          token_use: "id",
+          auth_time: "1700000000",
+          exp: "1700100000",
+          iss: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ABCDEFGHI",
+          iat: "1700000000",
+          username: "user@example.com",
+        },
+      },
+    };
+
+    if (userRole) {
+      event.requestContext.authorizer.jwt.claims["cognito:groups"] = userRole;
+    }
   }
 
   return { ...event, ...eventOverrides };
 }
 
-export { generateUsers, generateGetUsersEvent };
+export { generateUsers, generateHttpApiEvent, generateTeams, generateEntries, generateEvent };
