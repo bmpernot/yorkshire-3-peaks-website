@@ -13,3 +13,5 @@ describe("Event functions", () => {
     it("Should be a to return an error", () => {});
   });
 });
+
+// TODO - make tests

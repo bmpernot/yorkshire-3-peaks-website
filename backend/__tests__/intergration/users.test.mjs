@@ -1,7 +1,7 @@
 import getUsers from "../../src/handlers/users/getUsers.mjs";
 import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { mockClient } from "aws-sdk-client-mock";
-import { generateUsers, generateGetAllUsersEvent } from "../utils/helperFunctions";
+import { generateUsers, generateGetUsersEvent } from "../utils/helperFunctions";
 
 describe("User functions", () => {
   const cognitoMock = mockClient(CognitoIdentityProviderClient);
@@ -18,7 +18,7 @@ describe("User functions", () => {
         Users: users,
       });
 
-      const event = generateGetAllUsersEvent({});
+      const event = generateGetUsersEvent({});
 
       const response = await getUsers(event);
 
@@ -35,7 +35,7 @@ describe("User functions", () => {
       const rejectedValue = new Error("Generic error");
       cognitoMock.on(ListUsersCommand).rejects(rejectedValue);
 
-      const event = generateGetAllUsersEvent({});
+      const event = generateGetUsersEvent({});
 
       const response = await getUsers(event);
 
@@ -46,9 +46,9 @@ describe("User functions", () => {
     it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "POST", "PATCH", "CONNECT"])(
       "Should reject incorrect http methods: %s",
       async (httpMethod) => {
-        const event = generateGetAllUsersEvent({
+        const event = generateGetUsersEvent({
           eventOverrides: {
-            httpMethod,
+            requestContext: { http: { method: httpMethod } },
           },
         });
 
@@ -68,7 +68,7 @@ describe("User functions", () => {
           Users: users,
         });
 
-        const event = generateGetAllUsersEvent({
+        const event = generateGetUsersEvent({
           fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
           userRole: userRole,
         });
@@ -98,7 +98,7 @@ describe("User functions", () => {
         Users: users,
       });
 
-      const event = generateGetAllUsersEvent({
+      const event = generateGetUsersEvent({
         fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
       });
 
@@ -133,7 +133,7 @@ describe("User functions", () => {
           Users: usersBatch4,
           PaginationToken: null,
         });
-      const event = generateGetAllUsersEvent({});
+      const event = generateGetUsersEvent({});
 
       const response = await getUsers(event);
 

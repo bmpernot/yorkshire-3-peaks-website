@@ -24,11 +24,11 @@ function generateUsers(numberOfUsers, offset = 0) {
   return users;
 }
 
-function generateGetAllUsersEvent({ fields = "", userRole, eventOverrides }) {
+function generateGetUsersEvent({ fields = "", userRole, eventOverrides }) {
   const event = {
-    httpMethod: "GET",
     queryStringParameters: { fields },
     requestContext: {
+      http: { method: "GET" },
       authorizer: {
         jwt: {
           claims: {
@@ -61,4 +61,4 @@ function generateGetAllUsersEvent({ fields = "", userRole, eventOverrides }) {
   return { ...event, ...eventOverrides };
 }
 
-export { generateUsers, generateGetAllUsersEvent };
+export { generateUsers, generateGetUsersEvent };
