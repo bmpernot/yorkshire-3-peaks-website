@@ -42,6 +42,7 @@ Resources:
               - "dynamodb:GetItem"
               - "dynamodb:Query"
               - "dynamodb:Scan"
+              - "dynamodb:BatchGetItem"
             Resource: !GetAtt TeamsTable.Arn
       Events:
         HttpApiEvent:
@@ -92,6 +93,7 @@ Resources:
               - "dynamodb:GetItem"
               - "dynamodb:Query"
               - "dynamodb:Scan"
+              - "dynamodb:BatchGetItem"
             Resource:
               - !GetAtt EntriesTable.Arn
               - !GetAtt TeamsTable.Arn
