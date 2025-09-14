@@ -8,14 +8,14 @@ const getTeams = async (event) => {
     };
   }
 
-  if (!event.queryStringParameters.teamId) {
+  if (!event.queryStringParameters.teamIds) {
     return {
       statusCode: 400,
-      body: `getTeams requires a filter of teamId`,
+      body: `getTeams requires a filter of teamIds`,
     };
   }
 
-  const teamIds = event.queryStringParameters.teamId.split(",");
+  const teamIds = event.queryStringParameters.teamIds.split(",");
 
   try {
     const teams = await getTeamsFunction(teamIds);

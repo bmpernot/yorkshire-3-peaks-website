@@ -5,7 +5,7 @@ import { DynamoDBClientConfig } from "../../utils/infrastructureConfig.mjs";
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-const teamsTableName = process.env.TEAMS_TABLE_NAME;
+const teamsTableName = process.env.TEAMS_TABLE_NAME || "TeamsTable";
 
 const getTeamsFunction = async (teamIds) => {
   try {
