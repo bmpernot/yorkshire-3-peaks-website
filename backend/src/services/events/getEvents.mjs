@@ -30,7 +30,7 @@ const getEvents = async () => {
 
     return allEvents;
   } catch (error) {
-    throw new Error("An error occurred when trying to get events from DynamoDB", { cause: error });
+    throw new Error("Failed to get events", { cause: error });
   }
 };
 

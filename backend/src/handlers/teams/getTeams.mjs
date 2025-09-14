@@ -1,4 +1,4 @@
-import getTeamsFunction from "../../services/events/getTeams.mjs";
+import getTeamsFunction from "../../services/teams/getTeams.mjs";
 
 const getTeams = async (event) => {
   if (event.requestContext.http.method !== "GET") {
@@ -8,8 +8,17 @@ const getTeams = async (event) => {
     };
   }
 
+  if (!event.queryStringParameters.teamId) {
+    return {
+      statusCode: 400,
+      body: `getTeams requires a filter of teamId`,
+    };
+  }
+
+  const teamIds = event.queryStringParameters.teamId.split(",");
+
   try {
-    const teams = await getTeamsFunction();
+    const teams = await getTeamsFunction(teamIds);
 
     return {
       statusCode: 200,

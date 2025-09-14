@@ -15,6 +15,13 @@ const getEntries = async (event) => {
     };
   }
 
+  if (event.queryStringParameters.eventId.split(",").length > 1) {
+    return {
+      statusCode: 400,
+      body: `getEntries only accepts one eventId at a time`,
+    };
+  }
+
   try {
     const eventId = event.queryStringParameters.eventId;
 
