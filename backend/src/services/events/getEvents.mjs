@@ -5,7 +5,7 @@ import { DynamoDBClientConfig } from "../../utils/infrastructureConfig.mjs";
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-const eventsTableName = process.env.EVENTS_TABLE_NAME;
+const eventsTableName = process.env.EVENTS_TABLE_NAME || "EventsTable";
 
 const getEvents = async () => {
   const allEvents = [];

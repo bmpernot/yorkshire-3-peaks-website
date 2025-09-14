@@ -6,7 +6,7 @@ import getTeamsFunction from "../teams/getTeams.mjs";
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-const entriesTableName = process.env.ENTRIES_TABLE_NAME;
+const entriesTableName = process.env.ENTRIES_TABLE_NAME || "EntriesTable";
 
 const getEntriesFunction = async (eventId) => {
   const allEntries = await getEntriesForEventId(eventId);

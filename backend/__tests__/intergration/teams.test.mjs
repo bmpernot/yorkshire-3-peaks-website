@@ -43,7 +43,7 @@ describe("Team functions", () => {
       expect(JSON.parse(result.body)).toHaveLength(3);
     });
 
-    it("Should throw an error if no team ids are passed in", async () => {
+    it("Should return an error if no team ids are passed in", async () => {
       const event = generateHttpApiEvent({});
 
       const result = await getTeams(event);
@@ -52,7 +52,7 @@ describe("Team functions", () => {
       expect(result.statusCode).toEqual(400);
     });
 
-    it("Should throw an error if an error occurs during the lookup", async () => {
+    it("Should return an error if an error occurs during the lookup", async () => {
       const mockTeams = generateTeams(1);
       const teamId = mockTeams[0].teamId;
 
@@ -67,5 +67,3 @@ describe("Team functions", () => {
     });
   });
 });
-
-// TODO - make tests
