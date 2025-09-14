@@ -2,29 +2,27 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { get } from "aws-amplify/api";
-// import {
-//   Box,
-//   FormControl,
-//   InputLabel,
-//   MenuItem,
-//   Select,
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableRow,
-// } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import Loading from "./common/Loading.mjs";
 import ErrorCard from "./common/ErrorCard.mjs";
 
+// TODO - sort out ui to generate the table based on the data being presented as not all data will be there
 // TODO - sort error handling and refresh buttons
-// TODO - reinstate ui
-// TODO - make sure headers are added to call
-// TODO - allow CORS to localhost 3000
 
 function Results() {
   const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEventId] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [entriesCache, setEntriesCache] = useState({});
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [error, setError] = useState(false);
@@ -33,13 +31,15 @@ function Results() {
     try {
       setLoadingMessage("Getting events");
 
-      const { body } = await get({ apiName: "api", path: "event", options: {} }).response;
+      const { body } = await get({ apiName: "api", path: "events", options: {} }).response;
       const data = await body.json();
+      data.sort((a, b) => {
+        return new Date(b.startDate).valueOf() - new Date(a.startDate).valueOf();
+      });
       setEvents(data);
 
       if (data.length > 0 && !selectedEvent) {
-        // TODO - sort data and grab the latest event
-        setSelectedEventId(data[0]);
+        setSelectedEvent(data[0]);
       }
     } catch (err) {
       console.error("Failed to fetch events", err);
@@ -50,16 +50,25 @@ function Results() {
 
   const fetchEntries = useCallback(
     async (selectedEvent) => {
-      const { id: eventId, startDate } = selectedEvent;
+      const { eventId, startDate } = selectedEvent;
       if (entriesCache[eventId]) {
         return;
       }
 
       setLoadingMessage(`Getting entries for ${new Date(startDate).getFullYear()}`);
       try {
-        const { body } = await get({ apiName: "api", path: `event/entries?eventId=${eventId}`, options: {} }).response;
+        const { body } = await get({ apiName: "api", path: `events/entries?eventId=${eventId}`, options: {} }).response;
         const data = await body.json();
-        // TODO - sort entries based on time finished
+        data.forEach((entry) => {
+          if (entry.start && entry.end) {
+            entry.time = new Date(entry.end).valueOf() - new Date(entry.start).valueOf();
+          }
+        });
+        data.sort((a, b) => {
+          const aTime = a.time || 9999999999;
+          const bTime = b.time || 9999999999;
+          return aTime - bTime;
+        });
         setEntriesCache((prev) => ({ ...prev, [eventId]: data }));
       } catch (err) {
         console.error("Failed to fetch entries", err);
@@ -79,12 +88,9 @@ function Results() {
     if (selectedEvent) {
       fetchEntries(selectedEvent);
     }
-  }, [selectedEvent, fetchEntries]);
+  }, [selectedEvent]);
 
   const entries = selectedEvent ? entriesCache[selectedEvent] || [] : [];
-
-  console.log("events", events);
-  console.log("entries", entries);
 
   if (loadingMessage) {
     return <Loading message={loadingMessage} />;
@@ -94,51 +100,53 @@ function Results() {
     return <ErrorCard error={error.message} />;
   }
 
-  // return (
-  //   <Box p={4}>
-  //     <h1>Results</h1>
+  return (
+    <Box p={4}>
+      <h1>Results</h1>
 
-  //     <FormControl sx={{ minWidth: 200, mb: 3 }}>
-  //       <InputLabel id="event-select-label">Select Event</InputLabel>
-  //       <Select
-  //         labelId="event-select-label"
-  //         value={selectedEvent || ""}
-  //         onChange={(e) => setSelectedEventId(e.target.value)}
-  //       >
-  //         {events.map((event) => (
-  //           <MenuItem key={event.id} value={event.id}>
-  //             {event.year} - {event.name}
-  //           </MenuItem>
-  //         ))}
-  //       </Select>
-  //     </FormControl>
-  //      {error && error.location === "Table" ? (<ErrorCard error={error.message}/>) : (
-  //     <Table>
-  //       <TableHead>
-  //         <TableRow>
-  //           <TableCell>Start</TableCell>
-  //           <TableCell>Checkpoint 1</TableCell>
-  //           <TableCell>Checkpoint 2</TableCell>
-  //           <TableCell>Checkpoint 3</TableCell>
-  //           <TableCell>Checkpoint X</TableCell>
-  //           <TableCell>End</TableCell>
-  //         </TableRow>
-  //       </TableHead>
-  //       <TableBody>
-  //         {entries.map((row, i) => (
-  //           <TableRow key={i}>
-  //             <TableCell>{row.start || "-"}</TableCell>
-  //             <TableCell>{row.checkpoint1 || "-"}</TableCell>
-  //             <TableCell>{row.checkpoint2 || "-"}</TableCell>
-  //             <TableCell>{row.checkpoint3 || "-"}</TableCell>
-  //             <TableCell>{row.checkpointX || "-"}</TableCell>
-  //             <TableCell>{row.end || "-"}</TableCell>
-  //           </TableRow>
-  //         ))}
-  //       </TableBody>
-  //     </Table>
-  //    )}
-  //   </Box>
-  // );
+      <FormControl sx={{ minWidth: 200, mb: 3 }}>
+        <InputLabel id="event-select-label">Select Event</InputLabel>
+        <Select
+          labelId="event-select-label"
+          value={selectedEvent || ""}
+          onChange={(e) => setSelectedEvent(e.target.value)}
+        >
+          {events.map((event) => (
+            <MenuItem key={event.id} value={event.id}>
+              {event.year} - {event.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {error && error.location === "Table" ? (
+        <ErrorCard error={error.message} />
+      ) : (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Start</TableCell>
+              <TableCell>Checkpoint 1</TableCell>
+              <TableCell>Checkpoint 2</TableCell>
+              <TableCell>Checkpoint 3</TableCell>
+              <TableCell>Checkpoint X</TableCell>
+              <TableCell>End</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {entries.map((row, i) => (
+              <TableRow key={i}>
+                <TableCell>{row.start || "-"}</TableCell>
+                <TableCell>{row.checkpoint1 || "-"}</TableCell>
+                <TableCell>{row.checkpoint2 || "-"}</TableCell>
+                <TableCell>{row.checkpoint3 || "-"}</TableCell>
+                <TableCell>{row.checkpointX || "-"}</TableCell>
+                <TableCell>{row.end || "-"}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </Box>
+  );
 }
 export default Results;
