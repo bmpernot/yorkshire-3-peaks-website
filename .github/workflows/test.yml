@@ -18,6 +18,19 @@ jobs:
       - name: Lint check
         run: npm run lint
 
+  test-ui-components:
+    runs-on: self-hosted
+    needs:
+      - format-and-validate-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Run component tests
+        run: npm run test
+        working-directory: "ui"
+
   test-ui:
     runs-on: self-hosted
     needs:
