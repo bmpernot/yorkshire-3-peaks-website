@@ -9,3 +9,6 @@ TODO - acceptance tests
         do a combination of local stack and jagregory/cognito-local:latest
 
 TODO - need to make a new branch on aws for testing purposes so that i can manual test there with the actual services if need be
+
+NEED TODO BEFORE MERGE:
+- need to update the amplify config to node 22.19.0 so that the new tech can work and build 

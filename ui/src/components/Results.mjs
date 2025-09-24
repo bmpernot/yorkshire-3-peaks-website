@@ -2,23 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { get } from "aws-amplify/api";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Select, IconButton, Paper } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { Refresh } from "@mui/icons-material";
 import Loading from "./common/Loading.mjs";
 import ErrorCard from "./common/ErrorCard.mjs";
-
-// TODO - sort out ui to generate the table based on the data being presented as not all data will be there
-// TODO - sort error handling and refresh buttons
 
 function Results() {
   const [events, setEvents] = useState([]);
@@ -49,13 +37,16 @@ function Results() {
   }, []);
 
   const fetchEntries = useCallback(
-    async (selectedEvent) => {
+    async ({ selectedEvent, forceRefresh = false }) => {
       const { eventId, startDate } = selectedEvent;
-      if (entriesCache[eventId]) {
+      if (!forceRefresh && entriesCache[eventId]) {
+        setLoadingMessage(false);
         return;
       }
 
-      setLoadingMessage(`Getting entries for ${new Date(startDate).getFullYear()}`);
+      const date = new Date(startDate);
+
+      setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth()}${date.getFullYear()}`);
       try {
         const { body } = await get({ apiName: "api", path: `events/entries?eventId=${eventId}`, options: {} }).response;
         const data = await body.json();
@@ -86,11 +77,11 @@ function Results() {
 
   useEffect(() => {
     if (selectedEvent) {
-      fetchEntries(selectedEvent);
+      fetchEntries({ selectedEvent });
     }
   }, [selectedEvent]);
 
-  const entries = selectedEvent ? entriesCache[selectedEvent] || [] : [];
+  const entries = selectedEvent ? entriesCache[selectedEvent.eventId] || [] : [];
 
   if (loadingMessage) {
     return <Loading message={loadingMessage} />;
@@ -101,52 +92,106 @@ function Results() {
   }
 
   return (
-    <Box p={4}>
-      <h1>Results</h1>
-
-      <FormControl sx={{ minWidth: 200, mb: 3 }}>
-        <InputLabel id="event-select-label">Select Event</InputLabel>
-        <Select
-          labelId="event-select-label"
-          value={selectedEvent || ""}
-          onChange={(e) => setSelectedEvent(e.target.value)}
-        >
-          {events.map((event) => (
-            <MenuItem key={event.id} value={event.id}>
-              {event.year} - {event.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      {error && error.location === "Table" ? (
-        <ErrorCard error={error.message} />
-      ) : (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Start</TableCell>
-              <TableCell>Checkpoint 1</TableCell>
-              <TableCell>Checkpoint 2</TableCell>
-              <TableCell>Checkpoint 3</TableCell>
-              <TableCell>Checkpoint X</TableCell>
-              <TableCell>End</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {entries.map((row, i) => (
-              <TableRow key={i}>
-                <TableCell>{row.start || "-"}</TableCell>
-                <TableCell>{row.checkpoint1 || "-"}</TableCell>
-                <TableCell>{row.checkpoint2 || "-"}</TableCell>
-                <TableCell>{row.checkpoint3 || "-"}</TableCell>
-                <TableCell>{row.checkpointX || "-"}</TableCell>
-                <TableCell>{row.end || "-"}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+    <Box display="grid" alignContent="left">
+      <h1 className="page-title">Results</h1>
+      <Events
+        events={events}
+        selectedEvent={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+        fetchEvents={fetchEvents}
+      />
+      <Entries entries={entries} fetchEntries={fetchEntries} selectedEvent={selectedEvent} />
     </Box>
   );
 }
+
+function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
+  return (
+    <Box paddingTop="1rem" display="flex" alignItems="center">
+      <FormControl>
+        <InputLabel id="demo-multiple-name-label">Event</InputLabel>
+        <Select
+          labelId="events-list-label"
+          id="events-list"
+          value={selectedEvent?.eventId}
+          sx={{ minWidth: "150px" }}
+          onChange={(event) => {
+            setSelectedEvent(event.target.value);
+          }}
+        >
+          {events.map((event) => {
+            const date = new Date(event.startDate);
+            return (
+              <MenuItem key={event.eventId} value={event.eventId}>
+                {date.getDate()}/{date.getMonth()}/{date.getFullYear()}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
+      <IconButton
+        id="refresh-events"
+        onClick={() => {
+          fetchEvents();
+        }}
+      >
+        <Refresh />
+      </IconButton>
+    </Box>
+  );
+}
+
+function Entries({ entries, fetchEntries, selectedEvent }) {
+  console.log("entries", entries);
+  console.log("stuff", generateColumns(entries));
+
+  return (
+    <Box paddingTop="1rem" display="flex" alignItems="center">
+      <Paper>
+        <DataGrid
+          rows={entries}
+          columns={[]}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
+          pageSizeOptions={entries.length > 5 ? [5, 10] : []}
+          getRowId={(entry) => entry.teamId}
+        />
+      </Paper>
+      <IconButton
+        id="refresh-events"
+        onClick={() => {
+          fetchEntries({ selectedEvent, forceRefresh: true });
+        }}
+      >
+        <Refresh />
+      </IconButton>
+    </Box>
+  );
+}
+
+// TODO - need to finish this
+// TODO - auto generate the columns out of the unique keys from the entries then sprit out the data we know we dont want and create new data of the diffs between each checkpoint but make it hidden column
+
+function generateColumns(entries) {
+  const keys = [...new Set(entries.flatMap((entry) => Object.keys(entry)))];
+  const numberOfCheckpoint = keys.filter((key) => key.startsWith("checkpoint")).length;
+  const columns = [
+    { field: "teamName", headerName: "Team name" },
+    { field: "start", headerName: "Start" },
+    ...generateCheckpointColumnObjects({ numberOfCheckpoint }),
+    { field: "end", headerName: "End" },
+    { field: "time", headerName: "Time" },
+  ];
+  return columns;
+}
+
+function generateCheckpointColumnObjects({ numberOfCheckpoint }) {
+  const columns = [];
+
+  columns.push({});
+  for (let index = 0; index < numberOfCheckpoint; index++) {
+    columns.push({});
+    columns.push({});
+  }
+}
+
 export default Results;

@@ -1,6 +1,6 @@
 import { generateEvents, generateEntries } from "./generators";
 
-function stubEvents({ numberOfEvents, overrides }) {
+function stubEvents({ numberOfEvents, overrides = {} }) {
   const events = generateEvents({ numberOfEvents, overrides: overrides.events });
 
   const errorConfig = overrides?.error;
@@ -20,10 +20,10 @@ function stubEvents({ numberOfEvents, overrides }) {
   return events;
 }
 
-function stubEntries({ events, overrides }) {
+function stubEntries({ events, overrides = {} }) {
   const entries = generateEntries({ events, overrides });
   Object.keys(entries).forEach((key) => {
-    const errorConfig = overrides?.errors?.[key];
+    const errorConfig = overrides.errors?.[key];
     let failCount = errorConfig?.times ?? 0;
 
     cy.intercept(`${Cypress.env("NEXT_PUBLIC_API_URL")}events/entries?eventId=${key}`, (req) => {
