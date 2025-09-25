@@ -122,7 +122,7 @@ function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
           {events.map((event) => {
             const date = new Date(event.startDate);
             return (
-              <MenuItem key={event.eventId} value={event.eventId}>
+              <MenuItem key={event.eventId} value={event.eventId} id={event.eventId}>
                 {date.getDate()}/{date.getMonth()}/{date.getFullYear()}
               </MenuItem>
             );
@@ -147,23 +147,24 @@ function Entries({ entries, fetchEntries, selectedEvent }) {
       <Box paddingTop="1rem" display="flex" alignItems="center" maxWidth="90vw" maxHeight="70vh" overflow="auto">
         <Paper>
           <DataGrid
+            id="entries-table"
             rows={entries}
             columns={generateColumns(entries)}
             initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
             pageSizeOptions={entries.length > 5 ? [5, 10] : []}
-            getRowId={(entry) => entry.teamId}
+            getRowId={(entry) => `team-id-${entry.teamId}`}
           />
         </Paper>
       </Box>
       <Button
-        id="refresh-events"
+        id="refresh-entries"
         variant="contained"
         endIcon={<Refresh />}
         onClick={() => {
           fetchEntries({ selectedEvent, forceRefresh: true });
         }}
       >
-        Refresh Events
+        Refresh Entries
       </Button>
     </>
   );

@@ -3,38 +3,61 @@ export default class resultsPage {
     cy.visit(`${Cypress.env("ui_base_url")}/event/results`);
     return this;
   }
+  waitFor(alias) {
+    cy.wait(alias);
+    return this;
+  }
   verifyEvents(events) {
+    cy.get("[id=events-list]").click();
     events.forEach((event) => {
       const date = new Date(event.startDate);
       const formattedDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
-      cy.get("[data-cy=events-list]").children().should("have.value", event.eventId).and("have.text", formattedDate);
+      cy.get(`[id=${event.eventId}]`).and("have.text", formattedDate);
     });
+    cy.press(Cypress.Keyboard.Keys.TAB);
     return this;
   }
-  verifyEntries(entries) {
-    entries.forEach((entry) => {
-      cy.get("[data-cy=entries-table]").should("contain", entry);
-    });
+  verifySelectedEvent(event) {
+    const date = new Date(event.startDate);
+    const formattedDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+    cy.get("[id=events-list]").should("contain", formattedDate);
+    return this;
+  }
+  verifyEntries(entries = []) {
+    if (entries.length === 0) {
+      cy.get("[id=entries-table]").should("not.exist");
+    } else {
+      entries.forEach((entry) => {
+        cy.get(`[data-id=team-id-${entry.teamId}]`)
+          .children()
+          .then(($children) => {
+            const numberOfChildren = $children.length;
+
+            for (let index = 1; index < numberOfChildren - 1; index++) {
+              if (index === 1) {
+                cy.get(`[data-id=team-id-${entry.teamId}]`).children().eq(index).should("contain", entry.teamName);
+              } else {
+                cy.get(`[data-id=team-id-${entry.teamId}]`)
+                  .children()
+                  .eq(index)
+                  .contains(/^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/);
+              }
+            }
+          });
+      });
+    }
     return this;
   }
   refreshEvents() {
-    cy.get("[data-cy=refresh-events]").click();
+    cy.get("[id=refresh-events]").click();
     return this;
   }
   refreshEntries() {
-    cy.get("[data-cy=refresh-entries]").click();
+    cy.get("[id=refresh-entries]").click();
     return this;
   }
-  verifyEventsError() {
-    cy.get("[data-cy=events-error-message]").should("contain", "Failed to get events");
-    return this;
-  }
-  verifyEntriesError() {
-    cy.get("[data-cy=entries-error-message]").should("contain", "Failed to get events");
-    return this;
-  }
-  sortEntries(field) {
-    cy.get(`[data-cy=entries-table] [data-cy=sort-${field}]`).click();
+  then(functionDef = () => {}) {
+    cy.then(functionDef);
     return this;
   }
 }

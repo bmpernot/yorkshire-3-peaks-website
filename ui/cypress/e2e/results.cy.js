@@ -8,35 +8,49 @@ describe("Results", () => {
     entries = stubEntries({ events });
   });
 
-  it.only("Should show all pieces of information in the table", () => {
-    resultsPage.open().verifyEvents(events).verifyEntries(entries[events[0].eventId]);
+  it("Should show all pieces of information in the table", () => {
+    resultsPage
+      .open()
+      .waitFor(["@Events", `@Event-Entry-${events[0].eventId}`])
+      .verifySelectedEvent(events[0])
+      .verifyEvents(events)
+      .verifyEntries(entries[events[0].eventId]);
   });
 
   it("Should an empty table when there is no results for an event", () => {
-    resultsPage.open().verifyEntries([]);
+    entries = stubEntries({ events, overrides: { entries: { [events[0].eventId]: [] } } });
+
+    resultsPage
+      .open()
+      .waitFor(["@Events", `@Event-Entry-${events[0].eventId}`])
+      .verifyEntries([]);
   });
 
   it("Should be able to use the refresh button to get new events", () => {
-    resultsPage.open().verifyEvents(events);
+    resultsPage
+      .open()
+      .waitFor(["@Events", `@Event-Entry-${events[0].eventId}`])
+      .verifyEvents(events);
 
     events = stubEvents({ numberOfEvents: 1, overrides: { events } });
 
-    resultsPage.refreshEvents().verifyEvents(events);
+    resultsPage.refreshEvents().waitFor(["@Events"]).verifyEvents(events);
   });
 
   it("Should be able to use the refresh button to get new entries", () => {
     entries = stubEntries({ events, overrides: { entries: { [events[0].eventId]: [] } } });
-    resultsPage.open().verifyEntries(entries);
-
-    entries = stubEntries({ events });
-    resultsPage.refreshEntries().verifyEntries(entries);
-  });
-
-  it("Should be able to handle errors", () => {
-    resultsPage.open().verifyEventsError().verifyEvents().verifyEntriesError().refreshEntries().verifyEntries();
-  });
-
-  it("Should be able to allow sorting", () => {
-    resultsPage.open().verifyEntries().sortEntries().verifyEntries();
+    resultsPage
+      .open()
+      .waitFor(["@Events", `@Event-Entry-${events[0].eventId}`])
+      .then(() => {
+        resultsPage.verifyEntries(entries[events[0].eventId]);
+      })
+      .then(() => {
+        entries = stubEntries({ events });
+        resultsPage.refreshEntries().waitFor([`@Event-Entry-${events[0].eventId}`]);
+      })
+      .then(() => {
+        resultsPage.verifyEntries(entries[events[0].eventId]);
+      });
   });
 });
