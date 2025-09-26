@@ -4,7 +4,7 @@ import { ExpandMore } from "@mui/icons-material";
 import { styles } from "../../styles/rules.mui.styles.mjs";
 import BulletedList from "./BulletedList.jsx";
 
-const RuleSection = memo(({ section }) => {
+const RuleSection = memo(function RuleSectionComponent({ section }) {
   const ariaControls = useMemo(() => `${section.id}-content`, [section.id]);
   const headerId = useMemo(() => `${section.id}-header`, [section.id]);
 

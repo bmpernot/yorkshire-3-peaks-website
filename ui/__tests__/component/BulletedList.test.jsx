@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import BulletedList from "../../src/components/Rules/BulletedList.jsx";
+import BulletedList from "@/src/components/Rules/BulletedList.jsx";
 
-vi.mock("../../src/styles/rules.mui.styles.mjs", () => ({
+vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
   styles: {
     ruleListItemIcon: {},
     equipmentListItemIcon: {},

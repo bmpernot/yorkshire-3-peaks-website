@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import RuleSection from "../../src/components/Rules/RuleSection.jsx";
+import RuleSection from "@/src/components/Rules/RuleSection.jsx";
 
-vi.mock("../../src/components/Rules/BulletedList.jsx", () => ({
+vi.mock("@/src/components/Rules/BulletedList.jsx", () => ({
   default: ({ items, type }) => (
     <div data-testid="bulleted-list" data-type={type}>
       {items?.map((item, i) => (
@@ -12,7 +12,7 @@ vi.mock("../../src/components/Rules/BulletedList.jsx", () => ({
   ),
 }));
 
-vi.mock("../../src/styles/rules.mui.styles.mjs", () => ({
+vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
   styles: {
     accordion: {},
     accordionSummary: {},

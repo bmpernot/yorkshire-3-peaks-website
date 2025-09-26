@@ -1,19 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import Rules from "../../src/components/Rules/Rules.jsx";
+import Rules from "@/src/components/Rules/Rules.jsx";
 
-vi.mock("../../src/components/Rules/RuleSection.jsx", () => ({
+vi.mock("@/src/components/Rules/RuleSection.jsx", () => ({
   default: ({ section }) => <div data-testid={`rule-section-${section.id}`}>{section.title}</div>,
 }));
 
-vi.mock("../../src/components/Rules/rulesData.jsx", () => ({
+vi.mock("@/src/components/Rules/rulesData.jsx", () => ({
   rulesData: [
     { id: "team", title: "Team Composition" },
     { id: "race", title: "Race" },
   ],
 }));
 
-vi.mock("../../src/styles/rules.mui.styles.mjs", () => ({
+vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
   styles: {
     pageContainer: {},
     mainTitle: {},
