@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "cy:open": "cypress open --e2e --browser edge",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.6.2",
@@ -22,6 +25,7 @@
     "@mui/x-data-grid": "^8.11.3",
     "aws-amplify": "^6.14.4",
     "dotenv": "^16.5.0",
+    "html-react-parser": "^5.2.6",
     "next": "15.5.3",
     "phone": "^3.1.58",
     "react": "19.1.0",
@@ -30,8 +34,13 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react": "^4.7.0",
     "cypress": "^14.3.0",
     "eslint": "^8",
-    "eslint-config-next": "15.3.2"
+    "eslint-config-next": "15.3.2",
+    "jsdom": "^27.0.0",
+    "vitest": "^3.2.4"
   }
 }

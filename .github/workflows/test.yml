@@ -11,12 +11,36 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14
+          cache: "npm"
       - name: Install dependencies
         run: npm ci
       - name: Format check
         run: npm run format:check
       - name: Lint check
         run: npm run lint
+
+  test-ui-components:
+    runs-on: self-hosted
+    needs:
+      - format-and-validate-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+        working-directory: "ui"
+      - name: Run component tests
+        run: npm run test
+        working-directory: "ui"
 
   test-ui:
     runs-on: self-hosted
@@ -30,6 +54,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14
+          cache: "npm"
       - name: Runs cypress tests
         uses: cypress-io/github-action@v6
         with:
@@ -46,6 +75,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14
+          cache: "npm"
       - name: Install backend dependencies
         run: npm ci
         working-directory: "backend"

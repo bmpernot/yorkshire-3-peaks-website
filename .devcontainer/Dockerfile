@@ -1,4 +1,4 @@
-FROM cypress/browsers:node-22.19.0
+FROM cypress/browsers:22.14.0
 
 SHELL [ "/bin/bash", "-o", "pipefail", "-c" ]
 
