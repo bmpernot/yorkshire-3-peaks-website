@@ -31,7 +31,7 @@ function Results() {
       }
     } catch (err) {
       console.error("Failed to fetch events", err);
-      setError({ location: "Page", message: "Failed to get events" });
+      setError({ message: "Failed to get events" });
       setLoadingMessage(false);
     }
   }, []);
@@ -46,7 +46,7 @@ function Results() {
 
       const date = new Date(startDate);
 
-      setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth()}${date.getFullYear()}`);
+      setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`);
       try {
         const { body } = await get({ apiName: "api", path: `events/entries?eventId=${eventId}`, options: {} }).response;
         const data = await body.json();
@@ -63,7 +63,7 @@ function Results() {
         setEntriesCache((prev) => ({ ...prev, [eventId]: data }));
       } catch (err) {
         console.error("Failed to fetch entries", err);
-        setError({ location: "Table", message: "Failed to get event data" });
+        setError({ message: "Failed to get event entries" });
       } finally {
         setLoadingMessage(false);
       }
@@ -87,7 +87,7 @@ function Results() {
     return <Loading message={loadingMessage} />;
   }
 
-  if (error && error.location === "Page") {
+  if (error) {
     return <ErrorCard error={error.message} />;
   }
 
