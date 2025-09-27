@@ -22,13 +22,19 @@ function Results() {
 
       const { body } = await get({ apiName: "api", path: "events", options: {} }).response;
       const data = await body.json();
-      data.sort((a, b) => {
-        return new Date(b.startDate).valueOf() - new Date(a.startDate).valueOf();
-      });
-      setEvents(data);
 
-      if (data.length > 0 && !selectedEvent) {
-        setSelectedEvent(data[0]);
+      const previousEvents = data
+        .filter((event) => {
+          return new Date(event.startDate).valueOf() < Date.now();
+        })
+        .sort((a, b) => {
+          return new Date(b.startDate).valueOf() - new Date(a.startDate).valueOf();
+        });
+
+      setEvents(previousEvents);
+
+      if (previousEvents.length > 0 && !selectedEvent) {
+        setSelectedEvent(previousEvents[0]);
       }
     } catch (err) {
       console.error("Failed to fetch events", err);
