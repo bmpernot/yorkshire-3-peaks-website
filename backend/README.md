@@ -60,7 +60,7 @@ Next, you can use the AWS Serverless Application Repository to deploy ready-to-u
 Due to how Dynamo DB is a NoSql DB and we are trying to use it as one as it is in the free tier. All data entries must strictly follow the specification. If specification changes all data must be updated accordingly.
 
 Ids are generated using uuid version 4 for randomness
-dateTimes are nodes new Date() class output `2024-06-07T12:00:00.000Z`
+dateTimes are nodes new Date().toISOString() output `2024-06-07T12:00:00.000Z`
 
 ### Events Table:
 
@@ -73,7 +73,7 @@ dateTimes are nodes new Date() class output `2024-06-07T12:00:00.000Z`
 | requiredWalkers    | integer  | Required     |
 | requiredVolunteers | integer  | Required     |
 | earlyBirdPrice     | integer  | Required     |
-| earlyBirdCutoff    | integer  | Required     |
+| earlyBirdCutoff    | dateTime | Required     |
 | price              | integer  | Required     |
 
 ### Teams Table:
@@ -92,6 +92,7 @@ dateTimes are nodes new Date() class output `2024-06-07T12:00:00.000Z`
 | memberId               | string                    | Secondary Key |
 | ---------------------- | ------------------------- | ------------- |
 | additionalRequirements | string                    | Optional      |
+| volunteer              | boolean                   | Optional      |
 
 ### Entries Table:
 
