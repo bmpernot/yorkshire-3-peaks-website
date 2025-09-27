@@ -2,11 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { get } from "aws-amplify/api";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Loading from "../common/Loading.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import Entries from "./Entries.mjs";
 import Events from "./Events.mjs";
+import { styles } from "@/src/styles/results.mui.styles.mjs";
 
 function Results() {
   const [events, setEvents] = useState([]);
@@ -93,7 +94,9 @@ function Results() {
 
   return (
     <Box display="grid" alignContent="left">
-      <h1 className="page-title">Results</h1>
+      <Typography variant="h3" component="h1" align="left" sx={styles.mainTitle}>
+        Results
+      </Typography>
       <Events
         events={events}
         selectedEvent={selectedEvent}
