@@ -1,16 +1,16 @@
-import getAllUsers from "../../src/handlers/users/getAllUsers.mjs";
+import getUsers from "../../src/handlers/users/getUsers.mjs";
 import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { mockClient } from "aws-sdk-client-mock";
-import { generateUsers, generateGetAllUsersEvent } from "../utils/helperFunctions";
+import { generateUsers, generateHttpApiEvent } from "../utils/helperFunctions";
 
-describe("User functions", function () {
+describe("User functions", () => {
   const cognitoMock = mockClient(CognitoIdentityProviderClient);
 
   beforeEach(() => {
     cognitoMock.reset();
   });
 
-  describe("Test getAllUsers", () => {
+  describe("Test getUsers", () => {
     it("Should return a list of ids", async () => {
       const users = generateUsers(1);
 
@@ -18,9 +18,9 @@ describe("User functions", function () {
         Users: users,
       });
 
-      const event = generateGetAllUsersEvent({});
+      const event = generateHttpApiEvent({});
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(200);
       expect(JSON.parse(response.body)).toEqual([
@@ -35,27 +35,27 @@ describe("User functions", function () {
       const rejectedValue = new Error("Generic error");
       cognitoMock.on(ListUsersCommand).rejects(rejectedValue);
 
-      const event = generateGetAllUsersEvent({});
+      const event = generateHttpApiEvent({});
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(500);
-      expect(response.body).toEqual("Failed to get all users");
+      expect(response.body).toEqual("Failed to get users");
     });
 
     it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "POST", "PATCH", "CONNECT"])(
       "Should reject incorrect http methods: %s",
       async (httpMethod) => {
-        const event = generateGetAllUsersEvent({
+        const event = generateHttpApiEvent({
           eventOverrides: {
-            httpMethod,
+            requestContext: { http: { method: httpMethod } },
           },
         });
 
-        const response = await getAllUsers(event);
+        const response = await getUsers(event);
 
         expect(response.statusCode).toEqual(405);
-        expect(response.body).toEqual(`getAllUsers only accepts GET method, you tried: ${httpMethod}`);
+        expect(response.body).toEqual(`getUsers only accepts GET method, you tried: ${httpMethod}`);
       },
     );
 
@@ -68,12 +68,14 @@ describe("User functions", function () {
           Users: users,
         });
 
-        const event = generateGetAllUsersEvent({
-          fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
+        const event = generateHttpApiEvent({
+          queryStringParameters: {
+            fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
+          },
           userRole: userRole,
         });
 
-        const response = await getAllUsers(event);
+        const response = await getUsers(event);
 
         expect(response.statusCode).toEqual(200);
         expect(JSON.parse(response.body)).toEqual([
@@ -98,11 +100,13 @@ describe("User functions", function () {
         Users: users,
       });
 
-      const event = generateGetAllUsersEvent({
-        fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
+      const event = generateHttpApiEvent({
+        queryStringParameters: {
+          fields: "phone_number,given_name,family_name,email_verified,ice_number,custom:notify",
+        },
       });
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(403);
       expect(response.body).toEqual("Unauthorized to get more fields");
@@ -133,9 +137,9 @@ describe("User functions", function () {
           Users: usersBatch4,
           PaginationToken: null,
         });
-      const event = generateGetAllUsersEvent({});
+      const event = generateHttpApiEvent({});
 
-      const response = await getAllUsers(event);
+      const response = await getUsers(event);
 
       expect(response.statusCode).toEqual(200);
       const responseBody = JSON.parse(response.body);

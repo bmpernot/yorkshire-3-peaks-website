@@ -3,13 +3,13 @@ import { CognitoIdentityProviderConfig } from "../../utils/infrastructureConfig.
 
 const client = new CognitoIdentityProviderClient(CognitoIdentityProviderConfig);
 
-const userPoolId = process.env.COGNITO_USER_POOL_ID;
+const userPoolId = process.env.COGNITO_USER_POOL_NAME;
 
 const defaultFields = ["sub", "email"];
 
 const cognitoDefaultAttributes = ["sub", "email", "phone_number", "given_name", "family_name", "email_verified"];
 
-const getAllUsers = async (fields = []) => {
+const getUsers = async (fields = []) => {
   let allUsers = [];
   let paginationToken;
 
@@ -43,11 +43,11 @@ const getAllUsers = async (fields = []) => {
 
     return filteredUsers;
   } catch (error) {
-    throw new Error("An error occurred when trying to get all users from Cognito", { cause: error });
+    throw new Error("An error occurred when trying to get users from Cognito", { cause: error });
   }
 };
 
-export default getAllUsers;
+export default getUsers;
 
 function ensureCustomPrefix(fields, defaultFields) {
   return fields.map((field) => {

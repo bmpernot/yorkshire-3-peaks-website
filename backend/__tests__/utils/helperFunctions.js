@@ -24,12 +24,76 @@ function generateUsers(numberOfUsers, offset = 0) {
   return users;
 }
 
-function generateGetAllUsersEvent({ fields = "", userRole, eventOverrides }) {
+function generateTeams(numberOfTeams, offset = 0) {
+  return Array.from({ length: numberOfTeams }, (_, i) => {
+    const teamId = `team-id-${i + offset + 1}`;
+    const teamName = `team-name-${i + offset + 1}`;
+    return {
+      teamId,
+      teamName,
+    };
+  });
+}
+
+function generateEntries(eventId, teams, offset = 0) {
+  return teams.map((team, i) => {
+    const baseDate = new Date(Date.now() - i - offset * 1000 * 60 * 60 * 24);
+    const checkpoints = [1, 2, 3, 4, 5, 6, 7].reduce((acc, idx) => {
+      if (Math.random() > 0.8) {
+        acc[`checkpoint${idx}`] = new Date(baseDate.valueOf() + 3600000 * idx + Math.random() * 1800000).toISOString();
+      }
+      return acc;
+    }, {});
+
+    return {
+      eventId,
+      teamId: team.teamId,
+      cost: generateRandomNumber({ min: 10, max: 100 }),
+      paid: generateRandomNumber({ min: 0, max: 1 }),
+      start: baseDate.toISOString(),
+      ...checkpoints,
+      end: new Date(baseDate.valueOf() + 3600000 * 8 + Math.random() * 1800000).toISOString(),
+    };
+  });
+}
+
+function generateEvent(numberOfEvents, offset = 0) {
+  return Array.from({ length: numberOfEvents }, (_, i) => {
+    const eventId = `event-id-${i + offset + 1}`;
+    const date = new Date(Date.now() - i - offset * 1000 * 60 * 60 * 24);
+    const startDate = date.toISOString();
+    const endDate = new Date(date.valueOf() + 172800000).toISOString();
+
+    return {
+      eventId,
+      startDate: startDate,
+      endDate: endDate,
+      requiredWalkers: generateRandomNumber({ min: 10, max: 100 }),
+      requiredVolunteers: generateRandomNumber({ min: 5, max: 50 }),
+      earlyBirdPrice: generateRandomNumber({ min: 10, max: 30 }),
+      earlyBirdCutoff: generateRandomNumber({ min: 7, max: 30 }),
+      price: generateRandomNumber({ min: 40, max: 100 }),
+    };
+  });
+}
+
+function generateHttpApiEvent({
+  queryStringParameters,
+  method = "GET",
+  userRole,
+  eventOverrides,
+  userSignedIn = true,
+}) {
   const event = {
-    httpMethod: "GET",
-    queryStringParameters: { fields },
+    queryStringParameters: queryStringParameters || {},
     requestContext: {
-      authorizer: {
+      http: { method },
+    },
+  };
+
+  if (userSignedIn) {
+    event.requestContext.authorizer = {
+      jwt: {
         claims: {
           sub: "12345678-1234-1234-1234-123456789012",
           email: "user@example.com",
@@ -49,14 +113,18 @@ function generateGetAllUsersEvent({ fields = "", userRole, eventOverrides }) {
           username: "user@example.com",
         },
       },
-    },
-  };
+    };
 
-  if (userRole) {
-    event.requestContext.authorizer.claims["cognito:groups"] = userRole;
+    if (userRole) {
+      event.requestContext.authorizer.jwt.claims["cognito:groups"] = userRole;
+    }
   }
 
   return { ...event, ...eventOverrides };
 }
 
-export { generateUsers, generateGetAllUsersEvent };
+function generateRandomNumber({ min, max }) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export { generateUsers, generateHttpApiEvent, generateTeams, generateEntries, generateEvent };

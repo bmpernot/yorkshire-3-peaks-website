@@ -6,18 +6,13 @@ Transform:
   - AWS::Serverless-2016-10-31
 
 Resources:
-  ##### User Resources #####
+  ##### API Resources #####
 
-  getAllUsers:
+  getUsers:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users/getAllUsers.default
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: A function to grab all users' information
+      Handler: src/handlers/users/getUsers.default
+      Description: A function to grab users' information
       Policies:
         - Statement:
             Effect: "Allow"
@@ -25,18 +20,100 @@ Resources:
               - "cognito-idp:ListUsers"
             Resource: !GetAtt CognitoUserPool.Arn
       Events:
-        Api:
-          Type: Api
+        HttpApiEvent:
+          Type: HttpApi
           Properties:
-            Path: /user/
+            Path: /users
             Method: GET
+            ApiId: !Ref HttpApiGateway
       Environment:
         Variables:
-          COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+          COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
 
-  ##### User Resources #####
+  getTeams:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/getTeams.default
+      Description: A function to grab teams' information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchGetItem"
+            Resource: !GetAtt TeamsTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams
+            Method: GET
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          TEAMS_TABLE_NAME: !Ref TeamsTable
 
-  ##### Event Resources #####
+  getEvents:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/events/getEvents.default
+      Description: A function to grab events
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+            Resource: !GetAtt EventsTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events
+            Method: GET
+            ApiId: !Ref HttpApiGateway
+            Auth:
+              Authorizer: NONE
+      Environment:
+        Variables:
+          EVENTS_TABLE_NAME: !Ref EventsTable
+
+  getEntries:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/events/getEntries.default
+      Description: A function to grab event entries
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchGetItem"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt TeamsTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events/entries
+            Method: GET
+            ApiId: !Ref HttpApiGateway
+            Auth:
+              Authorizer: NONE
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAMS_TABLE_NAME: !Ref TeamsTable
+
+  ##### API Resources #####
+
+  ##### DB Resources #####
 
   ### View README.md for the table data layouts ###
 
@@ -96,10 +173,7 @@ Resources:
         - AttributeName: teamId
           KeyType: RANGE
 
-  ##### Event Resources #####
-
-  ##### Information Resources #####
-  ##### Information Resources #####
+  ##### DB Resources #####
 
   ##### Cognito User Pool #####
 
@@ -233,19 +307,68 @@ Resources:
       Precedence: 10
       Description: A group people trained to look after the data in the db
 
-##### Cognito User Pool #####
+  ##### Cognito User Pool #####
 
-##### API Gateway #####
+  ##### API Gateway #####
+
+  # 2 Certs request manually:
+  # - one in us-east-1 for the amplify application - 4f068f57-af87-4721-b205-df7275fbbe25
+  # - one in eu-west-2 for the http-api - aec5a927-bae6-45a0-9ccf-ae918431df25
+
+  # 1 CNAME DNS recorded added to api.yorkshirepeaks.co.uk to api gateway
+
+  HttpApiGateway:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: Prod
+      Domain:
+        DomainName: api.yorkshirepeaks.co.uk
+        CertificateArn: !Sub arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/aec5a927-bae6-45a0-9ccf-ae918431df25
+        EndpointConfiguration: REGIONAL
+      Auth:
+        Authorizers:
+          OAuth2Authorizer:
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}"
+              audience:
+                - !Ref UserPoolClient
+            IdentitySource: "$request.header.Authorization"
+        DefaultAuthorizer: OAuth2Authorizer
+      CorsConfiguration:
+        AllowHeaders:
+          - Authorization
+          - Content-Type
+          - Access-Control-Allow-Methods
+          - Access-Control-Allow-Origin
+          - Access-Control-Allow-Headers
+          - Accept
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-Requested-With
+        AllowOrigins:
+          - http://localhost:3000
+          - https://yorkshirepeaks.co.uk
+          - https://www.yorkshirepeaks.co.uk
+        AllowMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          - PUT
+          - DELETE
+          - POST
+          - PATCH
 
 Globals:
-  Api:
-    Auth:
-      Authorizers:
-        CognitoAuthorizer:
-          UserPoolArn: !GetAtt CognitoUserPool.Arn
+  Function:
+    Runtime: nodejs20.x
+    Architectures:
+      - x86_64
+    MemorySize: 128
+    Timeout: 100
 
 Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Value: "https://api.yorkshirepeaks.co.uk/"
 ##### API Gateway #####

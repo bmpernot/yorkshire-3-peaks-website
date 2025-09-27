@@ -22,11 +22,7 @@ Run functions locally and invoke them with the `sam local invoke` command.
 So far i have made these but i don't know if they work as i haven't tried them.
 
 ```bash
-backend$ sam local invoke getAllUsers --event events/userFunctions/getAllUsers.json
-backend$ sam local invoke getUserById --event events/userFunctions/getUserById.json
-backend$ sam local invoke addUser --event events/userFunctions/addUser.json
-backend$ sam local invoke updateUser --event events/userFunctions/updateUser.json
-backend$ sam local invoke deleteUser --event events/userFunctions/deleteUser.json
+backend$ sam local invoke getUsers --event events/userFunctions/getUsers.json
 ```
 
 The AWS SAM CLI can also emulate your application's API. Use the `npm run local` command to run the API locally on port 3001 from inside the dev container.
