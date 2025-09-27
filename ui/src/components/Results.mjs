@@ -263,10 +263,29 @@ function generateCheckpointColumnObjects({ checkpoints }) {
 }
 
 function timeStamp(date) {
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds}`;
+  let hours = date.getHours();
+  if (Number.isNaN(hours)) {
+    return "";
+  } else {
+    hours = String(hours).padStart(2, "0");
+  }
+
+  let minutes = date.getMinutes();
+  if (Number.isNaN(minutes)) {
+    return "";
+  } else {
+    minutes = String(minutes).padStart(2, "0");
+  }
+
+  let seconds = date.getSeconds();
+  if (Number.isNaN(seconds)) {
+    return "";
+  } else {
+    seconds = String(seconds).padStart(2, "0");
+  }
+
+  const timeStamp = `${hours}:${minutes}:${seconds}`;
+  return timeStamp;
 }
 
 export default Results;
