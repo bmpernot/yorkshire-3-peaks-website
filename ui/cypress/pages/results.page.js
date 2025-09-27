@@ -11,7 +11,7 @@ export default class resultsPage {
     cy.get("[id=events-list]").click();
     events.forEach((event) => {
       const date = new Date(event.startDate);
-      const formattedDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
       cy.get(`[id=${event.eventId}]`).and("have.text", formattedDate);
     });
     cy.press(Cypress.Keyboard.Keys.TAB);
@@ -19,7 +19,7 @@ export default class resultsPage {
   }
   verifySelectedEvent(event) {
     const date = new Date(event.startDate);
-    const formattedDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+    const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     cy.get("[id=events-list]").should("contain", formattedDate);
     return this;
   }

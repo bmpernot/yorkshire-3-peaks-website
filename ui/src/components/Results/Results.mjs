@@ -47,7 +47,7 @@ function Results() {
 
       const date = new Date(startDate);
 
-      setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`);
+      setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
       try {
         const { body } = await get({ apiName: "api", path: `events/entries?eventId=${eventId}`, options: {} }).response;
         const data = await body.json();

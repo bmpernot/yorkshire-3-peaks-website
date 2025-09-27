@@ -22,7 +22,7 @@ function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
             const date = new Date(event.startDate);
             return (
               <MenuItem key={event.eventId} value={event.eventId} id={event.eventId}>
-                {date.getDate()}/{date.getMonth()}/{date.getFullYear()}
+                {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
               </MenuItem>
             );
           })}
