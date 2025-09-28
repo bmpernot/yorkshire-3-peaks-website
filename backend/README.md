@@ -78,11 +78,12 @@ dateTimes are nodes new Date().toISOString() output `2024-06-07T12:00:00.000Z`
 
 ### Teams Table:
 
-| Column Name          | Type   | Relationship |
-| -------------------- | ------ | ------------ |
-| teamId               | string | Primary Key  |
-| -------------------- | ------ | ------------ |
-| teamName             | string | Required     |
+| Column Name          | Type    | Relationship |
+| -------------------- | ------- | ------------ |
+| teamId               | string  | Primary Key  |
+| -------------------- | ------  | ------------ |
+| teamName             | string  | Required     |
+| volunteer            | boolean | Optional     |
 
 ### Team Members Table:
 
