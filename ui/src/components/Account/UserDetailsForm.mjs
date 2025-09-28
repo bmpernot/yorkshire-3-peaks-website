@@ -171,7 +171,7 @@ function UserDetailsForm({ user }) {
             fullWidth
             variant="contained"
             disabled={isLoading}
-            loading={isLoading}
+            loading={String(isLoading)}
           >
             Update details
           </Button>
