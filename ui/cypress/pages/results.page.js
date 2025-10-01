@@ -48,6 +48,16 @@ export default class resultsPage {
     }
     return this;
   }
+  verifyRowsExist(entries = []) {
+    if (entries.length === 0) {
+      cy.get("[id=entries-table]").should("not.exist");
+    } else {
+      entries.forEach((entry) => {
+        cy.get(`[data-id=team-id-${entry.teamId}]`).should("be.visible");
+      });
+    }
+    return this;
+  }
   refreshEvents() {
     cy.get("[id=refresh-events]").click();
     return this;
@@ -58,6 +68,11 @@ export default class resultsPage {
   }
   then(functionDef = () => {}) {
     cy.then(functionDef);
+    return this;
+  }
+  selectEvent(eventId) {
+    cy.get("[id=events-list]").click();
+    cy.get(`[id=${eventId}]`).click();
     return this;
   }
 }

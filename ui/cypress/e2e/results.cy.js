@@ -53,4 +53,30 @@ describe("Results", () => {
         resultsPage.verifyEntries(entries[events[0].eventId]);
       });
   });
+
+  it("Should be able to swap between events to get the result and cache the older ones", () => {
+    events = stubEvents({
+      numberOfEvents: 1,
+      overrides: {
+        events: [
+          {
+            startDate: new Date("01/01/2024").toISOString(),
+            eventId: "0d72d55a-b4bd-4310-8027-e6488c90f7da",
+            endDate: new Date("01/03/2024").toISOString(),
+          },
+        ],
+      },
+    });
+    entries = stubEntries({ events });
+
+    resultsPage
+      .open()
+      .waitFor(["@Events", `@Event-Entry-${events[0].eventId}`])
+      .verifyRowsExist(entries[events[0].eventId])
+      .selectEvent(events[1].eventId)
+      .waitFor([`@Event-Entry-${events[1].eventId}`])
+      .verifyRowsExist(entries[events[1].eventId])
+      .selectEvent(events[0].eventId)
+      .verifyRowsExist(entries[events[0].eventId]);
+  });
 });

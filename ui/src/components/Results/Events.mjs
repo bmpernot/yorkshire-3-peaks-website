@@ -12,7 +12,7 @@ function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
         <Select
           labelId="events-list-label"
           id="events-list"
-          value={selectedEvent?.eventId}
+          value={selectedEvent}
           sx={styles.table}
           onChange={(event) => {
             setSelectedEvent(event.target.value);
@@ -21,7 +21,7 @@ function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
           {events.map((event) => {
             const date = new Date(event.startDate);
             return (
-              <MenuItem key={event.eventId} value={event.eventId} id={event.eventId}>
+              <MenuItem key={event.eventId} value={event} id={event.eventId}>
                 {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
               </MenuItem>
             );
