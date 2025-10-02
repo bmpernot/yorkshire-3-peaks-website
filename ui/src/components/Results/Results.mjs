@@ -13,7 +13,7 @@ function Results() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [entriesCache, setEntriesCache] = useState({});
-  const [loadingMessage, setLoadingMessage] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Getting events");
   const [error, setError] = useState(false);
 
   const fetchEvents = useCallback(async () => {

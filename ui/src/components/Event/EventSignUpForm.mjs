@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { toast } from "react-toastify";
-import { post } from "aws-amplify/api";
+import { post, get } from "aws-amplify/api";
 
 function EventSignUpForm({ eventId, router, isLoggedIn }) {
   const [formData, setFormData] = useState({
@@ -20,11 +20,13 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
     members: [],
   });
 
-  console.log("eventId", eventId);
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // TODO - input validation - make sure that there are at least 3 members on the team
+    // TODO - input validation:
+    // - make sure that there are at least 3 members on the team
+    // - check that the person signing them up is a member
+    // - check that the members of the group are not already apart of another team
     // TODO - test that the form adding and removing members works as expected
 
     try {
@@ -47,7 +49,7 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
     <SignUpContainer direction="column" justifyContent="space-between">
       <StyledCard variant="outlined">
         <Typography variant="h4">Team Sign Up</Typography>
-        <Typography variant="body1" sx={{ mb: 2 }}>
+        <Typography variant="body1" sx={{ mb: 2 }} id="team-registration-information">
           • Teams must have <strong>3 - 5 members</strong>.<br />
           • Payment is managed on your profile page. Each member can contribute, but your team must meet or exceed the
           full amount.
@@ -110,7 +112,12 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
             </Button>
           </Box>
         ) : (
-          <Button onClick={() => router.push("/auth/sign-in")} variant="contained" color="primary">
+          <Button
+            onClick={() => router.push("/auth/sign-in")}
+            variant="contained"
+            color="primary"
+            id="event-team-registration-sign-in-button"
+          >
             Sign in to register a team
           </Button>
         )}
@@ -133,15 +140,8 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
     try {
       setIsLoading(true);
       // TODO - update api
-      // const { body } = await get({ apiName: "api", path: `users?user=${searchTerm}`, options: {} }).response;
-      // const data = await body.json();
-
-      // TEMP data
-      const data = [
-        { id: "1", firstName: "Ben", lastName: "Pernot", email: "benjamin.pernot195@gmail.com" },
-        { id: "2", firstName: "Jane", lastName: "Doe", email: "jane@example.com" },
-        { id: "3", firstName: "John", lastName: "Smith", email: "john@example.com" },
-      ];
+      const { body } = await get({ apiName: "api", path: `users?user=${searchTerm}`, options: {} }).response;
+      const data = await body.json();
 
       setUsers(data);
     } catch (error) {
@@ -156,6 +156,8 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
       const handler = setTimeout(() => {
         searchUserBase(searchTerm);
       }, 500);
+
+      // TODO - make 1000 milliseconds and put in a waiting icon th show how long to wait before it searches
 
       return () => clearTimeout(handler);
     }

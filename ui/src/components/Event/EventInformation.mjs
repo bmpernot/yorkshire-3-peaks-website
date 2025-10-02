@@ -15,13 +15,13 @@ function EventInformation({ eventInformation }) {
           Current Event Overview
         </Typography>
         <Grid2 container>
-          <Grid2 item="true" sm={12} md={6}>
+          <Grid2 item="true" sm={12} md={6} id="walkers-needed-info">
             <Typography variant="h6" sx={{ marginBottom: -4 }}>
               Walkers Needed:
             </Typography>
             <CustomPieChart required={eventInformation.requiredWalkers} current={eventInformation.currentWalkers} />
           </Grid2>
-          <Grid2 item="true" sm={12} md={6}>
+          <Grid2 item="true" sm={12} md={6} id="volunteers-needed-info">
             <Typography variant="h6" sx={{ marginBottom: -4 }}>
               Volunteers Needed:
             </Typography>
@@ -30,11 +30,11 @@ function EventInformation({ eventInformation }) {
               current={eventInformation.currentVolunteers}
             />
           </Grid2>
-          <Grid2 item="true" md={12}>
+          <Grid2 item="true" md={12} id="money-raised-info">
             <Typography variant="h6">Money Raised:</Typography>
             <Typography>£{eventInformation.moneyRaised}</Typography>
           </Grid2>
-          <Grid2 item="true" md={12}>
+          <Grid2 item="true" md={12} id="event-date-info">
             <Typography variant="h6">Event Date:</Typography>
             <Typography>
               {eventStartDate.getDate()}
