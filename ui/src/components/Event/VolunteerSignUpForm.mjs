@@ -13,9 +13,6 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
     event.preventDefault();
 
     try {
-      // TODO - make api
-      // TODO - verification - make sure that they are not already a member of the volunteers team do this on the api - return the message for the toast
-
       const registrationData = { memberId: userId };
 
       if (additionalRequirements.current.value?.length > 0) {

@@ -33,13 +33,14 @@ export default class resultsPage {
   }
   verifyEventTeamRegistration() {
     cy.get("[id=team-registration-information]")
-      .should("contain.text", "• Teams must have 3 - 5 members.")
+      .should("contain.text", "• Teams must have 3 - 5 members and must include yourself.")
       .and(
         "contain.text",
         "• Payment is managed on your profile page. Each member can contribute, but your team must meet or exceed the full amount.",
       )
       .and("contain.text", "• You can edit your team details anytime from your profile.")
-      .and("contain.text", "• All team members will have access to update the entry.");
+      .and("contain.text", "• All team members will have access to update the entry.")
+      .and("contain.text", "• Disabled users in the user search are ones that have already signed up to a team.");
     return this;
   }
   verifyEventVolunteerRegistration() {
@@ -51,12 +52,24 @@ export default class resultsPage {
       .and("contain.text", "No prior experience is necessary - just enthusiasm and a willingness to help!");
     return this;
   }
+  typeTeamName(teamName) {
+    cy.get("[id=teamName]").type(teamName);
+    return this;
+  }
   searchForUser({ teamMemberNumber, searchValue }) {
-    cy.get(`[id=team-members-${teamMemberNumber}]`).type(searchValue);
+    cy.get(`[id=team-member-${teamMemberNumber}]`).type(searchValue);
+    return this;
+  }
+  verifyUserSearchDisabled({ teamMemberNumber, option }) {
+    cy.get(`[id=team-member-${teamMemberNumber}-option-${option}]`).should("have.attr", "aria-disabled", "true");
+    return this;
+  }
+  selectUser({ teamMemberNumber, option }) {
+    cy.get(`[id=team-member-${teamMemberNumber}-option-${option}]`).click();
     return this;
   }
   verifyUserSearch({ teamMemberNumber, option, value }) {
-    cy.get(`[id=team-members-${teamMemberNumber}-option-${option}]`).should("contain.text", value);
+    cy.get(`[id=team-member-${teamMemberNumber}-option-${option}]`).should("contain.text", value);
   }
   registerTeam() {
     return this;
@@ -87,6 +100,22 @@ export default class resultsPage {
     cy.get("[id=event-volunteer-registration-sign-in-button]")
       .should("be.visible")
       .and("contain.text", "Sign in to volunteer");
+    return this;
+  }
+  happyToVolunteer({ teamMemberNumber }) {
+    cy.get(`[id=team-member-happy-to-volunteer-${teamMemberNumber}]`).click();
+    return this;
+  }
+  additionalRequirements({ teamMemberNumber, additionalRequirementsText }) {
+    cy.get(`[id=requirements-${teamMemberNumber}]`).type(additionalRequirementsText);
+    return this;
+  }
+  submitTeam() {
+    cy.get("[id=submit-team-button]").click();
+    return this;
+  }
+  verifyError({ errorIndex, value }) {
+    cy.get(`[id=error-card-${errorIndex}]`).should("have.text", value);
     return this;
   }
 }

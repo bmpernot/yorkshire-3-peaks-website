@@ -13,33 +13,35 @@ import {
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { toast } from "react-toastify";
 import { post, get } from "aws-amplify/api";
+import ErrorCard from "../common/ErrorCard.mjs";
 
-function EventSignUpForm({ eventId, router, isLoggedIn }) {
+function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
   const [formData, setFormData] = useState({
     teamName: "",
     members: [],
   });
+  const [errors, setErrors] = useState([]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // TODO - input validation:
-    // - make sure that there are at least 3 members on the team
-    // - check that the person signing them up is a member
-    // - check that the members of the group are not already apart of another team
-    // TODO - test that the form adding and removing members works as expected
+    const errorsInFormData = validateFormData(formData, user);
+    if (errorsInFormData.length > 0) {
+      setErrors(errorsInFormData);
+      return;
+    }
 
     try {
-      // TODO - make api
-      await post({
+      const { body } = await post({
         apiName: "api",
         path: `events/register?eventId=${eventId}`,
-        options: { body: { teamData: formData } },
+        options: { body: formData },
       }).response;
+      const data = await body.text();
+
+      toast.success(data);
 
       router.push(`/user/profile`);
-
-      toast.success("Thank you for registering a team.");
     } catch (error) {
       toast.error("Failed to register team.");
     }
@@ -50,7 +52,8 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
       <StyledCard variant="outlined">
         <Typography variant="h4">Team Sign Up</Typography>
         <Typography variant="body1" sx={{ mb: 2 }} id="team-registration-information">
-          • Teams must have <strong>3 - 5 members</strong>.<br />
+          • Teams must have <strong>3 - 5 members</strong> and must include yourself.
+          <br />
           • Payment is managed on your profile page. Each member can contribute, but your team must meet or exceed the
           full amount.
           <br />
@@ -58,9 +61,16 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
           <br />
           • All team members will have access to update the entry.
           <br />
+          • Disabled users in the user search are ones that have already signed up to a team.
+          <br />
         </Typography>
         {isLoggedIn ? (
           <Box component="form" onSubmit={handleSubmit}>
+            {errors.length > 0
+              ? errors.map((error, index) => {
+                  return <ErrorCard error={error} index={index} />;
+                })
+              : null}
             <FormControl fullWidth sx={{ mb: 2 }}>
               <FormLabel htmlFor="teamName">Team Name</FormLabel>
               <TextField
@@ -77,18 +87,21 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
               formData={formData}
               setFormData={setFormData}
               membersIndex={0}
+              eventId={eventId}
             />
             <TeamMemberSection
               teamMemberLabel={"Team member"}
               formData={formData}
               setFormData={setFormData}
               membersIndex={1}
+              eventId={eventId}
             />
             <TeamMemberSection
               teamMemberLabel={"Team member"}
               formData={formData}
               setFormData={setFormData}
               membersIndex={2}
+              eventId={eventId}
             />
             {formData.members.length >= 3 ? (
               <TeamMemberSection
@@ -96,6 +109,7 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
                 formData={formData}
                 setFormData={setFormData}
                 membersIndex={3}
+                eventId={eventId}
               />
             ) : null}
             {formData.members.length >= 4 ? (
@@ -104,10 +118,11 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
                 formData={formData}
                 setFormData={setFormData}
                 membersIndex={4}
+                eventId={eventId}
               />
             ) : null}
 
-            <Button type="submit" variant="contained" color="primary">
+            <Button type="submit" variant="contained" color="primary" id="submit-team-button">
               Create Team
             </Button>
           </Box>
@@ -126,56 +141,59 @@ function EventSignUpForm({ eventId, router, isLoggedIn }) {
   );
 }
 
-function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersIndex }) {
+function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersIndex, eventId }) {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [userSearching, setUserSearching] = useState(false);
 
-  const searchUserBase = useCallback(async (term) => {
-    if (!term || term.trim() === "") {
-      setUsers([]);
+  const searchUserBase = useCallback(
+    async (term) => {
+      if (!term || term.trim() === "") {
+        setUsers([]);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const { body } = await get({ apiName: "api", path: `users?user=${term}&eventId=${eventId}`, options: {} })
+          .response;
+        const data = await body.json();
+
+        setUsers(data);
+      } catch (error) {
+        toast.error(`Failed to look up user: ${term}`);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [eventId],
+  );
+
+  useEffect(() => {
+    if (!userSearching || searchTerm.trim().length < 3) {
       return;
     }
 
-    try {
-      setIsLoading(true);
-      // TODO - update api
-      const { body } = await get({ apiName: "api", path: `users?user=${searchTerm}`, options: {} }).response;
-      const data = await body.json();
+    const handler = setTimeout(() => {
+      searchUserBase(searchTerm);
+    }, 500);
 
-      setUsers(data);
-    } catch (error) {
-      toast.error(`Failed to look up user: ${searchTerm}`);
-    } finally {
-      setIsLoading(false);
-    }
-  });
-
-  useEffect(() => {
-    if (searchTerm.trim().length >= 3) {
-      const handler = setTimeout(() => {
-        searchUserBase(searchTerm);
-      }, 500);
-
-      // TODO - make 1000 milliseconds and put in a waiting icon th show how long to wait before it searches
-
-      return () => clearTimeout(handler);
-    }
-  }, [searchTerm, searchUserBase]);
+    return () => clearTimeout(handler);
+  }, [searchTerm, userSearching, searchUserBase]);
 
   const updateMember = (index, updates) => {
     const updatedMembers = [...formData.members];
 
     if (!updatedMembers[index]) {
-      updatedMembers[index] = { id: null, isVolunteer: false, additionalRequirements: "" };
+      updatedMembers[index] = { sub: null, isVolunteer: false, additionalRequirements: "" };
     }
 
     updatedMembers[index] = { ...updatedMembers[index], ...updates };
 
-    const { id, isVolunteer, additionalRequirements } = updatedMembers[index];
-    const isEmpty = !id && !isVolunteer && (!additionalRequirements || additionalRequirements.trim() === "");
+    const { sub } = updatedMembers[index];
 
-    if (isEmpty) {
+    if (!sub) {
       updatedMembers.splice(index, 1);
     }
 
@@ -187,24 +205,37 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
       <FormControl fullWidth sx={{ mb: 2 }}>
         <FormLabel>{teamMemberLabel}</FormLabel>
         <Autocomplete
-          id={`team-members-${membersIndex}`}
+          id={`team-member-${membersIndex}`}
           options={users}
           noOptionsText={searchTerm === "" ? "Search by name or email" : `No results`}
-          getOptionLabel={(option) => (option ? `${option.firstName} ${option.lastName} (${option.email})` : "")}
+          getOptionLabel={(option) => (option ? `${option.given_name} ${option.family_name} (${option.email})` : "")}
+          getOptionDisabled={(option) => {
+            if (option.alreadyParticipating) {
+              return true;
+            }
+            const formDataMemberIds = formData.members.map((member) => member.sub);
+            if (formDataMemberIds.includes(option.sub)) {
+              return true;
+            }
+          }}
           value={formData.members[membersIndex] || null}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          onChange={(_, value) =>
+          isOptionEqualToValue={(option, value) => option.sub === value.sub}
+          onChange={(_, value) => {
+            setUserSearching(false);
             updateMember(membersIndex, {
-              id: value?.id || null,
-              firstName: value?.firstName || "",
-              lastName: value?.lastName || "",
+              sub: value?.sub || null,
+              given_name: value?.given_name || "",
+              family_name: value?.family_name || "",
               email: value?.email || "",
-            })
-          }
+            });
+          }}
           renderInput={(params) => <TextField {...params} placeholder="Search by name or email" />}
           sx={{ flex: 1 }}
           inputValue={searchTerm}
-          onInputChange={(_, newInputValue) => {
+          onInputChange={(_, newInputValue, reason) => {
+            if (reason === "input") {
+              setUserSearching(true);
+            }
             setSearchTerm(newInputValue);
           }}
           loading={isLoading}
@@ -217,6 +248,7 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
           <Checkbox
             checked={formData.members[membersIndex]?.isVolunteer || false}
             onChange={(event) => updateMember(membersIndex, { isVolunteer: event.target.checked })}
+            id={`team-member-happy-to-volunteer-${membersIndex}`}
           />
         }
         label="Happy to volunteer if needed"
@@ -236,6 +268,23 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
       </FormControl>
     </>
   );
+}
+
+function validateFormData(formData, user) {
+  const messages = [];
+  if (!formData.members.some((member) => member.sub === user.id)) {
+    messages.push("You are required to be part of the team.");
+  }
+
+  if (formData.members.length < 3 || formData.members.length > 5) {
+    messages.push("Teams must have 3 to 5 members.");
+  }
+
+  if (!formData.teamName.trim()) {
+    messages.push("Team name is required.");
+  }
+
+  return messages;
 }
 
 export default EventSignUpForm;

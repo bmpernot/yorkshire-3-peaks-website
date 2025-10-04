@@ -82,9 +82,12 @@ function stubTeamRegistration({ events, overrides = {} }) {
   });
 }
 
-function stubUserSearch(users = []) {
+function stubUserSearch(eventId, users = []) {
   users.forEach((user) => {
-    cy.intercept(`${Cypress.env("NEXT_PUBLIC_API_URL")}users?user=${user.searchTerm}`, user.response).as(`User-Search`);
+    cy.intercept(
+      `${Cypress.env("NEXT_PUBLIC_API_URL")}users?user=${user.searchTerm}&eventId=${eventId}`,
+      user.response,
+    ).as(`User-Search`);
   });
 }
 

@@ -14,8 +14,6 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/src/utils/userContext";
 import NoEvents from "./NoEvents.mjs";
 
-// TODO - fix layout of page
-
 function CurrentEvent() {
   const { user, loggedIn } = useUser();
   const [events, setEvents] = useState([]);
@@ -65,7 +63,6 @@ function CurrentEvent() {
 
       setLoadingMessage(`Getting information for ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
       try {
-        // TODO - make api
         const { body } = await get({ apiName: "api", path: `events/information?eventId=${eventId}`, options: {} })
           .response;
         const data = await body.json();
@@ -121,7 +118,7 @@ function CurrentEvent() {
             <EventInformation eventInformation={eventInformation} />
           </Grid2>
           <Grid2 item="true" xs={12} md={6}>
-            <EventSignUpForm eventId={eventInformation.eventId} router={router} isLoggedIn={isLoggedIn} />
+            <EventSignUpForm eventId={eventInformation.eventId} router={router} isLoggedIn={isLoggedIn} user={user} />
           </Grid2>
           <Grid2 item="true" xs={12} md={6}>
             <VolunteeringSignUpForm
