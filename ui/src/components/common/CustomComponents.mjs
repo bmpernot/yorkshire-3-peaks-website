@@ -8,7 +8,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   gap: theme.spacing(2),
   width: "100%",
   [theme.breakpoints.down("sm")]: {
-    width: "225px",
+    padding: theme.spacing(3),
   },
   maxWidth: "1000px",
   alignItems: "center",
