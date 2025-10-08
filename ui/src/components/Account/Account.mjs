@@ -31,13 +31,13 @@ function Account() {
           </StyledCard>
         </StyledContainer>
       </Grid2>
-      <Grid2 xs={12} md={4}>
+      <Grid2 size={{ xs: 12, md: 4 }}>
         <UserDetailsForm user={user} />
       </Grid2>
-      <Grid2 xs={12} md={4}>
+      <Grid2 size={{ xs: 12, md: 4 }}>
         <PasswordForm />
       </Grid2>
-      <Grid2 xs={12} md={4}>
+      <Grid2 size={{ xs: 12, md: 4 }}>
         <DeleteAccountForm email={user.email} updateUser={updateUser} />
       </Grid2>
     </Grid2>

@@ -101,7 +101,7 @@ function CurrentEvent() {
   const isLoggedIn = loggedIn();
 
   return (
-    <Box>
+    <Box sx={{ maxWidth: "1000px" }}>
       <Typography variant="h3" component="h1" align="left" sx={styles.mainTitle}>
         Current Events
       </Typography>
@@ -115,13 +115,13 @@ function CurrentEvent() {
         <NoEvents />
       ) : (
         <Grid2 container={true}>
-          <Grid2 item="true" xs={12} md={6}>
+          <Grid2 item="true" size={12}>
             <EventInformation eventInformation={eventInformation} />
           </Grid2>
-          <Grid2 item="true" xs={12} md={6}>
+          <Grid2 item="true" size={12}>
             <EventSignUpForm eventId={eventInformation.eventId} router={router} isLoggedIn={isLoggedIn} user={user} />
           </Grid2>
-          <Grid2 item="true" xs={12} md={6}>
+          <Grid2 item="true" size={12}>
             <VolunteeringSignUpForm
               eventId={eventInformation.eventId}
               router={router}

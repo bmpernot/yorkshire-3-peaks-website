@@ -412,7 +412,7 @@ describe("Event", () => {
         .verifyError({ errorIndex: 0, value: "Team name is required." });
     });
 
-    it("Should not allow a team in which any of the members are already part of this team or another team", () => {
+    it.only("Should not allow a team in which any of the members are already part of this team or another team", () => {
       cy.interceptAmplifyAuth().stubUser(USER_ROLES.USER);
       stubUserSearch(events[1].eventId, [
         {

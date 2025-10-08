@@ -10,7 +10,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     width: "225px",
   },
-  maxWidth: "290px",
+  maxWidth: "1000px",
   alignItems: "center",
   justifyContent: "space-between",
   boxShadow: "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",

@@ -11,18 +11,38 @@ function EventInformation({ eventInformation }) {
   return (
     <SignUpContainer direction="column" justifyContent="space-between">
       <StyledCard variant="outlined">
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h3" gutterBottom>
           Current Event Overview
         </Typography>
         <Grid2 container>
-          <Grid2 item="true" sm={12} md={6} id="walkers-needed-info">
-            <Typography variant="h6" sx={{ marginBottom: -4 }}>
+          <Grid2
+            item="true"
+            size={{ md: 6, sm: 12 }}
+            id="walkers-needed-info"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="h4" sx={{ marginBottom: -4 }}>
               Walkers Needed:
             </Typography>
             <CustomPieChart required={eventInformation.requiredWalkers} current={eventInformation.currentWalkers} />
           </Grid2>
-          <Grid2 item="true" sm={12} md={6} id="volunteers-needed-info">
-            <Typography variant="h6" sx={{ marginBottom: -4 }}>
+          <Grid2
+            item="true"
+            size={{ md: 6, sm: 12 }}
+            id="volunteers-needed-info"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="h4" sx={{ marginBottom: -4 }}>
               Volunteers Needed:
             </Typography>
             <CustomPieChart
@@ -30,13 +50,23 @@ function EventInformation({ eventInformation }) {
               current={eventInformation.currentVolunteers}
             />
           </Grid2>
-          <Grid2 item="true" md={12} id="money-raised-info">
-            <Typography variant="h6">Money Raised:</Typography>
-            <Typography>£{eventInformation.moneyRaised}</Typography>
+          <Grid2
+            item="true"
+            size={{ md: 6, sm: 12 }}
+            id="money-raised-info"
+            sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginTop: 2 }}
+          >
+            <Typography variant="h4">Money Raised:</Typography>
+            <Typography variant="h6">£{eventInformation.moneyRaised}</Typography>
           </Grid2>
-          <Grid2 item="true" md={12} id="event-date-info">
-            <Typography variant="h6">Event Date:</Typography>
-            <Typography>
+          <Grid2
+            item="true"
+            size={{ md: 6, sm: 12 }}
+            id="event-date-info"
+            sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginTop: 2 }}
+          >
+            <Typography variant="h4">Event Date:</Typography>
+            <Typography variant="h6">
               {eventStartDate.getDate()}
               {" - "}
               {eventEndDate.toLocaleDateString("en-GB", {
@@ -92,7 +122,7 @@ function CustomPieChart({ required, current }) {
           {percentage}%
         </Typography>
       </Box>
-      <Typography variant="body2" sx={{ marginTop: -3, fontWeight: "bold" }}>
+      <Typography variant="h6" sx={{ marginTop: -3, fontWeight: "bold" }}>
         {current}/{required}
       </Typography>
     </Box>
