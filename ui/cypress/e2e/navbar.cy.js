@@ -55,7 +55,7 @@ describe("NavBar", () => {
             .urlShouldBe("user/profile")
             .goToPage("Account")
             .urlShouldBe("user/account")
-            .goToPage("Current Event")
+            .goToPage("Current Events")
             .urlShouldBe("event/current")
             .goToPage("Promotion")
             .urlShouldBe("event/promotion")
