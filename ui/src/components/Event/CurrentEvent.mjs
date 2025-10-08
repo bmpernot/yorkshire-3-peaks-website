@@ -15,6 +15,8 @@ import { useUser } from "@/src/utils/userContext";
 import NoEvents from "./NoEvents.mjs";
 
 function CurrentEvent() {
+  const router = useRouter();
+
   const { user, loggedIn } = useUser();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -96,7 +98,6 @@ function CurrentEvent() {
   }
 
   const eventInformation = selectedEvent ? eventInformationCache[selectedEvent.eventId] || [] : [];
-  const router = useRouter();
   const isLoggedIn = loggedIn();
 
   return (
