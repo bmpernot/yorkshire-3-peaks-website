@@ -1,6 +1,29 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import BulletedList from "@/src/components/Rules/BulletedList.jsx";
+
+vi.mock("@mui/material", () => ({
+  List: ({ children, disableGutters, dense, disablePadding, ...props }) => <ul {...props}>{children}</ul>,
+  ListItem: ({ children, alignItems, disableGutters, ...props }) => <li {...props}>{children}</li>,
+  ListItemIcon: ({ children, ...props }) => <div {...props}>{children}</div>,
+  ListItemText: ({ primary, secondary, ...props }) => (
+    <div {...props}>{primary}{secondary && <span>{secondary}</span>}</div>
+  ),
+  Typography: ({ children, component, variant, ...props }) => {
+    const Component = component || (variant?.startsWith("h") ? variant : "div");
+    return React.createElement(Component, props, children);
+  },
+  Tooltip: ({ children, title, arrow, ...props }) => (
+    <div {...props} title={title} aria-label={title}>{children}</div>
+  ),
+}));
+
+vi.mock("@mui/icons-material", () => ({
+  FiberManualRecord: () => <span>•</span>,
+  Info: () => <span>Info</span>,
+  InfoOutlined: () => <span>Info</span>,
+}));
 
 vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
   styles: {
@@ -41,13 +64,13 @@ describe("BulletedList", () => {
     expect(screen.getByText("Primary content")).toBeInTheDocument();
   });
 
-  it("uses equipment styles when type is equipment", () => {
-    const { container } = render(<BulletedList items={mockItems} type="equipment" />);
-    expect(container.querySelector(".MuiList-root")).toBeInTheDocument();
+  it("renders list with equipment type", () => {
+    render(<BulletedList items={mockItems} type="equipment" />);
+    expect(screen.getByRole("list")).toBeInTheDocument();
   });
 
   it("renders bullet icons for list items", () => {
-    const { container } = render(<BulletedList items={[{ text: "Test" }]} />);
-    expect(container.querySelector(".MuiListItemIcon-root")).toBeInTheDocument();
+    render(<BulletedList items={[{ text: "Test" }]} />);
+    expect(screen.getByText("•")).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import Promotion from "@/src/components/Promotion.mjs";
+import Promotion from "@/src/components/Promotion";
 
 export default function PromotionPage() {
   return <Promotion />;

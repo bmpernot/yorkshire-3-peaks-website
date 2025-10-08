@@ -1,0 +1,126 @@
+import { Campaign, VolunteerActivism, Schedule, Groups } from "@mui/icons-material";
+
+export const promotionData = {
+  recruitment: [
+    {
+      id: "walker-recruitment",
+      icon: <Groups />,
+      title: "Step Up for a Cause - Join the Yorkshire Three Peaks Challenge 20XX!",
+      type: "Walker",
+      content: [
+        "Are you ready to take on the stunning peaks of Pen-y-ghent, Whernside, and Ingleborough - and make a real difference while doing it?",
+        "📅 Date: Friday Xth - Sunday Xth JuXX 20XX",
+        "🎟️ Early Bird Entry: £45 per person (until 1st April), then £50",
+        "👣 Teams of 3-5 people | 24.6 miles | Scenic views | Community spirit",
+        "Every step you take helps support life-changing charities. Camping included. Safety first - fully qualified radio crew and mountain rescue on hand.",
+        "👉 For more information or to register visit yorkshirepeaks.co.uk",
+        "📧 Got questions? Contact: yorkshirepeaks@gmail.com",
+        "Ready to challenge yourself for charity? Join us for an unforgettable adventure."
+      ]
+    },
+    {
+      id: "volunteer-recruitment-1",
+      icon: <VolunteerActivism />,
+      title: "Call for Volunteers - Be the Backbone of the Three Peaks Challenge!",
+      type: "Volunteer",
+      content: [
+        "Be the hero behind the heroes! Our participants need your support to make this challenge safe and successful. We're looking for passionate and reliable volunteers for this June.",
+        "👋 What's Involved:",
+        ["Join us Friday evening or by 6:00 AM Saturday", "Help with team check-ins and safety briefings", "Support walkers from checkpoints across the peaks", "Assist with setup, cleanup, and post-event celebrations"],
+        "🛖 Option to camp on-site Friday-Sunday",
+        "🎁 We're offering a £200 donation to a charity of your choice for every volunteer.",
+        "⏳ Interested? Reach out to the organisers. You'll help make this experience safe, inspiring, and unforgettable."
+      ]
+    },
+    {
+      id: "volunteer-recruitment-2",
+      icon: <VolunteerActivism />,
+      title: "Yorkshire Three Peaks 2025 - Volunteers Needed!",
+      type: "Volunteer",
+      content: [
+        "Join our amazing volunteer team! We're looking for kind, energetic, and dependable individuals to support our challenge weekend from 6-8 June.",
+        "Help us:",
+        ["Greet and register walkers", "Monitor checkpoints and support safety teams", "Assist with campsite logistics and clean-up", "Celebrate with our walkers after they conquer the peaks!"],
+        "🎁 Bonus: We'll donate £200 to a charity of your choice in recognition of your time and effort.",
+        "Whether you can help all weekend or just the day - it all makes a difference.",
+        "📨 Message the organisers to get involved!"
+      ]
+    },
+    {
+      id: "volunteer-recruitment-3",
+      icon: <VolunteerActivism />,
+      title: "Support Behind the Scenes - Volunteer with the Yorkshire 3 Peaks Event",
+      type: "Volunteer",
+      content: [
+        "Join our amazing volunteer team and help create an unforgettable experience for hundreds of participants - we need YOU!",
+        "✅ Roles available for Friday setup, Saturday walk coordination, and Sunday breakdown",
+        "✅ No experience needed - just enthusiasm and reliability",
+        "✅ Full briefing provided and meals available on site",
+        "👥 Bring a friend and make a weekend of it!",
+        "🫶 Volunteering is a great way to meet new people and support incredible causes."
+      ]
+    },
+    {
+      id: "walker-recruitment-2",
+      icon: <Groups />,
+      title: "Walk the Yorkshire Three Peaks - For Charity. For Challenge. For Change.",
+      type: "Walker",
+      content: [
+        "Conquer three iconic Yorkshire peaks in one epic 24.6-mile challenge while raising funds for causes close to your heart.",
+        "🗓️ Event Dates: XXth - XXth JuXX 20XX",
+        "💷 Entry: £45 early bird (until 1st April) | £50 standard",
+        "👨‍👩‍👧‍👦 Teams of 3-5 | Full safety support | Camping included",
+        "📍 Starting in Horton-in-Ribblesdale",
+        "🚑 Safety first: mountain rescue team, first aid, and qualified radio crew on standby.",
+        "💛 Make this more than just a walk. Make it a legacy.",
+        "📌 Sign up now at yorkshirepeaks.co.uk"
+      ]
+    }
+  ],
+  reminders: [
+    {
+      id: "one-month-reminder",
+      icon: <Schedule />,
+      title: "Only One Month to Go - Yorkshire Three Peaks 2025!",
+      type: "Reminder",
+      content: [
+        "This is your friendly reminder that the adventure begins soon:",
+        "📅 XXth - XXth JuXX 20XX | 🏕️ Horton-in-Ribblesdale",
+        "If you're signed up - it's time to:",
+        ["Check your kit", "Finalise travel plans", "Rally your team!"],
+        "If you haven't signed up yet - this is your last chance to be part of something amazing.",
+        "👣 24.6 miles | 🏔️ 3 peaks | 💛 Countless memories",
+        "🎟️ Register today at yorkshirepeaks.co.uk Let's smash our participation goal before the big day!"
+      ]
+    },
+    {
+      id: "final-countdown",
+      icon: <Schedule />,
+      title: "Final Countdown - Yorkshire Three Peaks Is This Weekend!",
+      type: "Reminder",
+      content: [
+        "Walkers, volunteers, and supporters - the wait is over!",
+        "🌦️ Weather looks XXXXX (bring the correct clothes for the weather)",
+        "🕕 Meet at 6:00 AM Saturday, kit checks at the start line",
+        "📍 Horton-in-Ribblesdale campsite open from Friday afternoon",
+        "Please make sure you:",
+        ["Bring all essential kit", "Confirm travel and team arrangements", "Bring cash/card for food and pub meal if attending"],
+        "Limited spots remaining - bring your friends for the adventure of a lifetime!"
+      ]
+    },
+    {
+      id: "tomorrow-start",
+      icon: <Schedule />,
+      title: "It's Time! The Yorkshire Three Peaks Starts Tomorrow",
+      type: "Reminder",
+      content: [
+        "To all our brave participants and brilliant volunteers: we're nearly there.",
+        "📅 Saturday's Start Time: 6:00 AM sharp",
+        "📍 Starting Point: Horton-in-Ribblesdale (look for the registration tents)",
+        "🌤️ Weather outlook: 10-14°C, overcast with light showers - pack accordingly!",
+        "🧰 Bring: waterproofs, food, first aid essentials, head torch, printed map or offline GPS",
+        "🥾 Final tip: Start steady, hydrate often, and stick with your team."
+      ]
+    }
+  ]
+};
