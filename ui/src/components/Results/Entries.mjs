@@ -7,8 +7,21 @@ import generateColumns from "./Columns.mjs";
 
 function Entries({ entries, fetchEntries, selectedEvent }) {
   return (
-    <>
-      <Box paddingTop="1rem" display="flex" alignItems="center" maxWidth="90vw" maxHeight="70vh" overflow="auto">
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+        flexDirection: "column",
+        p: { xs: 2, sm: 3 },
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "divider",
+        mt: 2,
+      }}
+    >
+      <Box display="flex" alignItems="center" maxWidth="90vw" maxHeight="70vh" overflow="auto">
         <Paper>
           <DataGrid
             id="entries-table"
@@ -30,7 +43,7 @@ function Entries({ entries, fetchEntries, selectedEvent }) {
       >
         Refresh Entries
       </Button>
-    </>
+    </Box>
   );
 }
 
