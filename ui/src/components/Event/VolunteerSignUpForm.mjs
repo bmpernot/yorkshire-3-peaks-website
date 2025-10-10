@@ -5,6 +5,7 @@ import { StyledCard, StyledContainer as SignUpContainer } from "../common/Custom
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import { post } from "aws-amplify/api";
+import { styles } from "@/src/styles/event.mui.styles.mjs";
 
 function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
   const additionalRequirements = useRef();
@@ -35,37 +36,13 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
 
   return (
     <SignUpContainer direction="column" justifyContent="space-between" paddingTop="true">
-      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth="true">
-        <Typography
-          variant="h4"
-          component="h2"
-          sx={{
-            mb: 2,
-            fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
-            fontWeight: 600,
-            color: "primary.main",
-          }}
-        >
+      <StyledCard variant="outlined" sx={styles.card} nomaxwidth="true">
+        <Typography variant="h4" component="h2" sx={styles.title}>
           Volunteer Registration
         </Typography>
 
-        <Box
-          sx={{
-            p: { xs: 2, sm: 3 },
-            bgcolor: "warning.light",
-            borderRadius: 2,
-            mb: 3,
-          }}
-        >
-          <Typography
-            variant="body1"
-            sx={{
-              color: "warning.contrastText",
-              fontSize: { xs: "0.875rem", sm: "1rem" },
-              lineHeight: 1.6,
-            }}
-            id="volunteer-registration-information"
-          >
+        <Box sx={styles.box}>
+          <Typography variant="body1" sx={styles.description} id="volunteer-registration-information">
             <strong>What volunteers do:</strong>
             <br />
             Support walkers along the route, help with checkpoints, provide refreshments, assist with logistics, and
@@ -74,8 +51,8 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
         </Box>
         {isLoggedIn ? (
           <Box component="form" onSubmit={handleSubmit}>
-            <FormControl fullWidth sx={{ mb: 3 }}>
-              <FormLabel sx={{ mb: 1, fontWeight: 500 }}>Additional Requirements</FormLabel>
+            <FormControl fullWidth sx={styles.form}>
+              <FormLabel sx={styles.formLabel}>Additional Requirements</FormLabel>
               <TextField
                 id="additional-requirements-volunteer"
                 name="requirements"
@@ -94,11 +71,7 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
               size="large"
               fullWidth
               id="volunteer-registration-button"
-              sx={{
-                py: { xs: 1.5, sm: 2 },
-                fontSize: { xs: "1rem", sm: "1.125rem" },
-                fontWeight: 600,
-              }}
+              sx={styles.button}
             >
               I want to volunteer
             </Button>
@@ -111,11 +84,7 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
             size="large"
             fullWidth
             id="event-volunteer-registration-sign-in-button"
-            sx={{
-              py: { xs: 1.5, sm: 2 },
-              fontSize: { xs: "1rem", sm: "1.125rem" },
-              fontWeight: 600,
-            }}
+            sx={styles.button}
           >
             Sign in to volunteer
           </Button>

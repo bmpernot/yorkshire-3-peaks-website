@@ -14,6 +14,7 @@ import { StyledCard, StyledContainer as SignUpContainer } from "../common/Custom
 import { toast } from "react-toastify";
 import { post, get } from "aws-amplify/api";
 import ErrorCard from "../common/ErrorCard.mjs";
+import { styles } from "@/src/styles/event.mui.styles.mjs";
 
 function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
   const [formData, setFormData] = useState({
@@ -49,24 +50,25 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
 
   return (
     <SignUpContainer direction="column" justifyContent="space-between" paddingTop="true">
-      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth="true">
-        <Typography variant="h4" sx={{ color: "#8dc550", fontWeight: 600, mb: 2 }}>
+      <StyledCard variant="outlined" sx={styles.card} nomaxwidth="true">
+        <Typography variant="h4" sx={styles.title}>
           Team Registration
         </Typography>
-
-        <Typography variant="body1" sx={{ mb: 2 }} id="team-registration-information">
-          • Teams must have <strong>3 - 5 members</strong> and must include yourself.
-          <br />
-          • Payment is managed on your profile page. Each member can contribute, but your team must meet or exceed the
-          full amount.
-          <br />
-          • You can edit your team details anytime from your profile.
-          <br />
-          • All team members will have access to update the entry.
-          <br />
-          • Disabled users in the user search are ones that have already signed up to a team.
-          <br />
-        </Typography>
+        <Box sx={styles.box}>
+          <Typography variant="body1" sx={styles.description} id="team-registration-information">
+            • Teams must have <strong>3 - 5 members</strong> and must include yourself.
+            <br />
+            • Payment is managed on your profile page. Each member can contribute, but your team must meet or exceed the
+            full amount.
+            <br />
+            • You can edit your team details anytime from your profile.
+            <br />
+            • All team members will have access to update the entry.
+            <br />
+            • Disabled users in the user search are ones that have already signed up to a team.
+            <br />
+          </Typography>
+        </Box>
         {isLoggedIn ? (
           <Box component="form" onSubmit={handleSubmit}>
             {errors.length > 0
@@ -74,8 +76,8 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
                   return <ErrorCard error={error} index={index} />;
                 })
               : null}
-            <FormControl fullWidth sx={{ mb: 3 }}>
-              <FormLabel sx={{ mb: 1, fontWeight: 500 }}>Team Name</FormLabel>
+            <FormControl fullWidth sx={styles.form}>
+              <FormLabel sx={styles.formLabel}>Team Name</FormLabel>
               <TextField
                 id="teamName"
                 name="teamName"
@@ -84,7 +86,6 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
                 placeholder="Enter your team name"
                 variant="outlined"
                 size="medium"
-                required
               />
             </FormControl>
 
@@ -128,7 +129,15 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
               />
             ) : null}
 
-            <Button type="submit" variant="contained" color="primary" id="submit-team-button">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              id="submit-team-button"
+              size="large"
+              fullWidth
+              sx={styles.button}
+            >
               Create Team
             </Button>
           </Box>
@@ -138,6 +147,9 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
             variant="contained"
             color="primary"
             id="event-team-registration-sign-in-button"
+            size="large"
+            fullWidth
+            sx={styles.button}
           >
             Sign in to register a team
           </Button>
@@ -207,29 +219,12 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
   };
 
   return (
-    <Box
-      sx={{
-        p: { xs: 2, sm: 3 },
-        mb: 3,
-        border: "1px solid",
-        borderColor: "divider",
-        borderRadius: 2,
-        bgcolor: "background.paper",
-      }}
-    >
-      <Typography
-        variant="h6"
-        sx={{
-          mb: 2,
-          fontWeight: 600,
-          color: "text.primary",
-          fontSize: { xs: "1rem", sm: "1.125rem" },
-        }}
-      >
+    <Box sx={styles.teamMemberBox}>
+      <Typography variant="h6" sx={styles.teamMemberTitle}>
         {teamMemberLabel}
       </Typography>
 
-      <FormControl fullWidth sx={{ mb: 2 }}>
+      <FormControl fullWidth sx={styles.formGap}>
         <Autocomplete
           id={`team-member-${membersIndex}`}
           options={users}
@@ -280,11 +275,11 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
           />
         }
         label="Happy to volunteer if needed"
-        sx={{ mb: 2 }}
+        sx={styles.formGap}
       />
 
       <FormControl fullWidth>
-        <FormLabel sx={{ mb: 1, fontWeight: 500 }}>Additional Requirements</FormLabel>
+        <FormLabel sx={styles.formLabel}>Additional Requirements</FormLabel>
         <TextField
           id={`requirements-${membersIndex}`}
           name={`requirements-${membersIndex}`}

@@ -1,7 +1,7 @@
 import { Stack, Card } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const StyledCard = styled(Card)(({ theme, noMaxWidth }) => ({
+const StyledCard = styled(Card)(({ theme, nomaxwidth }) => ({
   display: "flex",
   flexDirection: "column",
   padding: theme.spacing(4),
@@ -10,7 +10,7 @@ const StyledCard = styled(Card)(({ theme, noMaxWidth }) => ({
   [theme.breakpoints.down("sm")]: {
     padding: theme.spacing(3),
   },
-  maxWidth: noMaxWidth ? "" : "330px",
+  maxWidth: nomaxwidth ? "" : "330px",
   alignItems: "center",
   justifyContent: "space-between",
   boxShadow: "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
