@@ -63,7 +63,7 @@ function UserDetailsForm({ user }) {
   };
 
   return (
-    <StyledContainer direction="column" justifyContent="space-between">
+    <StyledContainer direction="column" justifyContent="space-between" paddingTop={true}>
       <StyledCard variant="outlined">
         <Box sx={styles.titleBox}>
           <Typography component="h1" variant="h4" sx={styles.title}>

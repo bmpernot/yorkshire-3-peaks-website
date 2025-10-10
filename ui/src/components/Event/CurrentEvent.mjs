@@ -106,19 +106,17 @@ function CurrentEvent() {
         Current Events
       </Typography>
 
-      <Box>
-        <Events
-          events={events}
-          selectedEvent={selectedEvent}
-          setSelectedEvent={setSelectedEvent}
-          fetchEvents={fetchEvents}
-        />
-      </Box>
+      <Events
+        events={events}
+        selectedEvent={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+        fetchEvents={fetchEvents}
+      />
 
       {events.length === 0 ? (
         <NoEvents />
       ) : (
-        <Grid2 container spacing={{ xs: 2, sm: 3, md: 4 }}>
+        <Grid2 container={true} spacing={{ xs: 2, sm: 3, md: 4 }}>
           <Grid2 size={12}>
             <EventInformation eventInformation={eventInformation} />
           </Grid2>

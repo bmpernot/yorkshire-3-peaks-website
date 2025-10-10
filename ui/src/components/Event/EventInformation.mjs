@@ -9,8 +9,8 @@ function EventInformation({ eventInformation }) {
   const eventEndDate = new Date(eventInformation.endDate);
 
   return (
-    <SignUpContainer direction="column" justifyContent="space-between">
-      <StyledCard variant="outlined">
+    <SignUpContainer direction="column" justifyContent="space-between" paddingTop={true}>
+      <StyledCard variant="outlined" noMaxWidth={true}>
         <Typography
           variant="h4"
           component="h2"

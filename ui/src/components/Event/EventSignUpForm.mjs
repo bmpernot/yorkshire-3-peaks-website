@@ -48,12 +48,12 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
   };
 
   return (
-    <SignUpContainer direction="column" justifyContent="space-between">
-      <StyledCard variant="outlined" sx={{ height: "fit-content" }}>
+    <SignUpContainer direction="column" justifyContent="space-between" paddingTop={true}>
+      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth={true}>
         <Typography variant="h4" sx={{ color: "#8dc550", fontWeight: 600, mb: 2 }}>
           Team Registration
         </Typography>
-        
+
         <Typography variant="body1" sx={{ mb: 2 }} id="team-registration-information">
           • Teams must have <strong>3 - 5 members</strong> and must include yourself.
           <br />
@@ -207,23 +207,28 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
   };
 
   return (
-    <Box sx={{
-      p: { xs: 2, sm: 3 },
-      mb: 3,
-      border: "1px solid",
-      borderColor: "divider",
-      borderRadius: 2,
-      bgcolor: "background.paper"
-    }}>
-      <Typography variant="h6" sx={{ 
-        mb: 2, 
-        fontWeight: 600,
-        color: "text.primary",
-        fontSize: { xs: "1rem", sm: "1.125rem" }
-      }}>
+    <Box
+      sx={{
+        p: { xs: 2, sm: 3 },
+        mb: 3,
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 2,
+        bgcolor: "background.paper",
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          mb: 2,
+          fontWeight: 600,
+          color: "text.primary",
+          fontSize: { xs: "1rem", sm: "1.125rem" },
+        }}
+      >
         {teamMemberLabel}
       </Typography>
-      
+
       <FormControl fullWidth sx={{ mb: 2 }}>
         <Autocomplete
           id={`team-member-${membersIndex}`}
@@ -251,12 +256,7 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
             });
           }}
           renderInput={(params) => (
-            <TextField 
-              {...params} 
-              placeholder="Search by name or email"
-              variant="outlined"
-              size="medium"
-            />
+            <TextField {...params} placeholder="Search by name or email" variant="outlined" size="medium" />
           )}
           inputValue={searchTerm}
           onInputChange={(_, newInputValue, reason) => {

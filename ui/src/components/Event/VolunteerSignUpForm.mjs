@@ -34,34 +34,42 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
   }
 
   return (
-    <SignUpContainer direction="column" justifyContent="space-between">
-      <StyledCard variant="outlined" sx={{ height: "fit-content" }}>
-        <Typography 
-          variant="h4" 
+    <SignUpContainer direction="column" justifyContent="space-between" paddingTop={true}>
+      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth={true}>
+        <Typography
+          variant="h4"
           component="h2"
-          sx={{ 
+          sx={{
             mb: 2,
             fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
             fontWeight: 600,
-            color: "primary.main"
+            color: "primary.main",
           }}
         >
           Volunteer Registration
         </Typography>
-        
-        <Box sx={{
-          p: { xs: 2, sm: 3 },
-          bgcolor: "warning.light",
-          borderRadius: 2,
-          mb: 3
-        }}>
-          <Typography variant="body1" sx={{ 
-            color: "warning.contrastText",
-            fontSize: { xs: "0.875rem", sm: "1rem" },
-            lineHeight: 1.6
-          }} id="volunteer-registration-information">
+
+        <Box
+          sx={{
+            p: { xs: 2, sm: 3 },
+            bgcolor: "warning.light",
+            borderRadius: 2,
+            mb: 3,
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              color: "warning.contrastText",
+              fontSize: { xs: "0.875rem", sm: "1rem" },
+              lineHeight: 1.6,
+            }}
+            id="volunteer-registration-information"
+          >
             <strong>What volunteers do:</strong>
-            <br />Support walkers along the route, help with checkpoints, provide refreshments, assist with logistics, and ensure everyone stays safe. No prior experience necessary - just enthusiasm and willingness to help!
+            <br />
+            Support walkers along the route, help with checkpoints, provide refreshments, assist with logistics, and
+            ensure everyone stays safe. No prior experience necessary - just enthusiasm and willingness to help!
           </Typography>
         </Box>
         {isLoggedIn ? (
@@ -79,17 +87,17 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
                 size="medium"
               />
             </FormControl>
-            <Button 
-              type="submit" 
-              variant="contained" 
-              color="primary" 
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
               size="large"
               fullWidth
               id="volunteer-registration-button"
-              sx={{ 
+              sx={{
                 py: { xs: 1.5, sm: 2 },
                 fontSize: { xs: "1rem", sm: "1.125rem" },
-                fontWeight: 600
+                fontWeight: 600,
               }}
             >
               I want to volunteer
@@ -103,10 +111,10 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
             size="large"
             fullWidth
             id="event-volunteer-registration-sign-in-button"
-            sx={{ 
+            sx={{
               py: { xs: 1.5, sm: 2 },
               fontSize: { xs: "1rem", sm: "1.125rem" },
-              fontWeight: 600
+              fontWeight: 600,
             }}
           >
             Sign in to volunteer
