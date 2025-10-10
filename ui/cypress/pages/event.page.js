@@ -11,11 +11,11 @@ export default class resultsPage {
     console.log(eventInformation);
     cy.get("[id=walkers-needed-info]").should(
       "contain",
-      `${eventInformation.currentWalkers}/${eventInformation.requiredWalkers}`,
+      `${eventInformation.currentWalkers} / ${eventInformation.requiredWalkers}`,
     );
     cy.get("[id=volunteers-needed-info]").should(
       "contain",
-      `${eventInformation.currentVolunteers}/${eventInformation.requiredVolunteers}`,
+      `${eventInformation.currentVolunteers} / ${eventInformation.requiredVolunteers}`,
     );
     cy.get("[id=money-raised-info]").should("contain", `£${eventInformation.moneyRaised}`);
     cy.get("[id=event-date-info]").should(
@@ -45,11 +45,11 @@ export default class resultsPage {
   }
   verifyEventVolunteerRegistration() {
     cy.get("[id=volunteer-registration-information]")
-      .should(
+      .should("contain.text", "What volunteers do:")
+      .and(
         "contain.text",
-        "Volunteering involves supporting walkers along the route, helping with checkpoints, providing refreshments, assisting with logistics, and ensuring everyone stays safe.",
-      )
-      .and("contain.text", "No prior experience is necessary - just enthusiasm and a willingness to help!");
+        "Support walkers along the route, help with checkpoints, provide refreshments, assist with logistics, and ensure everyone stays safe. No prior experience necessary - just enthusiasm and willingness to help!",
+      );
     return this;
   }
   typeTeamName(teamName) {
@@ -82,11 +82,12 @@ export default class resultsPage {
     return this;
   }
   verifyNoEventsAvailable() {
-    cy.get("[id=no-events]")
+    cy.get("[id=no-events-title]").should("be.visible").and("have.text", "No Current Events");
+    cy.get("[id=no-events-body]")
       .should("be.visible")
       .and(
-        "contain.text",
-        "There are no current events planned - if you would like to help set one up please contact us at yorkshirepeaks@gmail.com",
+        "have.text",
+        "There are no events currently planned. If you would like to help organize one, please contact us at yorkshirepeaks@gmail.com",
       );
     return this;
   }
