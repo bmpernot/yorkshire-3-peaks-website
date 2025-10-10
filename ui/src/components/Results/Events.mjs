@@ -6,23 +6,42 @@ import { styles } from "../../styles/results.mui.styles.mjs";
 
 function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
   return (
-    <Box paddingTop="1rem" display="flex" alignItems="center">
-      <FormControl>
-        <InputLabel id="demo-multiple-name-label">Event</InputLabel>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+        flexWrap: { xs: "wrap", sm: "nowrap" },
+        p: { xs: 2, sm: 3 },
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "divider",
+      }}
+    >
+      <FormControl sx={{ minWidth: { xs: "100%", sm: 200 } }}>
+        <InputLabel id="events-list-label" sx={{ fontWeight: 500 }}>
+          Select Event
+        </InputLabel>
         <Select
           labelId="events-list-label"
           id="events-list"
           value={selectedEvent}
-          sx={styles.table}
+          label="Select Event"
           onChange={(event) => {
             setSelectedEvent(event.target.value);
           }}
+          size="medium"
         >
           {events.map((event) => {
             const date = new Date(event.startDate);
             return (
               <MenuItem key={event.eventId} value={event} id={event.eventId}>
-                {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
+                {date.toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </MenuItem>
             );
           })}
@@ -33,6 +52,15 @@ function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
         onClick={() => {
           fetchEvents();
         }}
+        sx={{
+          bgcolor: "primary.main",
+          color: "primary.contrastText",
+          "&:hover": {
+            bgcolor: "primary.dark",
+          },
+          p: 1.5,
+        }}
+        size="large"
       >
         <Refresh />
       </IconButton>

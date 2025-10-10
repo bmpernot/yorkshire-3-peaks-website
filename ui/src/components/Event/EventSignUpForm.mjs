@@ -49,8 +49,11 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
 
   return (
     <SignUpContainer direction="column" justifyContent="space-between">
-      <StyledCard variant="outlined">
-        <Typography variant="h4">Team Sign Up</Typography>
+      <StyledCard variant="outlined" sx={{ height: "fit-content" }}>
+        <Typography variant="h4" sx={{ color: "#8dc550", fontWeight: 600, mb: 2 }}>
+          Team Registration
+        </Typography>
+        
         <Typography variant="body1" sx={{ mb: 2 }} id="team-registration-information">
           • Teams must have <strong>3 - 5 members</strong> and must include yourself.
           <br />
@@ -71,14 +74,17 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
                   return <ErrorCard error={error} index={index} />;
                 })
               : null}
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <FormLabel htmlFor="teamName">Team Name</FormLabel>
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <FormLabel sx={{ mb: 1, fontWeight: 500 }}>Team Name</FormLabel>
               <TextField
                 id="teamName"
                 name="teamName"
                 value={formData.teamName}
                 onChange={(e) => setFormData({ ...formData, teamName: e.target.value })}
                 placeholder="Enter your team name"
+                variant="outlined"
+                size="medium"
+                required
               />
             </FormControl>
 
@@ -201,9 +207,24 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
   };
 
   return (
-    <>
+    <Box sx={{
+      p: { xs: 2, sm: 3 },
+      mb: 3,
+      border: "1px solid",
+      borderColor: "divider",
+      borderRadius: 2,
+      bgcolor: "background.paper"
+    }}>
+      <Typography variant="h6" sx={{ 
+        mb: 2, 
+        fontWeight: 600,
+        color: "text.primary",
+        fontSize: { xs: "1rem", sm: "1.125rem" }
+      }}>
+        {teamMemberLabel}
+      </Typography>
+      
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <FormLabel>{teamMemberLabel}</FormLabel>
         <Autocomplete
           id={`team-member-${membersIndex}`}
           options={users}
@@ -229,8 +250,14 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
               email: value?.email || "",
             });
           }}
-          renderInput={(params) => <TextField {...params} placeholder="Search by name or email" />}
-          sx={{ flex: 1 }}
+          renderInput={(params) => (
+            <TextField 
+              {...params} 
+              placeholder="Search by name or email"
+              variant="outlined"
+              size="medium"
+            />
+          )}
           inputValue={searchTerm}
           onInputChange={(_, newInputValue, reason) => {
             if (reason === "input") {
@@ -249,13 +276,15 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
             checked={formData.members[membersIndex]?.isVolunteer || false}
             onChange={(event) => updateMember(membersIndex, { isVolunteer: event.target.checked })}
             id={`team-member-happy-to-volunteer-${membersIndex}`}
+            color="primary"
           />
         }
         label="Happy to volunteer if needed"
+        sx={{ mb: 2 }}
       />
 
-      <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
-        <FormLabel htmlFor="requirements">Additional Requirements</FormLabel>
+      <FormControl fullWidth>
+        <FormLabel sx={{ mb: 1, fontWeight: 500 }}>Additional Requirements</FormLabel>
         <TextField
           id={`requirements-${membersIndex}`}
           name={`requirements-${membersIndex}`}
@@ -264,9 +293,11 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
           placeholder="E.g. dietary needs, accessibility, medical info"
           value={formData.members[membersIndex]?.additionalRequirements || ""}
           onChange={(event) => updateMember(membersIndex, { additionalRequirements: event.target.value })}
+          variant="outlined"
+          size="medium"
         />
       </FormControl>
-    </>
+    </Box>
   );
 }
 

@@ -35,19 +35,39 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
 
   return (
     <SignUpContainer direction="column" justifyContent="space-between">
-      <StyledCard variant="outlined">
-        <Typography variant="h4" gutterBottom>
-          Volunteer Sign Up
+      <StyledCard variant="outlined" sx={{ height: "fit-content" }}>
+        <Typography 
+          variant="h4" 
+          component="h2"
+          sx={{ 
+            mb: 2,
+            fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
+            fontWeight: 600,
+            color: "primary.main"
+          }}
+        >
+          Volunteer Registration
         </Typography>
-        <Typography variant="body1" gutterBottom id="volunteer-registration-information">
-          Volunteering involves supporting walkers along the route, helping with checkpoints, providing refreshments,
-          assisting with logistics, and ensuring everyone stays safe. No prior experience is necessary - just enthusiasm
-          and a willingness to help!
-        </Typography>
+        
+        <Box sx={{
+          p: { xs: 2, sm: 3 },
+          bgcolor: "warning.light",
+          borderRadius: 2,
+          mb: 3
+        }}>
+          <Typography variant="body1" sx={{ 
+            color: "warning.contrastText",
+            fontSize: { xs: "0.875rem", sm: "1rem" },
+            lineHeight: 1.6
+          }} id="volunteer-registration-information">
+            <strong>What volunteers do:</strong>
+            <br />Support walkers along the route, help with checkpoints, provide refreshments, assist with logistics, and ensure everyone stays safe. No prior experience necessary - just enthusiasm and willingness to help!
+          </Typography>
+        </Box>
         {isLoggedIn ? (
           <Box component="form" onSubmit={handleSubmit}>
-            <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
-              <FormLabel htmlFor="requirements">Additional Requirements</FormLabel>
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <FormLabel sx={{ mb: 1, fontWeight: 500 }}>Additional Requirements</FormLabel>
               <TextField
                 id="additional-requirements-volunteer"
                 name="requirements"
@@ -55,9 +75,23 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
                 rows={3}
                 placeholder="E.g. dietary needs, accessibility, medical info"
                 inputRef={additionalRequirements}
+                variant="outlined"
+                size="medium"
               />
             </FormControl>
-            <Button type="submit" variant="contained" color="primary" id="volunteer-registration-button">
+            <Button 
+              type="submit" 
+              variant="contained" 
+              color="primary" 
+              size="large"
+              fullWidth
+              id="volunteer-registration-button"
+              sx={{ 
+                py: { xs: 1.5, sm: 2 },
+                fontSize: { xs: "1rem", sm: "1.125rem" },
+                fontWeight: 600
+              }}
+            >
               I want to volunteer
             </Button>
           </Box>
@@ -66,7 +100,14 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
             onClick={() => router.push("/auth/sign-in")}
             variant="contained"
             color="primary"
+            size="large"
+            fullWidth
             id="event-volunteer-registration-sign-in-button"
+            sx={{ 
+              py: { xs: 1.5, sm: 2 },
+              fontSize: { xs: "1rem", sm: "1.125rem" },
+              fontWeight: 600
+            }}
           >
             Sign in to volunteer
           </Button>
