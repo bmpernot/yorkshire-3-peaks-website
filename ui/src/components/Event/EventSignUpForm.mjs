@@ -48,8 +48,8 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
   };
 
   return (
-    <SignUpContainer direction="column" justifyContent="space-between" paddingTop={true}>
-      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth={true}>
+    <SignUpContainer direction="column" justifyContent="space-between" paddingTop="true">
+      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth="true">
         <Typography variant="h4" sx={{ color: "#8dc550", fontWeight: 600, mb: 2 }}>
           Team Registration
         </Typography>

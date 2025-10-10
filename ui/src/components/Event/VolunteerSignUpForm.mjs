@@ -34,8 +34,8 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
   }
 
   return (
-    <SignUpContainer direction="column" justifyContent="space-between" paddingTop={true}>
-      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth={true}>
+    <SignUpContainer direction="column" justifyContent="space-between" paddingTop="true">
+      <StyledCard variant="outlined" sx={{ height: "fit-content" }} noMaxWidth="true">
         <Typography
           variant="h4"
           component="h2"
