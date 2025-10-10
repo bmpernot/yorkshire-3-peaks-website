@@ -6,19 +6,7 @@ import { styles } from "../../styles/results.mui.styles.mjs";
 
 function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        flexWrap: { xs: "wrap", sm: "nowrap" },
-        p: { xs: 2, sm: 3 },
-        bgcolor: "background.paper",
-        borderRadius: 2,
-        border: "1px solid",
-        borderColor: "divider",
-      }}
-    >
+    <Box sx={styles.eventsBox}>
       <FormControl sx={{ minWidth: { xs: "100%", sm: 200 } }}>
         <InputLabel id="events-list-label" sx={{ fontWeight: 500 }}>
           Select Event
@@ -52,14 +40,7 @@ function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
         onClick={() => {
           fetchEvents();
         }}
-        sx={{
-          bgcolor: "primary.main",
-          color: "primary.contrastText",
-          "&:hover": {
-            bgcolor: "primary.dark",
-          },
-          p: 1.5,
-        }}
+        sx={styles.eventsRefreshButton}
         size="large"
       >
         <Refresh />

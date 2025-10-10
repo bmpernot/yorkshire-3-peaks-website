@@ -4,23 +4,11 @@ import { Box, Paper, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { Refresh } from "@mui/icons-material";
 import generateColumns from "./Columns.mjs";
+import { styles } from "../../styles/results.mui.styles.mjs";
 
 function Entries({ entries, fetchEntries, selectedEvent }) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        flexDirection: "column",
-        p: { xs: 2, sm: 3 },
-        bgcolor: "background.paper",
-        borderRadius: 2,
-        border: "1px solid",
-        borderColor: "divider",
-        mt: 2,
-      }}
-    >
+    <Box sx={styles.entriesBox}>
       <Box display="flex" alignItems="center" maxWidth="90vw" maxHeight="70vh" overflow="auto">
         <Paper>
           <DataGrid
@@ -30,6 +18,7 @@ function Entries({ entries, fetchEntries, selectedEvent }) {
             initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
             pageSizeOptions={entries.length > 5 ? [5, 10] : []}
             getRowId={(entry) => `team-id-${entry.teamId}`}
+            sx={styles.dataGrid}
           />
         </Paper>
       </Box>
