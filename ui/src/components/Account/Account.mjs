@@ -22,6 +22,7 @@ function Account() {
       sx={{
         display: "flex",
         justifyContent: "center",
+        paddingBottom: "32px",
       }}
     >
       <Grid2 size={12}>
