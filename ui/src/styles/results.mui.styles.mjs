@@ -4,16 +4,23 @@ const eventsBox = {
   display: "flex",
   alignItems: "center",
   gap: 2,
+  flexWrap: { xs: "wrap", sm: "nowrap" },
+  p: { xs: 2, sm: 3 },
+  bgcolor: "background.paper",
+  borderRadius: 2,
+  border: "1px solid",
+  borderColor: "divider",
+};
+const entriesBox = {
+  display: "flex",
+  alignItems: "center",
+  gap: 2,
   flexDirection: "column",
   p: { xs: 2, sm: 3 },
   bgcolor: "background.paper",
   borderRadius: 2,
   border: "1px solid",
   borderColor: "divider",
-  mt: 2,
-};
-const entriesBox = {
-  ...eventsBox,
   mt: 2,
 };
 const dataGrid = {
