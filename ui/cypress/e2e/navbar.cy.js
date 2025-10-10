@@ -19,6 +19,7 @@ describe("NavBar", () => {
   beforeEach(() => {
     cy.interceptAmplifyAuth();
     cy.stubUser();
+    cy.stubAPI();
   });
 
   for (const screenSize of screenSizes) {

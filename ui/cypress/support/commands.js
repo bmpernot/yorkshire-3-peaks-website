@@ -335,3 +335,7 @@ Cypress.Commands.add("stubUser", (role) => {
     user.signInDetails,
   );
 });
+
+Cypress.Commands.add("stubAPI", () => {
+  cy.intercept(`${Cypress.env("NEXT_PUBLIC_API_URL")}**`, { message: "Stubbed" }).as("stubbedAPI");
+});
