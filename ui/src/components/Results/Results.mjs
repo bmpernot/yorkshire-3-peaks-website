@@ -57,17 +57,18 @@ function Results() {
       try {
         const { body } = await get({ apiName: "api", path: `events/entries?eventId=${eventId}`, options: {} }).response;
         const data = await body.json();
-        data.forEach((entry) => {
+        const filteredData = data.filter((entry) => !entry.volunteer);
+        filteredData.forEach((entry) => {
           if (entry.start && entry.end) {
             entry.time = new Date(entry.end).valueOf() - new Date(entry.start).valueOf();
           }
         });
-        data.sort((a, b) => {
+        filteredData.sort((a, b) => {
           const aTime = a.time || 9999999999;
           const bTime = b.time || 9999999999;
           return aTime - bTime;
         });
-        setEntriesCache((prev) => ({ ...prev, [eventId]: data }));
+        setEntriesCache((prev) => ({ ...prev, [eventId]: filteredData }));
       } catch (err) {
         console.error("Failed to fetch entries", err);
         setError({ message: "Failed to get event entries" });
