@@ -78,12 +78,11 @@ dateTimes are nodes new Date().toISOString() output `2024-06-07T12:00:00.000Z`
 
 ### Teams Table:
 
-| Column Name          | Type    | Relationship |
-| -------------------- | ------- | ------------ |
-| teamId               | string  | Primary Key  |
-| -------------------- | ------  | ------------ |
-| teamName             | string  | Required     |
-| volunteer            | boolean | Optional     |
+| Column Name          | Type   | Relationship |
+| -------------------- | ------ | ------------ |
+| teamId               | string | Primary Key  |
+| -------------------- | ------ | ------------ |
+| teamName             | string | Required     |
 
 ### Team Members Table:
 
@@ -93,7 +92,6 @@ dateTimes are nodes new Date().toISOString() output `2024-06-07T12:00:00.000Z`
 | memberId               | string                    | Secondary Key |
 | ---------------------- | ------------------------- | ------------- |
 | additionalRequirements | string                    | Optional      |
-| volunteer              | boolean                   | Optional      |
 
 ### Entries Table:
 
@@ -113,3 +111,4 @@ enter as many times as there are checkpoints but follow the format
 | checkpoint3 | dateTime | Optional      |
 | checkpointX | dateTime | Optional      |
 | end         | dateTime | Optional      |
+| volunteer   | boolean  | Optional      |
