@@ -9,6 +9,7 @@ const getUsers = async (event) => {
   }
 
   const queryParams = event.queryStringParameters || {};
+  // TODO - remake to allow UI functionality- allow eventId and user as a filter to search by
   const fields = queryParams.fields && queryParams.fields.length > 0 ? queryParams.fields.split(",") : undefined;
   const claims = event.requestContext.authorizer.jwt.claims;
   const userRole = claims["cognito:groups"] ?? "User";
