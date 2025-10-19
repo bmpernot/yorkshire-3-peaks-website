@@ -188,6 +188,15 @@ Resources:
               - !GetAtt EntriesTable.Arn
               - !GetAtt TeamsTable.Arn
               - !GetAtt TeamMembersTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchGetItem"
+            Resource:
+              - !GetAtt EventsTable.Arn
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -200,6 +209,7 @@ Resources:
           ENTRIES_TABLE_NAME: !Ref EntriesTable
           TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
           TEAMS_TABLE_NAME: !Ref TeamsTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
 
   ##### API Resources #####
 
