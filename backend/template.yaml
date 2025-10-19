@@ -111,6 +111,96 @@ Resources:
           ENTRIES_TABLE_NAME: !Ref EntriesTable
           TEAMS_TABLE_NAME: !Ref TeamsTable
 
+  getEventInformation:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/events/getEventInformation.default
+      Description: A function to grab event information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchGetItem"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt EventsTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events/information
+            Method: GET
+            ApiId: !Ref HttpApiGateway
+            Auth:
+              Authorizer: NONE
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
+
+  registerVolunteer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/registerVolunteer.default
+      Description: A function to register a member as a volunteer
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchGetItem"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:PutItem"
+            Resource:
+              - !GetAtt TeamMembersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events/volunteer
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+
+  registerTeam:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/registerVolunteer.default
+      Description: A function to register a team for an event
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:PutItem"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events/volunteer
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+          TEAMS_TABLE_NAME: !Ref TeamsTable
+
   ##### API Resources #####
 
   ##### DB Resources #####
