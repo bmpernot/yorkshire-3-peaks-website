@@ -4,7 +4,7 @@ import { memo } from "react";
 import { Typography, List, ListItem, ListItemText } from "@mui/material";
 import { styles } from "../../styles/promotion.mui.styles.mjs";
 
-const PromotionContent = memo(({ content }) => {
+const PromotionContent = memo(function PromotionContentComponent({ content }) {
   if (Array.isArray(content)) {
     return (
       <List dense disablePadding>

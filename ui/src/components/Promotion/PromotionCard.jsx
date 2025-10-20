@@ -7,7 +7,7 @@ import PromotionContent from "./PromotionContent.jsx";
 import CopyButton from "./CopyButton.jsx";
 import CopyNotification from "./CopyNotification.jsx";
 
-const PromotionCard = memo(({ announcement, ariaLabel }) => {
+const PromotionCard = memo(function PromotionCardComponent({ announcement, ariaLabel }) {
   const [copied, setCopied] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
 

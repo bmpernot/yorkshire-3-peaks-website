@@ -11,7 +11,7 @@ import PosterCard from "./PosterCard.jsx";
 import NavigationChip from "./NavigationChip.jsx";
 import PromotionSection from "./PromotionSection.jsx";
 
-const Promotion = memo(() => {
+const Promotion = memo(function PromotionComponent() {
   const [expandedSections, setExpandedSections] = useState({
     recruitment: false,
     reminders: false,
@@ -87,8 +87,8 @@ const Promotion = memo(() => {
       </Box>
 
       <Typography variant="body1" sx={styles.introText}>
-        Help us spread the word about the Yorkshire Three Peaks Challenge! Whether you're participating, volunteering,
-        or simply supporting the cause, your promotion makes a real difference.
+        Help us spread the word about the Yorkshire Three Peaks Challenge! Whether you&apos;re participating,
+        volunteering, or simply supporting the cause, your promotion makes a real difference.
       </Typography>
 
       <Box sx={styles.guidelinesBox} role="note" aria-label="Usage guidelines">

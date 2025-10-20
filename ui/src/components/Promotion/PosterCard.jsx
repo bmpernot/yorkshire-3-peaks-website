@@ -7,7 +7,7 @@ import { styles } from "../../styles/promotion.mui.styles.mjs";
 import PreviewDialog from "./PreviewDialog.jsx";
 import PosterActions from "./PosterActions.jsx";
 
-const PosterCard = memo(({ title, description, downloadUrl, type, ariaLabel }) => {
+const PosterCard = memo(function PosterCardComponent({ title, description, downloadUrl, type, ariaLabel }) {
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const handleDownload = useCallback(() => {
@@ -48,7 +48,7 @@ const PosterCard = memo(({ title, description, downloadUrl, type, ariaLabel }) =
       />
       <CardContent sx={styles.cardContentFlex}>
         <Box sx={styles.cardHeader}>
-          <Image aria-hidden="true" />
+          <Image alt="" aria-hidden="true" />
           <Typography variant="h6" sx={styles.cardTitle} component="h3" id={`poster-title-${type.toLowerCase()}`}>
             {title}
           </Typography>
