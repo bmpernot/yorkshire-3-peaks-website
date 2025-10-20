@@ -4,8 +4,8 @@ import { describe, it, expect, vi } from "vitest";
 import Rules from "@/src/components/Rules/Rules.jsx";
 
 vi.mock("@mui/material", () => ({
-  Container: ({ children, maxWidth, ...props }) => <div {...props}>{children}</div>,
-  Typography: ({ children, component, variant, gutterBottom, ...props }) => {
+  Container: ({ children, ...props }) => <div {...props}>{children}</div>,
+  Typography: ({ children, component, variant, ...props }) => {
     const Component = component || (variant?.startsWith("h") ? variant : "div");
     return React.createElement(Component, props, children);
   },

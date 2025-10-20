@@ -4,7 +4,7 @@ import { vi } from "vitest";
 import CopyButton from "../../../src/components/Promotion/CopyButton.jsx";
 
 vi.mock("@mui/material", () => ({
-  Button: ({ children, onClick, startIcon, fullWidth, ...props }) => (
+  Button: ({ children, onClick, startIcon, ...props }) => (
     <button onClick={onClick} {...props}>
       {startIcon}
       {children}

@@ -4,7 +4,7 @@ import { vi } from "vitest";
 import PreviewDialog from "../../../src/components/Promotion/PreviewDialog.jsx";
 
 vi.mock("@mui/material", () => ({
-  Dialog: ({ open, children, maxWidth, fullWidth, ...props }) =>
+  Dialog: ({ open, children, ...props }) =>
     open ? (
       <div {...props} data-testid="dialog">
         {children}

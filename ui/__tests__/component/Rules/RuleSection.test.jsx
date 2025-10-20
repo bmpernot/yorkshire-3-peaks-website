@@ -5,7 +5,7 @@ import RuleSection from "@/src/components/Rules/RuleSection.jsx";
 
 vi.mock("@mui/material", () => ({
   Accordion: ({ children, ...props }) => <div {...props}>{children}</div>,
-  AccordionSummary: ({ children, expandIcon, ...props }) => <button {...props}>{children}</button>,
+  AccordionSummary: ({ children, ...props }) => <button {...props}>{children}</button>,
   AccordionDetails: ({ children, ...props }) => <div {...props}>{children}</div>,
   Typography: ({ children, component, variant, ...props }) => {
     const Component = component || (variant?.startsWith("h") ? variant : "div");

@@ -4,8 +4,8 @@ import { describe, it, expect, vi } from "vitest";
 import BulletedList from "@/src/components/Rules/BulletedList.jsx";
 
 vi.mock("@mui/material", () => ({
-  List: ({ children, disableGutters, dense, disablePadding, ...props }) => <ul {...props}>{children}</ul>,
-  ListItem: ({ children, alignItems, disableGutters, ...props }) => <li {...props}>{children}</li>,
+  List: ({ children, ...props }) => <ul {...props}>{children}</ul>,
+  ListItem: ({ children, ...props }) => <li {...props}>{children}</li>,
   ListItemIcon: ({ children, ...props }) => <div {...props}>{children}</div>,
   ListItemText: ({ primary, secondary, ...props }) => (
     <div {...props}>
@@ -17,7 +17,7 @@ vi.mock("@mui/material", () => ({
     const Component = component || (variant?.startsWith("h") ? variant : "div");
     return React.createElement(Component, props, children);
   },
-  Tooltip: ({ children, title, arrow, ...props }) => (
+  Tooltip: ({ children, title, ...props }) => (
     <div {...props} title={title} aria-label={title}>
       {children}
     </div>
