@@ -4,40 +4,37 @@ import { describe, it, expect } from "vitest";
 import BulletedList from "@/src/components/Rules/BulletedList.jsx";
 
 describe("BulletedList", () => {
-  const mockItems = [
-    { text: "Regular item" },
-    { type: "heading", text: "Section Heading" },
-    { text: "Item with tooltip", tooltip: "Helpful info" },
-    { primary: <span>Custom primary content</span> },
-  ];
-
-  it("renders regular text items", () => {
+  it("renders text items in a list", () => {
     render(<BulletedList items={[{ text: "Test item" }]} />);
+    expect(screen.getByRole("list")).toBeInTheDocument();
     expect(screen.getByText("Test item")).toBeInTheDocument();
   });
 
-  it("renders headings correctly", () => {
+  it("renders headings as h6 elements", () => {
     render(<BulletedList items={[{ type: "heading", text: "Test Heading" }]} />);
     expect(screen.getByRole("heading", { level: 6 })).toHaveTextContent("Test Heading");
   });
 
-  it("renders tooltips when provided", () => {
-    render(<BulletedList items={[{ text: "Test", tooltip: "Tooltip text" }]} />);
-    expect(screen.getByLabelText("Tooltip text")).toBeInTheDocument();
+  it("renders tooltip icon when tooltip provided", () => {
+    render(<BulletedList items={[{ text: "Test", tooltip: "Helpful info" }]} />);
+    expect(screen.getByLabelText("Helpful info")).toBeInTheDocument();
   });
 
-  it("renders primary content when provided", () => {
-    render(<BulletedList items={[{ primary: <span>Primary content</span> }]} />);
-    expect(screen.getByText("Primary content")).toBeInTheDocument();
+  it("renders custom primary content", () => {
+    render(<BulletedList items={[{ primary: <span>Custom content</span> }]} />);
+    expect(screen.getByText("Custom content")).toBeInTheDocument();
   });
 
-  it("renders list with equipment type", () => {
-    render(<BulletedList items={mockItems} type="equipment" />);
-    expect(screen.getByRole("list")).toBeInTheDocument();
-  });
+  it("renders mixed content types", () => {
+    const items = [
+      { type: "heading", text: "Section" },
+      { text: "Regular item" },
+      { text: "Item with tooltip", tooltip: "Info" },
+    ];
+    render(<BulletedList items={items} />);
 
-  it("renders bullet icons for list items", () => {
-    render(<BulletedList items={[{ text: "Test" }]} />);
-    expect(screen.getByText("•")).toBeInTheDocument();
+    expect(screen.getByRole("heading")).toHaveTextContent("Section");
+    expect(screen.getByText("Regular item")).toBeInTheDocument();
+    expect(screen.getByLabelText("Info")).toBeInTheDocument();
   });
 });

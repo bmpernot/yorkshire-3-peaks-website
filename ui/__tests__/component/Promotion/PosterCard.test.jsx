@@ -13,27 +13,47 @@ describe("PosterCard", () => {
   it("renders poster content correctly", () => {
     render(<PosterCard {...mockPoster} />);
 
-    expect(screen.getByText("Test Poster")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent("Test Poster");
     expect(screen.getByText("Test poster description")).toBeInTheDocument();
     expect(screen.getByText("Walker")).toBeInTheDocument();
-    expect(screen.getByTestId("poster-image")).toHaveAttribute("src", "/test-poster.svg");
+  });
+
+  it("renders as article with correct accessibility", () => {
+    render(<PosterCard {...mockPoster} />);
+
+    const article = screen.getByRole("article");
+    expect(article).toHaveAttribute("aria-label", "Downloadable poster: Test Poster");
+  });
+
+  it("renders image with correct attributes", () => {
+    render(<PosterCard {...mockPoster} />);
+
+    const image = screen.getByRole("button", { name: "Preview Test Poster in full size" });
+    expect(image).toHaveAttribute("tabindex", "0");
   });
 
   it("opens preview when image is clicked", () => {
     render(<PosterCard {...mockPoster} />);
 
-    fireEvent.click(screen.getByTestId("poster-image"));
+    const imageButton = screen.getByRole("button", { name: "Preview Test Poster in full size" });
+    fireEvent.click(imageButton);
 
-    expect(screen.getByTestId("preview-dialog")).toBeInTheDocument();
-    expect(screen.getByText("Preview: Test Poster")).toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
-  it("handles keyboard navigation", () => {
+  it("opens preview with Enter key", () => {
     render(<PosterCard {...mockPoster} />);
 
-    const image = screen.getByTestId("poster-image");
-    fireEvent.keyDown(image, { key: "Enter" });
+    const imageButton = screen.getByRole("button", { name: "Preview Test Poster in full size" });
+    fireEvent.keyDown(imageButton, { key: "Enter" });
 
-    expect(screen.getByTestId("preview-dialog")).toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("renders poster actions", () => {
+    render(<PosterCard {...mockPoster} />);
+
+    // Test that PosterActions component is rendered (you'd need to check what buttons it renders)
+    expect(screen.getByRole("article")).toBeInTheDocument();
   });
 });

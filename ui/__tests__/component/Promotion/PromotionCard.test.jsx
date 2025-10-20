@@ -1,7 +1,14 @@
 import React from "react";
-import { render, screen, user } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import PromotionCard from "../../../src/components/Promotion/PromotionCard.jsx";
+
+// Mock clipboard API
+Object.assign(navigator, {
+  clipboard: {
+    writeText: vi.fn(),
+  },
+});
 
 const mockAnnouncement = {
   id: "test-1",
@@ -11,33 +18,46 @@ const mockAnnouncement = {
   content: ["First paragraph", ["List item 1", "List item 2"], "Second paragraph"],
 };
 
-const mockWriteText = vi.fn();
-
 describe("PromotionCard", () => {
-  it("renders announcement content correctly", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("renders announcement title and type", () => {
     render(<PromotionCard announcement={mockAnnouncement} />);
 
-    expect(screen.getByText("Test Announcement")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent("Test Announcement");
     expect(screen.getByText("Walker")).toBeInTheDocument();
-    expect(screen.getAllByTestId("promotion-content")).toHaveLength(3);
   });
 
-  it("calls copy function when button is clicked", async () => {
-    const userEvent = user.setup();
+  it("renders as article with correct aria-label", () => {
     render(<PromotionCard announcement={mockAnnouncement} />);
 
-    await userEvent.click(screen.getByTestId("copy-button"));
-
-    expect(mockWriteText).toHaveBeenCalledWith(
-      "Test Announcement\n\nFirst paragraph\n\nList item 1\n• List item 2\n\nSecond paragraph",
-    );
+    const article = screen.getByRole("article");
+    expect(article).toHaveAttribute("aria-label", "Promotional content: Test Announcement");
   });
 
-  it("passes correct props to sub-components", () => {
+  it("copies text to clipboard when copy button clicked", async () => {
     render(<PromotionCard announcement={mockAnnouncement} />);
 
-    const copyButton = screen.getByTestId("copy-button");
-    expect(copyButton).toHaveAttribute("data-title", "Test Announcement");
-    expect(copyButton).toHaveAttribute("data-announcement-id", "test-1");
+    const copyButton = screen.getByRole("button", { name: /copy/i });
+    fireEvent.click(copyButton);
+
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        "Test Announcement\n\nFirst paragraph\n\nList item 1\n• List item 2\n\nSecond paragraph",
+      );
+    });
+  });
+
+  it("shows success notification after copying", async () => {
+    render(<PromotionCard announcement={mockAnnouncement} />);
+
+    const copyButton = screen.getByRole("button", { name: /copy/i });
+    fireEvent.click(copyButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("Text copied to clipboard!")).toBeInTheDocument();
+    });
   });
 });

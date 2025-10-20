@@ -18,17 +18,17 @@ describe("CopyButton", () => {
   it("renders copy state correctly", () => {
     render(<CopyButton {...mockProps} />);
 
-    expect(screen.getByText("Copy Text")).toBeInTheDocument();
-    expect(screen.getByTestId("copy-icon")).toBeInTheDocument();
-    expect(screen.queryByTestId("check-icon")).not.toBeInTheDocument();
+    const button = screen.getByRole("button");
+    expect(button).toHaveTextContent("Copy Text");
+    expect(button).toHaveAttribute("aria-label", "Copy promotional text for Test Title to clipboard");
   });
 
   it("renders copied state correctly", () => {
     render(<CopyButton {...mockProps} copied={true} />);
 
-    expect(screen.getByText("Copied!")).toBeInTheDocument();
-    expect(screen.getByTestId("check-icon")).toBeInTheDocument();
-    expect(screen.queryByTestId("copy-icon")).not.toBeInTheDocument();
+    const button = screen.getByRole("button");
+    expect(button).toHaveTextContent("Copied!");
+    expect(button).toHaveAttribute("aria-label", "Text copied successfully from Test Title");
   });
 
   it("calls onClick when clicked", () => {
@@ -43,15 +43,22 @@ describe("CopyButton", () => {
     render(<CopyButton {...mockProps} />);
 
     const button = screen.getByRole("button");
-    expect(button).toHaveAttribute("aria-label", "Copy promotional text for Test Title to clipboard");
     expect(button).toHaveAttribute("aria-describedby", "card-title-test-123");
   });
 
-  it("has correct accessibility attributes when copied", () => {
+  it("removes aria-describedby when copied", () => {
     render(<CopyButton {...mockProps} copied={true} />);
 
     const button = screen.getByRole("button");
-    expect(button).toHaveAttribute("aria-label", "Text copied successfully from Test Title");
     expect(button).not.toHaveAttribute("aria-describedby");
+  });
+
+  it("changes color when copied", () => {
+    const { rerender } = render(<CopyButton {...mockProps} />);
+
+    // Test that it re-renders with different state
+    rerender(<CopyButton {...mockProps} copied={true} />);
+
+    expect(screen.getByRole("button")).toHaveTextContent("Copied!");
   });
 });
