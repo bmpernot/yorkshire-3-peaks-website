@@ -1,7 +1,3 @@
 {
-  "editor.tabSize": 2,
-  "jest.disabledWorkspaceFolders": ["ui"],
-  "vitest.enable": true,
-  "aws.telemetry": false,
-  "remote.containers.connectionTimeout": 300
+  "editor.tabSize": 2
 }
