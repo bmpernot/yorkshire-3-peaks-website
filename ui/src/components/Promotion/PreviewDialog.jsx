@@ -28,7 +28,7 @@ const PreviewDialog = memo(function PreviewDialogComponent({ open, onClose, titl
           <Image
             src={imageUrl}
             alt={`Full size preview of ${title}. ${description}`}
-            fill
+            fill={true}
             style={styles.previewImage}
             role="img"
           />

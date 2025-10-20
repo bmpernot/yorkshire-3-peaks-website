@@ -11,11 +11,5 @@ export const media = {
       outlineOffset: "2px",
     },
   },
-  previewImage: {
-    maxWidth: "100%",
-    maxHeight: "70vh",
-    height: "auto",
-    borderRadius: "8px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-  },
+  previewImage: { objectFit: "contain" },
 };
