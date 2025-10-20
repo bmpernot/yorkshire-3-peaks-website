@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import { cleanup } from "@testing-library/react";
 
 // Suppress MUI prop warnings in tests
 const originalError = console.error;
@@ -17,4 +18,8 @@ beforeAll(() => {
 
 afterAll(() => {
   console.error = originalError;
+});
+
+afterEach(() => {
+  cleanup();
 });
