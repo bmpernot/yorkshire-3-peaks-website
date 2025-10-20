@@ -30,7 +30,7 @@ export default [
       "prefer-const": "error",
       "no-only-tests/no-only-tests": "error",
     },
-    ignores: ["**/node_modules/", "**/ui/build/**", ".vscode/*", "**/backend/.aws-sam/**", "**/backend/.data/**"],
+    ignores: ["**/node_modules/", "**/ui/.next/**", ".vscode/*", "**/backend/.aws-sam/**", "**/backend/.data/**"],
     languageOptions: {
       parser: babelParser,
       parserOptions: {
