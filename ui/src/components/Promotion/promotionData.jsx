@@ -15,8 +15,8 @@ export const promotionData = {
         "Every step you take helps support life-changing charities. Camping included. Safety first - fully qualified radio crew and mountain rescue on hand.",
         "👉 For more information or to register visit yorkshirepeaks.co.uk",
         "📧 Got questions? Contact: yorkshirepeaks@gmail.com",
-        "Ready to challenge yourself for charity? Join us for an unforgettable adventure."
-      ]
+        "Ready to challenge yourself for charity? Join us for an unforgettable adventure.",
+      ],
     },
     {
       id: "volunteer-recruitment-1",
@@ -26,11 +26,16 @@ export const promotionData = {
       content: [
         "Be the hero behind the heroes! Our participants need your support to make this challenge safe and successful. We're looking for passionate and reliable volunteers for this June.",
         "👋 What's Involved:",
-        ["Join us Friday evening or by 6:00 AM Saturday", "Help with team check-ins and safety briefings", "Support walkers from checkpoints across the peaks", "Assist with setup, cleanup, and post-event celebrations"],
+        [
+          "Join us Friday evening or by 6:00 AM Saturday",
+          "Help with team check-ins and safety briefings",
+          "Support walkers from checkpoints across the peaks",
+          "Assist with setup, cleanup, and post-event celebrations",
+        ],
         "🛖 Option to camp on-site Friday-Sunday",
         "🎁 We're offering a £200 donation to a charity of your choice for every volunteer.",
-        "⏳ Interested? Reach out to the organisers. You'll help make this experience safe, inspiring, and unforgettable."
-      ]
+        "⏳ Interested? Reach out to the organisers. You'll help make this experience safe, inspiring, and unforgettable.",
+      ],
     },
     {
       id: "volunteer-recruitment-2",
@@ -40,11 +45,16 @@ export const promotionData = {
       content: [
         "Join our amazing volunteer team! We're looking for kind, energetic, and dependable individuals to support our challenge weekend from 6-8 June.",
         "Help us:",
-        ["Greet and register walkers", "Monitor checkpoints and support safety teams", "Assist with campsite logistics and clean-up", "Celebrate with our walkers after they conquer the peaks!"],
+        [
+          "Greet and register walkers",
+          "Monitor checkpoints and support safety teams",
+          "Assist with campsite logistics and clean-up",
+          "Celebrate with our walkers after they conquer the peaks!",
+        ],
         "🎁 Bonus: We'll donate £200 to a charity of your choice in recognition of your time and effort.",
         "Whether you can help all weekend or just the day - it all makes a difference.",
-        "📨 Message the organisers to get involved!"
-      ]
+        "📨 Message the organisers to get involved!",
+      ],
     },
     {
       id: "volunteer-recruitment-3",
@@ -57,8 +67,8 @@ export const promotionData = {
         "✅ No experience needed - just enthusiasm and reliability",
         "✅ Full briefing provided and meals available on site",
         "👥 Bring a friend and make a weekend of it!",
-        "🫶 Volunteering is a great way to meet new people and support incredible causes."
-      ]
+        "🫶 Volunteering is a great way to meet new people and support incredible causes.",
+      ],
     },
     {
       id: "walker-recruitment-2",
@@ -73,9 +83,9 @@ export const promotionData = {
         "📍 Starting in Horton-in-Ribblesdale",
         "🚑 Safety first: mountain rescue team, first aid, and qualified radio crew on standby.",
         "💛 Make this more than just a walk. Make it a legacy.",
-        "📌 Sign up now at yorkshirepeaks.co.uk"
-      ]
-    }
+        "📌 Sign up now at yorkshirepeaks.co.uk",
+      ],
+    },
   ],
   reminders: [
     {
@@ -90,8 +100,8 @@ export const promotionData = {
         ["Check your kit", "Finalise travel plans", "Rally your team!"],
         "If you haven't signed up yet - this is your last chance to be part of something amazing.",
         "👣 24.6 miles | 🏔️ 3 peaks | 💛 Countless memories",
-        "🎟️ Register today at yorkshirepeaks.co.uk Let's smash our participation goal before the big day!"
-      ]
+        "🎟️ Register today at yorkshirepeaks.co.uk Let's smash our participation goal before the big day!",
+      ],
     },
     {
       id: "final-countdown",
@@ -104,9 +114,13 @@ export const promotionData = {
         "🕕 Meet at 6:00 AM Saturday, kit checks at the start line",
         "📍 Horton-in-Ribblesdale campsite open from Friday afternoon",
         "Please make sure you:",
-        ["Bring all essential kit", "Confirm travel and team arrangements", "Bring cash/card for food and pub meal if attending"],
-        "Limited spots remaining - bring your friends for the adventure of a lifetime!"
-      ]
+        [
+          "Bring all essential kit",
+          "Confirm travel and team arrangements",
+          "Bring cash/card for food and pub meal if attending",
+        ],
+        "Limited spots remaining - bring your friends for the adventure of a lifetime!",
+      ],
     },
     {
       id: "tomorrow-start",
@@ -119,8 +133,8 @@ export const promotionData = {
         "📍 Starting Point: Horton-in-Ribblesdale (look for the registration tents)",
         "🌤️ Weather outlook: 10-14°C, overcast with light showers - pack accordingly!",
         "🧰 Bring: waterproofs, food, first aid essentials, head torch, printed map or offline GPS",
-        "🥾 Final tip: Start steady, hydrate often, and stick with your team."
-      ]
-    }
-  ]
+        "🥾 Final tip: Start steady, hydrate often, and stick with your team.",
+      ],
+    },
+  ],
 };

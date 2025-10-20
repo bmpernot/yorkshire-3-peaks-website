@@ -4,13 +4,18 @@ import { vi } from "vitest";
 import PreviewDialog from "../../../src/components/Promotion/PreviewDialog.jsx";
 
 vi.mock("@mui/material", () => ({
-  Dialog: ({ open, children, maxWidth, fullWidth, ...props }) => (
-    open ? <div {...props} data-testid="dialog">{children}</div> : null
-  ),
+  Dialog: ({ open, children, maxWidth, fullWidth, ...props }) =>
+    open ? (
+      <div {...props} data-testid="dialog">
+        {children}
+      </div>
+    ) : null,
   DialogContent: ({ children, ...props }) => <div {...props}>{children}</div>,
   DialogTitle: ({ children, ...props }) => <div {...props}>{children}</div>,
   IconButton: ({ onClick, children, ...props }) => (
-    <button onClick={onClick} {...props}>{children}</button>
+    <button onClick={onClick} {...props}>
+      {children}
+    </button>
   ),
   Box: ({ children, ...props }) => <div {...props}>{children}</div>,
 }));

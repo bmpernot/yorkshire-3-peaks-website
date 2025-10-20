@@ -27,20 +27,23 @@ vi.mock("../../../src/styles/promotion.mui.styles.mjs", () => ({
 }));
 
 vi.mock("../../../src/components/Promotion/PreviewDialog.jsx", () => ({
-  default: ({ open, onClose, title }) => (
+  default: ({ open, onClose, title }) =>
     open ? (
       <div data-testid="preview-dialog" onClick={onClose}>
         Preview: {title}
       </div>
-    ) : null
-  ),
+    ) : null,
 }));
 
 vi.mock("../../../src/components/Promotion/PosterActions.jsx", () => ({
   default: ({ onPreview, onDownload, title }) => (
     <div data-testid="poster-actions">
-      <button onClick={onPreview} data-testid="preview-btn">Preview {title}</button>
-      <button onClick={onDownload} data-testid="download-btn">Download</button>
+      <button onClick={onPreview} data-testid="preview-btn">
+        Preview {title}
+      </button>
+      <button onClick={onDownload} data-testid="download-btn">
+        Download
+      </button>
     </div>
   ),
 }));

@@ -11,15 +11,15 @@ export const buttons = {
     bgcolor: "#8dc550",
     "&:hover": { bgcolor: "#7ab045" },
   },
-  statChip: { 
-    bgcolor: "primary.main", 
+  statChip: {
+    bgcolor: "primary.main",
     color: "primary.contrastText",
     fontWeight: "bold",
     cursor: "pointer",
     transition: "all 0.2s ease",
     "&:hover": {
       bgcolor: "primary.dark",
-      transform: "scale(1.05)"
-    }
+      transform: "scale(1.05)",
+    },
   },
 };

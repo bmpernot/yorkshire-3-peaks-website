@@ -8,14 +8,19 @@ vi.mock("@mui/material", () => ({
   ListItem: ({ children, alignItems, disableGutters, ...props }) => <li {...props}>{children}</li>,
   ListItemIcon: ({ children, ...props }) => <div {...props}>{children}</div>,
   ListItemText: ({ primary, secondary, ...props }) => (
-    <div {...props}>{primary}{secondary && <span>{secondary}</span>}</div>
+    <div {...props}>
+      {primary}
+      {secondary && <span>{secondary}</span>}
+    </div>
   ),
   Typography: ({ children, component, variant, ...props }) => {
     const Component = component || (variant?.startsWith("h") ? variant : "div");
     return React.createElement(Component, props, children);
   },
   Tooltip: ({ children, title, arrow, ...props }) => (
-    <div {...props} title={title} aria-label={title}>{children}</div>
+    <div {...props} title={title} aria-label={title}>
+      {children}
+    </div>
   ),
 }));
 

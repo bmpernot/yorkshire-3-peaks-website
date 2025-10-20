@@ -47,9 +47,9 @@ export const createMockComponent = (name) => {
 export const setupDOMMocks = () => {
   const mockScrollIntoView = vi.fn();
   const mockFocus = vi.fn();
-  
+
   Element.prototype.scrollIntoView = mockScrollIntoView;
   HTMLElement.prototype.focus = mockFocus;
-  
+
   return { mockScrollIntoView, mockFocus };
 };

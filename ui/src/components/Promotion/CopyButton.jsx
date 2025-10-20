@@ -12,11 +12,7 @@ const CopyButton = memo(({ copied, onClick, title, announcementId }) => (
     color={copied ? "success" : "primary"}
     size="small"
     fullWidth
-    aria-label={
-      copied
-        ? `Text copied successfully from ${title}`
-        : `Copy promotional text for ${title} to clipboard`
-    }
+    aria-label={copied ? `Text copied successfully from ${title}` : `Copy promotional text for ${title} to clipboard`}
     aria-describedby={copied ? undefined : `card-title-${announcementId}`}
   >
     {copied ? "Copied!" : "Copy Text"}

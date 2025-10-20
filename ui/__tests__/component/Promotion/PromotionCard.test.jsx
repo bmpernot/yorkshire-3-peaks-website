@@ -20,7 +20,9 @@ vi.mock("../../../src/styles/promotion.mui.styles.mjs", () => ({
 }));
 
 vi.mock("../../../src/components/Promotion/PromotionContent.jsx", () => ({
-  default: ({ content }) => <div data-testid="promotion-content">{Array.isArray(content) ? content.join(", ") : content}</div>,
+  default: ({ content }) => (
+    <div data-testid="promotion-content">{Array.isArray(content) ? content.join(", ") : content}</div>
+  ),
 }));
 
 vi.mock("../../../src/components/Promotion/CopyButton.jsx", () => ({
@@ -38,9 +40,12 @@ vi.mock("../../../src/components/Promotion/CopyButton.jsx", () => ({
 }));
 
 vi.mock("../../../src/components/Promotion/CopyNotification.jsx", () => ({
-  default: ({ open, onClose }) => (
-    open ? <div data-testid="copy-notification" onClick={onClose}>Notification</div> : null
-  ),
+  default: ({ open, onClose }) =>
+    open ? (
+      <div data-testid="copy-notification" onClick={onClose}>
+        Notification
+      </div>
+    ) : null,
 }));
 
 const mockAnnouncement = {
@@ -75,7 +80,7 @@ describe("PromotionCard", () => {
     fireEvent.click(screen.getByTestId("copy-button"));
 
     expect(mockWriteText).toHaveBeenCalledWith(
-      "Test Announcement\n\nFirst paragraph\n\nList item 1\n• List item 2\n\nSecond paragraph"
+      "Test Announcement\n\nFirst paragraph\n\nList item 1\n• List item 2\n\nSecond paragraph",
     );
   });
 

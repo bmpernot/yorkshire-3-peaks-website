@@ -1,13 +1,13 @@
 export const cards = {
-  promotionCard: { 
-    mb: 3, 
-    boxShadow: 2, 
+  promotionCard: {
+    mb: 3,
+    boxShadow: 2,
     borderRadius: 2,
     transition: "all 0.3s ease",
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    "&:hover": { boxShadow: 6, transform: "translateY(-2px)" }
+    "&:hover": { boxShadow: 6, transform: "translateY(-2px)" },
   },
   cardHeader: { display: "flex", alignItems: "center", gap: 2, mb: 2 },
   cardTitle: { fontWeight: "bold", flex: 1, lineHeight: 1.2 },
