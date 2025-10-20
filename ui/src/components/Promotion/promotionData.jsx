@@ -1,4 +1,4 @@
-import { Campaign, VolunteerActivism, Schedule, Groups } from "@mui/icons-material";
+import { VolunteerActivism, Schedule, Groups } from "@mui/icons-material";
 
 export const promotionData = {
   recruitment: [
