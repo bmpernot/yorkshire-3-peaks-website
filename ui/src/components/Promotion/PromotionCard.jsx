@@ -4,8 +4,8 @@ import { memo, useState, useCallback } from "react";
 import { Card, CardContent, Typography, Box, Chip, CardActions } from "@mui/material";
 import { styles } from "../../styles/promotion.mui.styles.mjs";
 import PromotionContent from "./PromotionContent.jsx";
-import CopyButton from "./CopyButton.jsx";
-import CopyNotification from "./CopyNotification.jsx";
+import CopyButton from "../common/CopyButton.jsx";
+import CopyNotification from "../common/CopyNotification.jsx";
 
 const PromotionCard = memo(function PromotionCardComponent({ announcement, ariaLabel }) {
   const [copied, setCopied] = useState(false);
