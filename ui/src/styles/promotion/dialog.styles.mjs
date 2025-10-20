@@ -24,6 +24,7 @@ export const dialog = {
   closeButton: {
     bgcolor: "action.hover",
     "&:hover": { bgcolor: "action.selected" },
+    zIndex: 1,
   },
   dialogContent: {
     p: 0,
