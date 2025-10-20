@@ -1,43 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import Rules from "@/src/components/Rules/Rules.jsx";
-
-vi.mock("@mui/material", () => ({
-  Container: ({ children, ...props }) => <div {...props}>{children}</div>,
-  Typography: ({ children, component, variant, ...props }) => {
-    const Component = component || (variant?.startsWith("h") ? variant : "div");
-    return React.createElement(Component, props, children);
-  },
-  Box: ({ children, ...props }) => <div {...props}>{children}</div>,
-  Button: ({ children, href, ...props }) =>
-    href ? (
-      <a href={href} {...props}>
-        {children}
-      </a>
-    ) : (
-      <button {...props}>{children}</button>
-    ),
-}));
-
-vi.mock("@mui/icons-material", () => ({
-  Download: () => <span>Download</span>,
-}));
-
-vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
-  styles: new Proxy({}, { get: () => ({}) }),
-}));
-
-vi.mock("@/src/components/Rules/RuleSection.jsx", () => ({
-  default: ({ section }) => <div data-testid={`rule-section-${section.id}`}>{section.title}</div>,
-}));
-
-vi.mock("@/src/components/Rules/rulesData.jsx", () => ({
-  rulesData: [
-    { id: "team", title: "Team Composition" },
-    { id: "race", title: "Race" },
-  ],
-}));
 
 describe("Rules", () => {
   it("renders title correctly", () => {

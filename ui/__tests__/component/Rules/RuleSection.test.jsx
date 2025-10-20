@@ -1,39 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import RuleSection from "@/src/components/Rules/RuleSection.jsx";
-
-vi.mock("@mui/material", () => ({
-  Accordion: ({ children, ...props }) => <div {...props}>{children}</div>,
-  AccordionSummary: ({ children, ...props }) => <button {...props}>{children}</button>,
-  AccordionDetails: ({ children, ...props }) => <div {...props}>{children}</div>,
-  Typography: ({ children, component, variant, ...props }) => {
-    const Component = component || (variant?.startsWith("h") ? variant : "div");
-    return React.createElement(Component, props, children);
-  },
-}));
-
-vi.mock("@mui/icons-material", () => ({
-  ExpandMore: () => <span>ExpandMore</span>,
-}));
-
-vi.mock("@/src/components/Rules/BulletedList.jsx", () => ({
-  default: ({ items, type }) => (
-    <div data-testid="bulleted-list" data-type={type}>
-      {items?.map((item, i) => (
-        <div key={i}>{item.text}</div>
-      ))}
-    </div>
-  ),
-}));
-
-vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
-  styles: {
-    accordion: {},
-    accordionSummary: {},
-    accordionDetails: {},
-  },
-}));
 
 const mockSection = {
   id: "test-section",

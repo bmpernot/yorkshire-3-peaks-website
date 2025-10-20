@@ -1,21 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { vi } from "vitest";
-import CopyButton from "../../../src/components/Promotion/CopyButton.jsx";
-
-vi.mock("@mui/material", () => ({
-  Button: ({ children, onClick, startIcon, ...props }) => (
-    <button onClick={onClick} {...props}>
-      {startIcon}
-      {children}
-    </button>
-  ),
-}));
-
-vi.mock("@mui/icons-material", () => ({
-  ContentCopy: () => <span data-testid="copy-icon">Copy</span>,
-  Check: () => <span data-testid="check-icon">Check</span>,
-}));
+import CopyButton from "../../../src/components/common/CopyButton.jsx";
 
 const mockProps = {
   copied: false,

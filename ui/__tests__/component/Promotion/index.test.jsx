@@ -3,79 +3,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { vi } from "vitest";
 import Promotion from "../../../src/components/Promotion/index.jsx";
 
-vi.mock("@mui/material", () => ({
-  Container: ({ children, ...props }) => <div {...props}>{children}</div>,
-  Typography: ({ children, component, variant, ...props }) => {
-    const Component = component || (variant?.startsWith("h") ? variant : "div");
-    return React.createElement(Component, props, children);
-  },
-  Box: ({ children, ...props }) => <div {...props}>{children}</div>,
-  Divider: () => <hr />,
-  Breadcrumbs: ({ children, ...props }) => <nav {...props}>{children}</nav>,
-  Link: ({ children, ...props }) => <a {...props}>{children}</a>,
-}));
-
-vi.mock("@mui/icons-material", () => ({
-  Groups: () => <span>Groups</span>,
-  Schedule: () => <span>Schedule</span>,
-  Download: () => <span>Download</span>,
-  Home: () => <span>Home</span>,
-}));
-
-vi.mock("../../../src/styles/promotion.mui.styles.mjs", () => ({
-  styles: new Proxy({}, { get: () => ({}) }),
-}));
-
-vi.mock("../../../src/components/Promotion/PromotionCard.jsx", () => ({
-  default: ({ announcement, ariaLabel }) => (
-    <div data-testid={`promotion-card-${announcement.id}`} aria-label={ariaLabel}>
-      {announcement.title}
-    </div>
-  ),
-}));
-
-vi.mock("../../../src/components/Promotion/PosterCard.jsx", () => ({
-  default: ({ title, ariaLabel }) => (
-    <div data-testid={`poster-card-${title}`} aria-label={ariaLabel}>
-      {title}
-    </div>
-  ),
-}));
-
-vi.mock("../../../src/components/Promotion/NavigationChip.jsx", () => ({
-  default: ({ section, onClick, onKeyDown, count, label }) => (
-    <button
-      data-testid={`nav-chip-${section}`}
-      onClick={() => onClick(section)}
-      onKeyDown={(e) => onKeyDown(e, section)}
-    >
-      {count} {label}
-    </button>
-  ),
-}));
-
-vi.mock("../../../src/components/Promotion/PromotionSection.jsx", () => ({
-  default: ({ sectionRef, expanded, onToggle, title, sectionId, children }) => (
-    <div ref={sectionRef} data-testid={`section-${sectionId}`} data-expanded={expanded}>
-      <button onClick={onToggle} data-testid={`toggle-${sectionId}`}>
-        {title}
-      </button>
-      {expanded && <div data-testid={`content-${sectionId}`}>{children}</div>}
-    </div>
-  ),
-}));
-
-vi.mock("../../../src/data/promotionData.jsx", () => ({
-  promotionData: {
-    recruitment: [{ id: "r1", title: "Recruitment 1" }],
-    reminders: [{ id: "rem1", title: "Reminder 1" }],
-  },
-}));
-
-vi.mock("../../../src/data/posterData.jsx", () => ({
-  posterData: [{ title: "Poster 1" }],
-}));
-
 const mockScrollIntoView = vi.fn();
 const mockFocus = vi.fn();
 
@@ -83,7 +10,6 @@ beforeEach(() => {
   vi.useFakeTimers();
   Element.prototype.scrollIntoView = mockScrollIntoView;
   HTMLElement.prototype.focus = mockFocus;
-  vi.clearAllMocks();
 });
 
 afterEach(() => {

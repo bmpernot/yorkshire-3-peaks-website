@@ -1,45 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import BulletedList from "@/src/components/Rules/BulletedList.jsx";
-
-vi.mock("@mui/material", () => ({
-  List: ({ children, ...props }) => <ul {...props}>{children}</ul>,
-  ListItem: ({ children, ...props }) => <li {...props}>{children}</li>,
-  ListItemIcon: ({ children, ...props }) => <div {...props}>{children}</div>,
-  ListItemText: ({ primary, secondary, ...props }) => (
-    <div {...props}>
-      {primary}
-      {secondary && <span>{secondary}</span>}
-    </div>
-  ),
-  Typography: ({ children, component, variant, ...props }) => {
-    const Component = component || (variant?.startsWith("h") ? variant : "div");
-    return React.createElement(Component, props, children);
-  },
-  Tooltip: ({ children, title, ...props }) => (
-    <div {...props} title={title} aria-label={title}>
-      {children}
-    </div>
-  ),
-}));
-
-vi.mock("@mui/icons-material", () => ({
-  FiberManualRecord: () => <span>•</span>,
-  Info: () => <span>Info</span>,
-  InfoOutlined: () => <span>Info</span>,
-}));
-
-vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
-  styles: {
-    ruleListItemIcon: {},
-    equipmentListItemIcon: {},
-    listItemText: {},
-    listItemBulletIcon: {},
-    tooltipIcon: {},
-    perPersonTitle: {},
-  },
-}));
 
 describe("BulletedList", () => {
   const mockItems = [
