@@ -86,29 +86,42 @@ dateTimes are nodes new Date().toISOString() output `2024-06-07T12:00:00.000Z`
 
 ### Team Members Table:
 
-| Column Name            | Type                      | Relationship  |
-| ---------------------- | ------------------------- | ------------- |
-| teamId                 | string                    | Primary Key   |
-| memberId               | string                    | Secondary Key |
-| ---------------------- | ------------------------- | ------------- |
-| additionalRequirements | string                    | Optional      |
+| Column Name            | Type                      | Relationship           |
+| ---------------------- | ------------------------- | ---------------------- |
+| teamId                 | string                    | Primary Key            |
+| userId                 | string                    | Secondary Key          |
+| eventId                | string                    | Global Secondary Index |
+| ---------------------- | ------------------------- | -------------          |
+| additionalRequirements | string                    | Optional               |
+| willingToVolunteer     | string                    | Optional               |
 
 ### Entries Table:
 
 do not enter a value if there is no data for the times
 enter as many times as there are checkpoints but follow the format
 
-| Column Name | Type     | Relationship  |
-| ----------- | -------- | ------------- |
-| eventId     | string   | Primary Key   |
-| teamId      | string   | Secondary Key |
-| ----------- | -------  | ------------- |
-| cost        | integer  | Required      |
-| paid        | integer  | Required      |
-| start       | dateTime | Optional      |
-| checkpoint1 | dateTime | Optional      |
-| checkpoint2 | dateTime | Optional      |
-| checkpoint3 | dateTime | Optional      |
-| checkpointX | dateTime | Optional      |
-| end         | dateTime | Optional      |
-| volunteer   | boolean  | Optional      |
+| Column Name | Type     | Relationship           |
+| ----------- | -------- | ---------------------- |
+| eventId     | string   | Primary Key            |
+| teamId      | string   | Secondary Key          |
+| volunteer   | boolean  | Global Secondary Index |
+| ----------- | -------  | -------------          |
+| cost        | integer  | Required               |
+| paid        | integer  | Required               |
+| start       | dateTime | Optional               |
+| checkpoint1 | dateTime | Optional               |
+| checkpoint2 | dateTime | Optional               |
+| checkpoint3 | dateTime | Optional               |
+| checkpointX | dateTime | Optional               |
+| end         | dateTime | Optional               |
+
+### User Table:
+
+| Column Name | Type    | Relationship  |
+| ----------- | ------- | ------------- |
+| userId      | string  | Primary Key   |
+| ----------- | ------- | ------------- |
+| firstName   | string  | Required      |
+| lastName    | string  | Required      |
+| email       | string  | Required      |
+| searchValue | string  | Required      |
