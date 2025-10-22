@@ -472,7 +472,7 @@ describe("Event", () => {
       authPage
         .waitForThen(`@Volunteer-Event-${events[1].eventId}`, (interception) => {
           expect(interception.request.body).to.include({
-            memberId: "76420294-00e1-700b-74d6-a22a780eeae1",
+            userId: "76420294-00e1-700b-74d6-a22a780eeae1",
             additionalRequirements: ADDITIONAL_REQUIREMENT,
           });
         })

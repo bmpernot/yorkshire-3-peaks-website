@@ -14,7 +14,7 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
     event.preventDefault();
 
     try {
-      const registrationData = { memberId: userId };
+      const registrationData = { userId };
 
       if (additionalRequirements.current.value?.length > 0) {
         registrationData.additionalRequirements = additionalRequirements.current.value;

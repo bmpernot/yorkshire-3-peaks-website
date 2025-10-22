@@ -234,8 +234,8 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
             if (option.alreadyParticipating) {
               return true;
             }
-            const formDataMemberIds = formData.members.map((member) => member.sub);
-            if (formDataMemberIds.includes(option.sub)) {
+            const formDataUserIds = formData.members.map((member) => member.sub);
+            if (formDataUserIds.includes(option.sub)) {
               return true;
             }
           }}
