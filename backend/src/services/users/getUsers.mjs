@@ -1,47 +1,47 @@
-import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { CognitoIdentityProviderConfig } from "../../utils/infrastructureConfig.mjs";
 
 const client = new CognitoIdentityProviderClient(CognitoIdentityProviderConfig);
 
 const userPoolId = process.env.COGNITO_USER_POOL_NAME;
 
-const defaultFields = ["sub", "email"];
-
+const defaultFields = ["sub", "given_name", "family_name", "email"];
 const cognitoDefaultAttributes = ["sub", "email", "phone_number", "given_name", "family_name", "email_verified"];
 
-const getUsers = async (fields = []) => {
-  let allUsers = [];
-  let paginationToken;
+const getUsers = async (fields = [], userIds = []) => {
+  if (userIds.length === 0) {
+    return [];
+  }
 
   try {
     const mergedFields = Array.from(new Set([...fields, ...defaultFields]));
     const processedFields = ensureCustomPrefix(mergedFields, cognitoDefaultAttributes);
 
-    do {
-      const params = {
-        UserPoolId: userPoolId,
-        Limit: 60,
-        AttributesToGet: processedFields,
-        PaginationToken: paginationToken,
-      };
-      const data = await client.send(new ListUsersCommand(params));
+    const results = await Promise.all(
+      userIds.map(async (userId) => {
+        try {
+          const data = await client.send(
+            new AdminGetUserCommand({
+              UserPoolId: userPoolId,
+              Username: userId,
+            }),
+          );
 
-      allUsers = [...allUsers, ...data.Users];
-      paginationToken = data.PaginationToken;
-    } while (paginationToken);
-
-    const filteredUsers = allUsers.map((user) => {
-      const attributes = {};
-      user.Attributes.forEach((attribute) => {
-        if (processedFields.includes(attribute.Name)) {
-          attributes[attribute.Name] = attribute.Value;
+          const attributes = {};
+          data.UserAttributes.forEach((attr) => {
+            if (processedFields.includes(attr.Name)) {
+              attributes[attr.Name] = attr.Value;
+            }
+          });
+          return attributes;
+        } catch (error) {
+          console.warn(`⚠️ Skipping user ${userId}: ${error.message}`);
+          return null;
         }
-      });
+      }),
+    );
 
-      return attributes;
-    });
-
-    return filteredUsers;
+    return results.filter(Boolean);
   } catch (error) {
     throw new Error("An error occurred when trying to get users from Cognito", { cause: error });
   }
