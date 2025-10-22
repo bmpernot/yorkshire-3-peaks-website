@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useRef } from "react";
+import { memo, useState, useRef, useCallback } from "react";
 import { Container, Typography, Box, Divider } from "@mui/material";
 import { Groups, Schedule, Download } from "@mui/icons-material";
 import { styles } from "../../styles/promotion.mui.styles.mjs";
@@ -24,36 +24,12 @@ const Promotion = memo(function PromotionComponent() {
     posters: useRef(null),
   };
 
-  const handleSectionToggle = (section) => {
+  const handleSectionToggle = useCallback((section) => {
     setExpandedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
     }));
-  };
-
-  const handleChipClick = (section) => {
-    if (!expandedSections[section]) {
-      setExpandedSections((prev) => ({
-        ...prev,
-        [section]: true,
-      }));
-    }
-
-    setTimeout(() => {
-      const element = sectionRefs[section].current;
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-        element.focus();
-      }
-    }, 100);
-  };
-
-  const handleKeyDown = (event, section) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleChipClick(section);
-    }
-  };
+  }, []);
 
   const totalRecruitment = promotionData.recruitment.length;
   const totalReminders = promotionData.reminders.length;
@@ -82,7 +58,7 @@ const Promotion = memo(function PromotionComponent() {
 
       <Box sx={styles.statsContainer} role="navigation" aria-label="Quick navigation to content sections">
         {navigationChips.map((chip) => (
-          <NavigationChip key={chip.section} {...chip} onClick={handleChipClick} onKeyDown={handleKeyDown} />
+          <NavigationChip key={chip.section} {...chip} onClick={handleSectionToggle} />
         ))}
       </Box>
 

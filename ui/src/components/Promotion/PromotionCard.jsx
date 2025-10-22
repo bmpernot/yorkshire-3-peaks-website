@@ -5,11 +5,10 @@ import { Card, CardContent, Typography, Box, Chip, CardActions } from "@mui/mate
 import { styles } from "../../styles/promotion.mui.styles.mjs";
 import PromotionContent from "./PromotionContent.jsx";
 import CopyButton from "../common/CopyButton.jsx";
-import CopyNotification from "../common/CopyNotification.jsx";
+import { toast } from "react-toastify";
 
 const PromotionCard = memo(function PromotionCardComponent({ announcement, ariaLabel }) {
   const [copied, setCopied] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const handleCopyText = useCallback(async () => {
     const textContent = announcement.content
@@ -21,14 +20,13 @@ const PromotionCard = memo(function PromotionCardComponent({ announcement, ariaL
     try {
       await navigator.clipboard.writeText(fullText);
       setCopied(true);
-      setShowSnackbar(true);
+      toast.success("Copied text to clipboard.");
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
+      toast.error("Failed to copy text to clipboard.");
     }
   }, [announcement.content, announcement.title]);
-
-  const handleCloseSnackbar = useCallback(() => setShowSnackbar(false), []);
 
   return (
     <Card
@@ -66,8 +64,6 @@ const PromotionCard = memo(function PromotionCardComponent({ announcement, ariaL
           announcementId={announcement.id}
         />
       </CardActions>
-
-      <CopyNotification open={showSnackbar} onClose={handleCloseSnackbar} />
     </Card>
   );
 });

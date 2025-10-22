@@ -19,18 +19,7 @@ const PosterCard = memo(function PosterCardComponent({ title, description, downl
     document.body.removeChild(link);
   }, [downloadUrl]);
 
-  const handlePreview = useCallback(() => setPreviewOpen(true), []);
-  const handleClosePreview = useCallback(() => setPreviewOpen(false), []);
-
-  const handleKeyDown = useCallback(
-    (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        handlePreview();
-      }
-    },
-    [handlePreview],
-  );
+  const handleTogglePreview = useCallback(() => setPreviewOpen((state) => !state), []);
 
   return (
     <Card sx={styles.promotionCard} role="article" aria-label={ariaLabel || `Downloadable poster: ${title}`}>
@@ -40,8 +29,7 @@ const PosterCard = memo(function PosterCardComponent({ title, description, downl
         image={downloadUrl}
         alt={`Preview of ${title} - click to view full size`}
         sx={styles.posterImage}
-        onClick={handlePreview}
-        onKeyDown={handleKeyDown}
+        onClick={handleTogglePreview}
         tabIndex={0}
         role="button"
         aria-label={`Preview ${title} in full size`}
@@ -69,12 +57,12 @@ const PosterCard = memo(function PosterCardComponent({ title, description, downl
         </Typography>
       </CardContent>
       <CardActions sx={styles.cardActions}>
-        <PosterActions title={title} type={type} onPreview={handlePreview} onDownload={handleDownload} />
+        <PosterActions title={title} type={type} onPreview={handleTogglePreview} onDownload={handleDownload} />
       </CardActions>
 
       <PreviewDialog
         open={previewOpen}
-        onClose={handleClosePreview}
+        onClose={handleTogglePreview}
         title={title}
         description={description}
         imageUrl={downloadUrl}
