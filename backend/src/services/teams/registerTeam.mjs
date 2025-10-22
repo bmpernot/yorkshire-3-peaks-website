@@ -1,6 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClientConfig } from "../../utils/infrastructureConfig.mjs";
+import { v4 } from "uuid";
 
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -12,11 +13,55 @@ const eventsTableName = process.env.EVENTS_TABLE_NAME || "EventsTable";
 
 const registerTeamFunction = async (eventId, teamInformation) => {
   try {
-    // TODO - handle if any member is already apart of a team
-    // TODO - get the event information using eventId
-    // TODO - create the teamsTable entry - get and store the UUID
-    // TODO - create the Entry for the Team - cost = number of member * by the price/earlybirdPrice (depending on the early bird date) from event information with teamId and eventId
-    // TODO - for each member in the teamInformation create an entry with each members details for the created team
+    const eventData = await ddbDocClient.send(new GetCommand({ TableName: eventsTableName, Key: { eventId } }));
+    if (!eventData.Item) {
+      throw new Error(`Event with ID ${eventId} not found`);
+    }
+    const eventInfo = eventData.Item;
+
+    const teamId = v4();
+    await ddbDocClient.send(
+      new PutCommand({
+        TableName: teamsTableName,
+        Item: { teamId, teamName: teamInformation.teamName },
+      }),
+    );
+
+    const now = new Date();
+    const price =
+      eventInfo.earlyBirdEndDate && now <= new Date(eventInfo.earlyBirdEndDate)
+        ? eventInfo.earlyBirdPrice
+        : eventInfo.price;
+
+    await ddbDocClient.send(
+      new PutCommand({
+        TableName: EntriesTableName,
+        Item: {
+          eventId,
+          teamId,
+          cost: price * teamInformation.members.length,
+          paid: 0,
+        },
+      }),
+    );
+
+    for (const member of teamInformation.members) {
+      await ddbDocClient.send(
+        new PutCommand({
+          TableName: TeamMembersTableName,
+          Item: {
+            teamId,
+            userId: member.userId,
+            eventId,
+            additionalRequirements: member.additionalRequirements || null,
+            willingToVolunteer: member.WillingToVolunteer || false,
+          },
+          ConditionExpression: "attribute_not_exists(teamId) AND attribute_not_exists(userId)",
+        }),
+      );
+    }
+
+    return { teamId, message: `Team ${teamInformation.teamName} registered successfully` };
   } catch (error) {
     throw new Error("Failed to register team", { cause: error });
   }
