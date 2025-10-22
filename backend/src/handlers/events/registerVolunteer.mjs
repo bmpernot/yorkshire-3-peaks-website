@@ -8,6 +8,8 @@ const registerVolunteer = async (event) => {
     };
   }
 
+  const claims = event.requestContext.authorizer.jwt.claims;
+  const authenticatedUserId = claims.sub;
   const eventId = event.queryStringParameters.eventId;
 
   if (!eventId) {
@@ -18,7 +20,7 @@ const registerVolunteer = async (event) => {
   }
 
   try {
-    await registerVolunteerFunction(eventId);
+    await registerVolunteerFunction(eventId, authenticatedUserId, event.body);
 
     return {
       statusCode: 201,
