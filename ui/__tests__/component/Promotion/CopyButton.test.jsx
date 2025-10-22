@@ -56,7 +56,6 @@ describe("CopyButton", () => {
   it("changes color when copied", () => {
     const { rerender } = render(<CopyButton {...mockProps} />);
 
-    // Test that it re-renders with different state
     rerender(<CopyButton {...mockProps} copied={true} />);
 
     expect(screen.getByRole("button")).toHaveTextContent("Copied!");

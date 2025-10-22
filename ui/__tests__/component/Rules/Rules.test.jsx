@@ -28,7 +28,7 @@ describe("Rules", () => {
 
   it("renders correct number of sections", () => {
     render(<Rules />);
-    // 7 sections based on rulesData
+
     expect(screen.getAllByRole("button")).toHaveLength(7);
   });
 });

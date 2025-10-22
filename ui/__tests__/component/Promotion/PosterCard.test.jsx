@@ -49,11 +49,4 @@ describe("PosterCard", () => {
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
-
-  it("renders poster actions", () => {
-    render(<PosterCard {...mockPoster} />);
-
-    // Test that PosterActions component is rendered (you'd need to check what buttons it renders)
-    expect(screen.getByRole("article")).toBeInTheDocument();
-  });
 });

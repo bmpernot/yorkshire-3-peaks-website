@@ -43,7 +43,6 @@ describe("Promotion Component", () => {
   it("renders all sections initially collapsed", () => {
     render(<Promotion />);
 
-    // Check that section content is not visible initially
     expect(screen.queryByText("Recruitment Announcements")).toBeInTheDocument();
     expect(screen.queryByText("Event Reminders")).toBeInTheDocument();
     expect(screen.queryByText("Downloadable Posters")).toBeInTheDocument();
