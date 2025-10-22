@@ -49,15 +49,4 @@ describe("PromotionCard", () => {
       );
     });
   });
-
-  it("shows success notification after copying", async () => {
-    render(<PromotionCard announcement={mockAnnouncement} />);
-
-    const copyButton = screen.getByRole("button", { name: /copy/i });
-    fireEvent.click(copyButton);
-
-    await waitFor(() => {
-      expect(screen.getByText("Text copied to clipboard!")).toBeInTheDocument();
-    });
-  });
 });

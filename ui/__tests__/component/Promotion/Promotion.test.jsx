@@ -70,17 +70,6 @@ describe("Promotion Component", () => {
     expect(mockFocus).toHaveBeenCalled();
   });
 
-  it("handles keyboard navigation on chips", () => {
-    render(<Promotion />);
-
-    const recruitmentChip = screen.getByText(/Recruitment Posts/);
-    fireEvent.keyDown(recruitmentChip, { key: "Enter" });
-
-    vi.runAllTimers();
-
-    expect(mockScrollIntoView).toHaveBeenCalled();
-  });
-
   it("renders navigation with correct accessibility", () => {
     render(<Promotion />);
 

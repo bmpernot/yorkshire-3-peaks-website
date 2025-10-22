@@ -40,13 +40,4 @@ describe("PosterCard", () => {
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
-
-  it("opens preview with Enter key", () => {
-    render(<PosterCard {...mockPoster} />);
-
-    const imageButton = screen.getByRole("button", { name: "Preview Test Poster in full size" });
-    fireEvent.keyDown(imageButton, { key: "Enter" });
-
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-  });
 });

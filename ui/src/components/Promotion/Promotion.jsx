@@ -29,6 +29,12 @@ const Promotion = memo(function PromotionComponent() {
       ...prev,
       [section]: !prev[section],
     }));
+
+    const element = sectionRefs[section].current;
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      element.focus();
+    }
   }, []);
 
   const totalRecruitment = promotionData.recruitment.length;
