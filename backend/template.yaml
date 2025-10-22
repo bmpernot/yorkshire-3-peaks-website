@@ -17,7 +17,7 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "cognito-idp:ListUsers"
+              - "cognito-idp:AdminGetUser"
             Resource: !GetAtt CognitoUserPool.Arn
       Events:
         HttpApiEvent:
@@ -29,6 +29,49 @@ Resources:
       Environment:
         Variables:
           COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
+
+  insertUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/insertUser.default
+      Description: A function to insert a user row for searching
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:PutItem"
+            Resource: !GetAtt UsersTable.Arn
+      Events:
+        CognitoTrigger:
+          Type: Cognito
+          Properties:
+            UserPool: !Ref CognitoUserPool
+            Trigger: PostConfirmation
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+
+  updateUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/updateUser.default
+      Description: Updates the users' information in db
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:UpdateCommand"
+            Resource: !GetAtt UsersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: PATCH
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
 
   getTeams:
     Type: AWS::Serverless::Function
@@ -120,13 +163,13 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
+              - "dynamodb:GetCommand"
               - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchGetItem"
             Resource:
               - !GetAtt EntriesTable.Arn
               - !GetAtt EventsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -140,6 +183,7 @@ Resources:
         Variables:
           ENTRIES_TABLE_NAME: !Ref EntriesTable
           EVENTS_TABLE_NAME: !Ref EventsTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
 
   registerVolunteer:
     Type: AWS::Serverless::Function
@@ -156,6 +200,7 @@ Resources:
               - "dynamodb:BatchGetItem"
             Resource:
               - !GetAtt EntriesTable.Arn
+              - !Sub "${EntriesTable.Arn}/index/VolunteerIndex"
         - Statement:
             Effect: "Allow"
             Action:
@@ -229,6 +274,18 @@ Resources:
         - AttributeName: teamId
           KeyType: HASH
 
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: users
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+
   TeamMembersTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -237,13 +294,28 @@ Resources:
       AttributeDefinitions:
         - AttributeName: teamId
           AttributeType: S
-        - AttributeName: memberId
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: eventId
           AttributeType: S
       KeySchema:
         - AttributeName: teamId
           KeyType: HASH
-        - AttributeName: memberId
+        - AttributeName: userId
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: EventIdIndex
+          KeySchema:
+            - AttributeName: eventId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: UserIdIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
   EventsTable:
     Type: AWS::DynamoDB::Table
@@ -272,6 +344,19 @@ Resources:
           KeyType: HASH
         - AttributeName: teamId
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: TeamIdIndex
+          KeySchema:
+            - AttributeName: teamId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: VolunteerIndex
+          KeySchema:
+            - AttributeName: volunteer
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
   ##### DB Resources #####
 
