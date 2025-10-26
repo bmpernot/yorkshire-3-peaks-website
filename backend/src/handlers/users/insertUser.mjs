@@ -8,7 +8,11 @@ const insertUser = async (event) => {
   const lastName = attributes.family_name || "";
   const email = attributes.email || "";
 
-  await insertUserFunction({ userId, firstName, lastName, email });
+  try {
+    await insertUserFunction({ userId, firstName, lastName, email });
+  } catch (error) {
+    console.error(new Error("Failed to insert user into DB", { cause: error }));
+  }
 
   return event;
 };

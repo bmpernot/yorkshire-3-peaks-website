@@ -8,12 +8,13 @@ const userPoolId = process.env.COGNITO_USER_POOL_NAME;
 const defaultFields = ["sub", "given_name", "family_name", "email"];
 const cognitoDefaultAttributes = ["sub", "email", "phone_number", "given_name", "family_name", "email_verified"];
 
-const getUsers = async (fields = [], userIds = []) => {
+const getUsers = async (fieldsString = "", userIds = []) => {
   if (userIds.length === 0) {
     return [];
   }
 
   try {
+    const fields = fieldsString.length > 0 ? fieldsString.split(",") : [];
     const mergedFields = Array.from(new Set([...fields, ...defaultFields]));
     const processedFields = ensureCustomPrefix(mergedFields, cognitoDefaultAttributes);
 

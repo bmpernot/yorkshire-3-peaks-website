@@ -34,7 +34,7 @@ const updateUser = async (event) => {
 
     return {
       statusCode: 500,
-      body: "Failed to get users",
+      body: "Failed to update users",
     };
   }
 };

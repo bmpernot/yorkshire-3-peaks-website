@@ -12,7 +12,7 @@ const userSearch = async ({ eventId, searchTerm }) => {
   try {
     const usersMatchingCriteria = [];
 
-    if (eventId) {
+    if (eventId && eventId.length > 0) {
       const teamMembersData = await ddbDocClient.send(
         new QueryCommand({
           TableName: teamMembersTableName,
@@ -26,7 +26,7 @@ const userSearch = async ({ eventId, searchTerm }) => {
       usersMatchingCriteria.push(participatingUserIds);
     }
 
-    if (searchTerm) {
+    if (searchTerm && searchTerm.length > 0) {
       const userData = await ddbDocClient.send(
         new ScanCommand({
           TableName: usersTableName,
