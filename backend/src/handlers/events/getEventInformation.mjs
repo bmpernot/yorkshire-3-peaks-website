@@ -4,7 +4,7 @@ const getEventInformation = async (event) => {
   if (event.requestContext.http.method !== "GET") {
     return {
       statusCode: 405,
-      body: `getEvents only accepts GET method, you tried: ${event.requestContext.http.method}`,
+      body: `getEventInformation only accepts GET method, you tried: ${event.requestContext.http.method}`,
     };
   }
 

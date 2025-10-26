@@ -1,4 +1,5 @@
 import registerTeamFunction from "../../services/teams/registerTeam.mjs";
+import userSearch from "../../services/users/searchUser.mjs";
 
 const registerTeam = async (event) => {
   if (event.requestContext.http.method !== "POST") {
@@ -12,7 +13,7 @@ const registerTeam = async (event) => {
   const authenticatedUserId = claims.sub;
   const eventId = event.queryStringParameters.eventId;
 
-  const [invalidDataReasons, data] = validateRequest(authenticatedUserId, eventId, event.body);
+  const [invalidDataReasons, data] = await validateRequest(authenticatedUserId, eventId, event.body);
 
   if (invalidDataReasons.length !== 0) {
     return {
@@ -39,7 +40,7 @@ const registerTeam = async (event) => {
 
 export default registerTeam;
 
-function validateRequest(userId, eventId, data) {
+async function validateRequest(userId, eventId, data) {
   let parsed;
   const invalidDataReasons = [];
 
@@ -54,14 +55,12 @@ function validateRequest(userId, eventId, data) {
     return [invalidDataReasons, undefined];
   }
 
-  const { teamName, members } = parsed;
+  const { teamName, members } = parsed || {};
 
-  // --- Validate team name ---
   if (!teamName || typeof teamName !== "string" || teamName.trim().length === 0) {
     invalidDataReasons.push("Team name is required");
   }
 
-  // --- Validate members ---
   if (!Array.isArray(members)) {
     invalidDataReasons.push("Members must be an array");
   } else {
@@ -69,20 +68,25 @@ function validateRequest(userId, eventId, data) {
       invalidDataReasons.push("Team must have between 3 and 5 members");
     }
 
-    // Ensure the submitting user is part of the team
     const submittingUserInTeam = members.some((m) => m.userId === userId);
     if (!submittingUserInTeam) {
       invalidDataReasons.push("The user submitting the request must be part of the team");
     }
 
-    // Check for duplicate userIds
     const userIds = members.map((m) => m.userId);
     const duplicateIds = userIds.filter((id, idx) => userIds.indexOf(id) !== idx);
     if (duplicateIds.length > 0) {
       invalidDataReasons.push("Duplicate members are not allowed in a team");
     }
 
-    // TODO - check that all members are not apart of any other team
+    const participatingUserIds = await userSearch({ eventId });
+    const alreadyParticipating = userIds.filter((id) => participatingUserIds.includes(id));
+
+    if (alreadyParticipating.length > 0) {
+      invalidDataReasons.push(
+        `The following users are already participating in this event: ${alreadyParticipating.join(", ")}`,
+      );
+    }
   }
 
   return [invalidDataReasons, parsed];

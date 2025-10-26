@@ -83,6 +83,7 @@ function generateHttpApiEvent({
   userRole,
   eventOverrides,
   userSignedIn = true,
+  body,
 }) {
   const event = {
     queryStringParameters: queryStringParameters || {},
@@ -117,6 +118,10 @@ function generateHttpApiEvent({
 
     if (userRole) {
       event.requestContext.authorizer.jwt.claims["cognito:groups"] = userRole;
+    }
+
+    if (body) {
+      event.body = body;
     }
   }
 

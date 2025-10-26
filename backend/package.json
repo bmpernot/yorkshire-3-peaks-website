@@ -8,6 +8,7 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
     "@aws-sdk/client-dynamodb": "^3.398.0",
     "@aws-sdk/lib-dynamodb": "^3.398.0",
+    "aws-sdk-client-mock-jest": "^2.2.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
