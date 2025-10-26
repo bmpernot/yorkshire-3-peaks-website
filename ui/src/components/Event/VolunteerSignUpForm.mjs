@@ -29,7 +29,7 @@ function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
 
       toast.success(data);
       router.push(`/user/profile`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to register you as a volunteer.");
     }
   }

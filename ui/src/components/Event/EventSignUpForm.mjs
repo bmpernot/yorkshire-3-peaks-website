@@ -43,7 +43,7 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
       toast.success(data);
 
       router.push(`/user/profile`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to register team.");
     }
   };
@@ -179,7 +179,7 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
         const data = await body.json();
 
         setUsers(data);
-      } catch (error) {
+      } catch {
         toast.error(`Failed to look up user: ${term}`);
       } finally {
         setIsLoading(false);
