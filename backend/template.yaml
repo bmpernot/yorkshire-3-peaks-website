@@ -19,6 +19,17 @@ Resources:
             Action:
               - "cognito-idp:AdminGetUser"
             Resource: !GetAtt CognitoUserPool.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt TeamMembersTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Scan"
+            Resource: !GetAtt UsersTable.Arn
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -29,6 +40,8 @@ Resources:
       Environment:
         Variables:
           COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
+          USERS_TABLE_NAME: !Ref UsersTable
+          TEAMS_TABLE_NAME: !Ref TeamsTable
 
   insertUser:
     Type: AWS::Serverless::Function
@@ -60,7 +73,7 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:UpdateCommand"
+              - "dynamodb:UpdateItem"
             Resource: !GetAtt UsersTable.Arn
       Events:
         HttpApiEvent:
@@ -82,9 +95,6 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
               - "dynamodb:BatchGetItem"
             Resource: !GetAtt TeamsTable.Arn
       Events:
@@ -107,8 +117,6 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
               - "dynamodb:Scan"
             Resource: !GetAtt EventsTable.Arn
       Events:
@@ -133,10 +141,7 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
               - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchGetItem"
             Resource:
               - !GetAtt EntriesTable.Arn
               - !GetAtt TeamsTable.Arn
@@ -164,10 +169,14 @@ Resources:
             Effect: "Allow"
             Action:
               - "dynamodb:GetCommand"
+            Resource:
+              - !GetAtt EventsTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
               - "dynamodb:Query"
             Resource:
               - !GetAtt EntriesTable.Arn
-              - !GetAtt EventsTable.Arn
               - !GetAtt TeamMembersTable.Arn
               - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
       Events:
@@ -194,10 +203,7 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
               - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchGetItem"
             Resource:
               - !GetAtt EntriesTable.Arn
               - !Sub "${EntriesTable.Arn}/index/VolunteerIndex"
@@ -228,7 +234,7 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:PutItem"
+              - "dynamodb:TransactWriteItems"
             Resource:
               - !GetAtt EntriesTable.Arn
               - !GetAtt TeamsTable.Arn
@@ -237,9 +243,6 @@ Resources:
             Effect: "Allow"
             Action:
               - "dynamodb:GetItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchGetItem"
             Resource:
               - !GetAtt EventsTable.Arn
       Events:
