@@ -36,7 +36,7 @@ const getUsers = async (fieldsString = "", userIds = []) => {
           });
           return attributes;
         } catch (error) {
-          console.warn(`⚠️ Skipping user ${userId}: ${error.message}`);
+          console.warn(`Skipping user ${userId}: ${error.message}`);
           return null;
         }
       }),
