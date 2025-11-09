@@ -19,8 +19,7 @@ export async function getUsers({ term, eventId }) {
 export async function updateUser({ userId, firstName, lastName, email }) {
   try {
     return (
-      await patch({ apiName: "api", path: "/users", options: { body: { userId, firstName, lastName, email } } })
-        .response
+      await patch({ apiName: "api", path: "users", options: { body: { userId, firstName, lastName, email } } }).response
     ).body.json();
   } catch (error) {
     throw new Error("Error updating user:", { cause: error });
@@ -29,7 +28,7 @@ export async function updateUser({ userId, firstName, lastName, email }) {
 
 export async function deleteUser() {
   try {
-    return (await del({ apiName: "api", path: "/users", options: {} }).response).statusCode;
+    return (await del({ apiName: "api", path: "users", options: {} }).response).statusCode;
   } catch (error) {
     throw new Error("Error deleting user:", { cause: error });
   }
