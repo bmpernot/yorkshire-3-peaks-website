@@ -89,44 +89,14 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
               />
             </FormControl>
 
-            <TeamMemberSection
-              teamMemberLabel={"Team leader"}
-              formData={formData}
-              setFormData={setFormData}
-              membersIndex={0}
-              eventId={eventId}
-            />
-            <TeamMemberSection
-              teamMemberLabel={"Team member"}
-              formData={formData}
-              setFormData={setFormData}
-              membersIndex={1}
-              eventId={eventId}
-            />
-            <TeamMemberSection
-              teamMemberLabel={"Team member"}
-              formData={formData}
-              setFormData={setFormData}
-              membersIndex={2}
-              eventId={eventId}
-            />
+            <TeamMemberSection formData={formData} setFormData={setFormData} membersIndex={0} eventId={eventId} />
+            <TeamMemberSection formData={formData} setFormData={setFormData} membersIndex={1} eventId={eventId} />
+            <TeamMemberSection formData={formData} setFormData={setFormData} membersIndex={2} eventId={eventId} />
             {formData.members.length >= 3 ? (
-              <TeamMemberSection
-                teamMemberLabel={"Team member"}
-                formData={formData}
-                setFormData={setFormData}
-                membersIndex={3}
-                eventId={eventId}
-              />
+              <TeamMemberSection formData={formData} setFormData={setFormData} membersIndex={3} eventId={eventId} />
             ) : null}
             {formData.members.length >= 4 ? (
-              <TeamMemberSection
-                teamMemberLabel={"Team member"}
-                formData={formData}
-                setFormData={setFormData}
-                membersIndex={4}
-                eventId={eventId}
-              />
+              <TeamMemberSection formData={formData} setFormData={setFormData} membersIndex={4} eventId={eventId} />
             ) : null}
 
             <Button
@@ -159,7 +129,7 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
   );
 }
 
-function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersIndex, eventId }) {
+function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -174,7 +144,7 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
 
       try {
         setIsLoading(true);
-        const { body } = await get({ apiName: "api", path: `users?user=${term}&eventId=${eventId}`, options: {} })
+        const { body } = await get({ apiName: "api", path: `users?searchTerm=${term}&eventId=${eventId}`, options: {} })
           .response;
         const data = await body.json();
 
@@ -204,14 +174,14 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
     const updatedMembers = [...formData.members];
 
     if (!updatedMembers[index]) {
-      updatedMembers[index] = { sub: null, isVolunteer: false, additionalRequirements: "" };
+      updatedMembers[index] = { userId: null, willingToVolunteer: false, additionalRequirements: "" };
     }
 
     updatedMembers[index] = { ...updatedMembers[index], ...updates };
 
-    const { sub } = updatedMembers[index];
+    const { userId } = updatedMembers[index];
 
-    if (!sub) {
+    if (!userId) {
       updatedMembers.splice(index, 1);
     }
 
@@ -221,7 +191,7 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
   return (
     <Box sx={styles.teamMemberBox}>
       <Typography variant="h6" sx={styles.teamMemberTitle}>
-        {teamMemberLabel}
+        Team member
       </Typography>
 
       <FormControl fullWidth sx={styles.formGap}>
@@ -234,17 +204,17 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
             if (option.alreadyParticipating) {
               return true;
             }
-            const formDataUserIds = formData.members.map((member) => member.sub);
-            if (formDataUserIds.includes(option.sub)) {
+            const formDataUserIds = formData.members.map((member) => member.userId);
+            if (formDataUserIds.includes(option.userId)) {
               return true;
             }
           }}
           value={formData.members[membersIndex] || null}
-          isOptionEqualToValue={(option, value) => option.sub === value.sub}
+          isOptionEqualToValue={(option, value) => option.userId === value.userId}
           onChange={(_, value) => {
             setUserSearching(false);
             updateMember(membersIndex, {
-              sub: value?.sub || null,
+              userId: value?.userId || null,
               given_name: value?.given_name || "",
               family_name: value?.family_name || "",
               email: value?.email || "",
@@ -268,8 +238,8 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
       <FormControlLabel
         control={
           <Checkbox
-            checked={formData.members[membersIndex]?.isVolunteer || false}
-            onChange={(event) => updateMember(membersIndex, { isVolunteer: event.target.checked })}
+            checked={formData.members[membersIndex]?.willingToVolunteer || false}
+            onChange={(event) => updateMember(membersIndex, { willingToVolunteer: event.target.checked })}
             id={`team-member-happy-to-volunteer-${membersIndex}`}
             color="primary"
           />
@@ -298,7 +268,7 @@ function TeamMemberSection({ teamMemberLabel, formData, setFormData, membersInde
 
 function validateFormData(formData, user) {
   const messages = [];
-  if (!formData.members.some((member) => member.sub === user.id)) {
+  if (!formData.members.some((member) => member.userId === user.id)) {
     messages.push("You are required to be part of the team.");
   }
 
