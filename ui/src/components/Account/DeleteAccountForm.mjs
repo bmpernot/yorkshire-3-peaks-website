@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { handleDeleteUser } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
+import { deleteUser } from "@/src/lib/backendActions.mjs";
 
 function DeleteAccountForm({ email, updateUser }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +31,15 @@ function DeleteAccountForm({ email, updateUser }) {
 
     try {
       await handleDeleteUser(router);
+
+      await deleteUser();
+
+      try {
+        router.push("/");
+      } catch (error) {
+        throw new Error("An error occurred when trying to redirect you to the home page", { cause: error });
+      }
+
       await updateUser();
       toast.success("Account was successfully deleted");
     } catch (error) {
