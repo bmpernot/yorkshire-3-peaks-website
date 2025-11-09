@@ -17,6 +17,17 @@ const reactRecommendedRules = react.configs.flat.recommended.rules;
 
 export default [
   {
+    ignores: [
+      "**/node_modules/**",
+      "**/.next/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/backend/.aws-sam/**",
+      "**/backend/.data/**",
+      ".vscode/**",
+    ],
+  },
+  {
     name: "Base eslint and prettier rule set",
     files: ["**/*"],
     plugins: { "no-only-tests": noOnlyTests, react },
@@ -30,7 +41,6 @@ export default [
       "prefer-const": "error",
       "no-only-tests/no-only-tests": "error",
     },
-    ignores: ["**/node_modules/", "**/ui/.next/**", ".vscode/*", "**/backend/.aws-sam/**", "**/backend/.data/**"],
     languageOptions: {
       parser: babelParser,
       parserOptions: {
