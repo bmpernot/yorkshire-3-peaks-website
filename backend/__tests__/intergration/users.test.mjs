@@ -1,9 +1,17 @@
 import getUsers from "../../src/handlers/users/getUsers.mjs";
 import insertUser from "../../src/handlers/users/insertUser.mjs";
 import updateUser from "../../src/handlers/users/updateUser.mjs";
+import deleteUser from "../../src/handlers/users/deleteUser.mjs";
 
 import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { DynamoDBDocumentClient, PutCommand, UpdateCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  UpdateCommand,
+  QueryCommand,
+  ScanCommand,
+  DeleteCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { mockClient } from "aws-sdk-client-mock";
 import { generateUsers, generateHttpApiEvent, generatePostCreateEvent } from "../utils/helperFunctions";
 
@@ -276,6 +284,51 @@ describe("User functions", () => {
 
       expect(response.statusCode).toEqual(500);
       expect(response.body).toEqual("Failed to update users");
+    });
+  });
+
+  describe("deleteUsers", () => {
+    it("should be able to delete a user info", async () => {
+      dynamoDBMock.on(DeleteCommand).resolves();
+
+      const event = generateHttpApiEvent({
+        method: "DELETE",
+      });
+
+      const response = await deleteUser(event);
+
+      expect(response.statusCode).toEqual(200);
+      expect(JSON.parse(response.body)).toEqual({ success: true, userId: "12345678-1234-1234-1234-123456789012" });
+    });
+
+    it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "PATCH", "POST", "GET", "CONNECT"])(
+      "Should reject incorrect http methods: %s",
+      async (httpMethod) => {
+        const event = generateHttpApiEvent({
+          eventOverrides: {
+            requestContext: { http: { method: httpMethod } },
+          },
+        });
+
+        const response = await deleteUser(event);
+
+        expect(response.statusCode).toEqual(405);
+        expect(response.body).toEqual(`deleteUser only accepts DELETE method, you tried: ${httpMethod}`);
+      },
+    );
+
+    it("Should be able to handle errors", async () => {
+      const rejectedValue = new Error("Generic error");
+      dynamoDBMock.on(DeleteCommand).rejects(rejectedValue);
+
+      const event = generateHttpApiEvent({
+        method: "DELETE",
+      });
+
+      const response = await deleteUser(event);
+
+      expect(response.statusCode).toEqual(500);
+      expect(response.body).toEqual("Failed to delete users");
     });
   });
 });

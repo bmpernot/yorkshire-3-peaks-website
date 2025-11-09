@@ -87,6 +87,28 @@ Resources:
         Variables:
           USERS_TABLE_NAME: !Ref UsersTable
 
+  deleteUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/deleteUser.default
+      Description: Deletes the users' information in db
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:DeleteItem"
+            Resource: !GetAtt UsersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: DELETE
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+
   getTeams:
     Type: AWS::Serverless::Function
     Properties:
