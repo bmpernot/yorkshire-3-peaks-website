@@ -4,8 +4,8 @@ import { Typography, Button, Box, FormControl, FormLabel, TextField } from "@mui
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import { post } from "aws-amplify/api";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
+import { registerVolunteer } from "@/src/lib/backendActions.mjs";
 
 function VolunteeringSignUpForm({ eventId, router, isLoggedIn }) {
   const additionalRequirements = useRef();
@@ -20,14 +20,9 @@ function VolunteeringSignUpForm({ eventId, router, isLoggedIn }) {
         registrationData.additionalRequirements = additionalRequirements.current.value;
       }
 
-      const { body } = await post({
-        apiName: "api",
-        path: `events/volunteer?eventId=${eventId}`,
-        options: { body: registrationData },
-      }).response;
-      const data = await body.text();
+      await registerVolunteer({ eventId, registrationData });
 
-      toast.success(data);
+      toast.success("Successfully registered as a volunteer");
       router.push(`/user/profile`);
     } catch {
       toast.error("Failed to register you as a volunteer.");

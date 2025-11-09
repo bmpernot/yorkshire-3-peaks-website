@@ -10,6 +10,7 @@ import { handleUpdateUserAttributes } from "../../lib/cognitoActions.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
 import { phone } from "phone";
+import { updateUser } from "@/src/lib/backendActions.mjs";
 
 function UserDetailsForm({ user }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,13 +46,18 @@ function UserDetailsForm({ user }) {
     const data = new FormData(event.currentTarget);
 
     try {
+      const firstName = data.get("fname");
+      const lastName = data.get("lname");
       await handleUpdateUserAttributes(
-        data.get("fname"),
-        data.get("lname"),
+        firstName,
+        lastName,
         phone(data.get("number"), { country: "GB" }).phoneNumber,
         phone(data.get("iceNumber"), { country: "GB" }).phoneNumber,
         data.get("notify") ? "true" : "false",
       );
+
+      await updateUser({ userId: user.id, firstName, lastName, email: user.email });
+
       toast.success("Your details have been updated");
     } catch (error) {
       console.error(new Error("An error occurred when trying to update your details", { cause: error }));

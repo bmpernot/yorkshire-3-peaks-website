@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { get } from "aws-amplify/api";
 import { Box, Typography } from "@mui/material";
 import Loading from "../common/Loading.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import Entries from "./Entries.mjs";
 import Events from "./Events.mjs";
 import { styles } from "@/src/styles/results.mui.styles.mjs";
+import { getEntries, getEvents } from "@/src/lib/backendActions.mjs";
 
 function Results() {
   const [events, setEvents] = useState([]);
@@ -20,8 +20,7 @@ function Results() {
     try {
       setLoadingMessage("Getting events");
 
-      const { body } = await get({ apiName: "api", path: "events", options: {} }).response;
-      const data = await body.json();
+      const data = await getEvents();
 
       const previousEvents = data
         .filter((event) => {
@@ -55,8 +54,7 @@ function Results() {
 
       setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
       try {
-        const { body } = await get({ apiName: "api", path: `events/entries?eventId=${eventId}`, options: {} }).response;
-        const data = await body.json();
+        const data = await getEntries({ eventId });
         const filteredData = data.filter((entry) => !entry.volunteer);
         filteredData.forEach((entry) => {
           if (entry.start && entry.end) {

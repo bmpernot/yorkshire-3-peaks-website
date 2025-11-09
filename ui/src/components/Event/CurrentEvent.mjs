@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { get } from "aws-amplify/api";
 import { Typography, Grid2, Box } from "@mui/material";
 import EventInformation from "./EventInformation.mjs";
 import EventSignUpForm from "./EventSignUpForm.mjs";
@@ -13,6 +12,7 @@ import VolunteeringSignUpForm from "./VolunteerSignUpForm.mjs";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/src/utils/userContext";
 import NoEvents from "./NoEvents.mjs";
+import { getEventInformation, getEvents } from "@/src/lib/backendActions.mjs";
 
 function CurrentEvent() {
   const router = useRouter();
@@ -28,8 +28,7 @@ function CurrentEvent() {
     try {
       setLoadingMessage("Getting events");
 
-      const { body } = await get({ apiName: "api", path: "events", options: {} }).response;
-      const data = await body.json();
+      const data = await getEvents();
 
       const futureEvents = data
         .filter((event) => {
@@ -65,9 +64,7 @@ function CurrentEvent() {
 
       setLoadingMessage(`Getting information for ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
       try {
-        const { body } = await get({ apiName: "api", path: `events/information?eventId=${eventId}`, options: {} })
-          .response;
-        const data = await body.json();
+        const data = await getEventInformation({ eventId });
         setEventInformationCache((prev) => ({ ...prev, [eventId]: data }));
       } catch (error) {
         console.error("Failed to fetch entries", error);

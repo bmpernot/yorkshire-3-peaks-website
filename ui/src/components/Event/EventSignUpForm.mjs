@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { toast } from "react-toastify";
-import { post, get } from "aws-amplify/api";
 import ErrorCard from "../common/ErrorCard.mjs";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
+import { getUsers, registerTeam } from "@/src/lib/backendActions.mjs";
 
 function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
   const [formData, setFormData] = useState({
@@ -33,14 +33,9 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
     }
 
     try {
-      const { body } = await post({
-        apiName: "api",
-        path: `events/register?eventId=${eventId}`,
-        options: { body: formData },
-      }).response;
-      const data = await body.text();
+      await registerTeam({ eventId, formData });
 
-      toast.success(data);
+      toast.success("Successfully registered team");
 
       router.push(`/user/profile`);
     } catch {
@@ -144,10 +139,7 @@ function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
 
       try {
         setIsLoading(true);
-        const { body } = await get({ apiName: "api", path: `users?searchTerm=${term}&eventId=${eventId}`, options: {} })
-          .response;
-        const data = await body.json();
-
+        const data = await getUsers({ term, eventId });
         setUsers(data);
       } catch {
         toast.error(`Failed to look up user: ${term}`);
