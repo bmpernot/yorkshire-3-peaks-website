@@ -4,7 +4,7 @@ import { get, patch, del, post } from "aws-amplify/api";
 
 export async function getUsers({ term, eventId }) {
   try {
-    return (
+    return await (
       await get({
         apiName: "api",
         path: `users?searchTerm=${term}&eventId=${eventId}`,
@@ -18,7 +18,7 @@ export async function getUsers({ term, eventId }) {
 
 export async function updateUser({ userId, firstName, lastName, email }) {
   try {
-    return (
+    return await (
       await patch({ apiName: "api", path: "users", options: { body: { userId, firstName, lastName, email } } }).response
     ).body.json();
   } catch (error) {
@@ -36,7 +36,7 @@ export async function deleteUser() {
 
 export async function getEvents() {
   try {
-    return (
+    return await (
       await get({
         apiName: "api",
         path: `events`,
@@ -50,7 +50,7 @@ export async function getEvents() {
 
 export async function getEntries({ eventId }) {
   try {
-    return (
+    return await (
       await get({
         apiName: "api",
         path: `events/entries?eventId=${eventId}`,
@@ -64,7 +64,7 @@ export async function getEntries({ eventId }) {
 
 export async function getEventInformation({ eventId }) {
   try {
-    return (
+    return await (
       await get({
         apiName: "api",
         path: `events/information?eventId=${eventId}`,
