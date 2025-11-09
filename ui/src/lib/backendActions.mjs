@@ -4,13 +4,14 @@ import { get, patch, del, post } from "aws-amplify/api";
 
 export async function getUsers({ term, eventId }) {
   try {
-    return await (
-      await get({
-        apiName: "api",
-        path: `users?searchTerm=${term}&eventId=${eventId}`,
-        options: {},
-      }).response
-    ).body.json();
+    const { response } = get({
+      apiName: "api",
+      path: `users?searchTerm=${term}&eventId=${eventId}`,
+      options: {},
+    });
+    const { body } = await response;
+
+    return await body.json();
   } catch (error) {
     throw new Error("Error fetching users:", { cause: error });
   }
@@ -18,9 +19,13 @@ export async function getUsers({ term, eventId }) {
 
 export async function updateUser({ userId, firstName, lastName, email }) {
   try {
-    return await (
-      await patch({ apiName: "api", path: "users", options: { body: { userId, firstName, lastName, email } } }).response
-    ).body.json();
+    const { response } = patch({
+      apiName: "api",
+      path: "users",
+      options: { body: { userId, firstName, lastName, email } },
+    });
+    const { body } = await response;
+    return await body.json();
   } catch (error) {
     throw new Error("Error updating user:", { cause: error });
   }
@@ -28,7 +33,9 @@ export async function updateUser({ userId, firstName, lastName, email }) {
 
 export async function deleteUser() {
   try {
-    return (await del({ apiName: "api", path: "users", options: {} }).response).statusCode;
+    const { response } = del({ apiName: "api", path: "users", options: {} });
+    const { statusCode } = await response;
+    return statusCode;
   } catch (error) {
     throw new Error("Error deleting user:", { cause: error });
   }
@@ -36,13 +43,13 @@ export async function deleteUser() {
 
 export async function getEvents() {
   try {
-    return await (
-      await get({
-        apiName: "api",
-        path: `events`,
-        options: {},
-      }).response
-    ).body.json();
+    const { response } = get({
+      apiName: "api",
+      path: `events`,
+      options: {},
+    });
+    const { body } = await response;
+    return await body.json();
   } catch (error) {
     throw new Error("Error fetching events:", { cause: error });
   }
@@ -50,13 +57,13 @@ export async function getEvents() {
 
 export async function getEntries({ eventId }) {
   try {
-    return await (
-      await get({
-        apiName: "api",
-        path: `events/entries?eventId=${eventId}`,
-        options: {},
-      }).response
-    ).body.json();
+    const { response } = get({
+      apiName: "api",
+      path: `events/entries?eventId=${eventId}`,
+      options: {},
+    });
+    const { body } = await response;
+    return await body.json();
   } catch (error) {
     throw new Error("Error fetching entries:", { cause: error });
   }
@@ -64,13 +71,13 @@ export async function getEntries({ eventId }) {
 
 export async function getEventInformation({ eventId }) {
   try {
-    return await (
-      await get({
-        apiName: "api",
-        path: `events/information?eventId=${eventId}`,
-        options: {},
-      }).response
-    ).body.json();
+    const { response } = get({
+      apiName: "api",
+      path: `events/information?eventId=${eventId}`,
+      options: {},
+    });
+    const { body } = await response;
+    return await body.json();
   } catch (error) {
     throw new Error("Error fetching event information:", { cause: error });
   }
