@@ -27,12 +27,34 @@ describe("Results", () => {
   });
 
   it("Should be able to use the refresh button to get new events", () => {
+    const stubbedEvents = [
+      {
+        endDate: "2024-11-11T18:05:32.419Z",
+        eventId: "05fcca38-426d-46c7-a560-a6c0ac095f45",
+        startDate: "2024-11-09T18:05:32.419Z",
+      },
+      {
+        endDate: "2024-11-11T18:05:32.432Z",
+        eventId: "05fcca38-426d-46c7-a560-a6c0ac095f46",
+        startDate: "2024-11-09T18:05:32.432Z",
+      },
+    ];
+
+    events = stubEvents({
+      numberOfEvents: 0,
+      overrides: {
+        events: [stubbedEvents[1]],
+      },
+    });
+
+    entries = stubEntries({ events, overrides: { entries: { [events[0].eventId]: [] } } });
+
     resultsPage
       .open()
       .waitFor(["@Events", `@Event-Entry-${events[0].eventId}`])
       .verifyEvents(events);
 
-    events = stubEvents({ numberOfEvents: 1, overrides: { events } });
+    events = stubEvents({ numberOfEvents: 0, overrides: { events: stubbedEvents } });
 
     resultsPage.refreshEvents().waitFor(["@Events"]).verifyEvents(events);
   });

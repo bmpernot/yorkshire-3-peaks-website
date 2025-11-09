@@ -38,6 +38,7 @@ function Results() {
     } catch (err) {
       console.error("Failed to fetch events", err);
       setError({ message: "Failed to get events" });
+    } finally {
       setLoadingMessage(false);
     }
   }, []);
