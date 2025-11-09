@@ -7,14 +7,14 @@ import { toast } from "react-toastify";
 import { post } from "aws-amplify/api";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
 
-function VolunteeringSignUpForm({ eventId, router, userId, isLoggedIn }) {
+function VolunteeringSignUpForm({ eventId, router, isLoggedIn }) {
   const additionalRequirements = useRef();
 
   async function handleSubmit(event) {
     event.preventDefault();
 
     try {
-      const registrationData = { userId };
+      const registrationData = {};
 
       if (additionalRequirements.current.value?.length > 0) {
         registrationData.additionalRequirements = additionalRequirements.current.value;

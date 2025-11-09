@@ -124,12 +124,7 @@ function CurrentEvent() {
             <EventSignUpForm eventId={eventInformation.eventId} router={router} isLoggedIn={isLoggedIn} user={user} />
           </Grid2>
           <Grid2 size={{ xs: 12, lg: 6 }}>
-            <VolunteeringSignUpForm
-              eventId={eventInformation.eventId}
-              router={router}
-              userId={user.id}
-              isLoggedIn={isLoggedIn}
-            />
+            <VolunteeringSignUpForm eventId={eventInformation.eventId} router={router} isLoggedIn={isLoggedIn} />
           </Grid2>
         </Grid2>
       )}
