@@ -1,0 +1,22 @@
+export const cards = {
+  promotionCard: {
+    mb: 3,
+    boxShadow: 2,
+    borderRadius: 2,
+    transition: "all 0.3s ease",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    "&:hover": { boxShadow: 6, transform: "translateY(-2px)" },
+  },
+  cardHeader: { display: "flex", alignItems: "center", gap: 2, mb: 2 },
+  cardTitle: { fontWeight: "bold", flex: 1, lineHeight: 1.2 },
+  typeChip: { ml: "auto" },
+  cardContent: { lineHeight: 1.6, flex: 1 },
+  cardContentFlex: { flex: 1, display: "flex", flexDirection: "column" },
+  cardActions: { px: 2, pb: 2 },
+  cardActionsCentered: { justifyContent: "center", px: 2, pb: 2 },
+  contentText: { mb: 1 },
+  listItem: { py: 0.5 },
+  contactButton: { mt: 2 },
+};

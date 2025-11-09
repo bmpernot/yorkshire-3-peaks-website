@@ -1,0 +1,51 @@
+export const dialog = {
+  previewDialog: {
+    "& .MuiBackdrop-root": {
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+    "& .MuiDialog-paper": {
+      m: { xs: 1, sm: 3 },
+      maxHeight: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" },
+      borderRadius: 3,
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+    },
+  },
+  dialogTitle: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    p: { xs: 2, sm: 3 },
+    fontSize: { xs: "1.1rem", sm: "1.5rem" },
+    fontWeight: "bold",
+    borderBottom: "1px solid",
+    borderColor: "divider",
+    bgcolor: "background.paper",
+  },
+  closeButton: {
+    bgcolor: "action.hover",
+    "&:hover": { bgcolor: "action.selected" },
+    zIndex: 1,
+  },
+  dialogContent: {
+    p: 0,
+    bgcolor: "grey.50",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: { xs: 300, sm: 500 },
+  },
+  imageContainer: {
+    p: { xs: 2, sm: 4 },
+    maxWidth: "100%",
+    maxHeight: "100%",
+    width: "100%",
+    height: "70vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    overflow: "hidden",
+    borderRadius: 3,
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+  },
+};
