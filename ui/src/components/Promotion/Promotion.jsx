@@ -18,24 +18,27 @@ const Promotion = memo(function PromotionComponent() {
     posters: false,
   });
 
-  const sectionRefs = {
+  const sectionRefs = memo({
     recruitment: useRef(null),
     reminders: useRef(null),
     posters: useRef(null),
-  };
+  });
 
-  const handleSectionToggle = useCallback((section) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
+  const handleSectionToggle = useCallback(
+    (section) => {
+      setExpandedSections((prev) => ({
+        ...prev,
+        [section]: !prev[section],
+      }));
 
-    const element = sectionRefs[section].current;
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-      element.focus();
-    }
-  }, []);
+      const element = sectionRefs.type[section].current;
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        element.focus();
+      }
+    },
+    [sectionRefs],
+  );
 
   const totalRecruitment = promotionData.recruitment.length;
   const totalReminders = promotionData.reminders.length;
@@ -83,7 +86,7 @@ const Promotion = memo(function PromotionComponent() {
       <Divider sx={styles.sectionDivider} />
 
       <PromotionSection
-        sectionRef={sectionRefs.recruitment}
+        sectionRef={sectionRefs.type.recruitment}
         expanded={expandedSections.recruitment}
         onToggle={() => handleSectionToggle("recruitment")}
         icon={<Groups sx={styles.sectionIcon} aria-hidden="true" />}
@@ -103,7 +106,7 @@ const Promotion = memo(function PromotionComponent() {
       </PromotionSection>
 
       <PromotionSection
-        sectionRef={sectionRefs.reminders}
+        sectionRef={sectionRefs.type.reminders}
         expanded={expandedSections.reminders}
         onToggle={() => handleSectionToggle("reminders")}
         icon={<Schedule sx={styles.sectionIcon} aria-hidden="true" />}
@@ -123,7 +126,7 @@ const Promotion = memo(function PromotionComponent() {
       </PromotionSection>
 
       <PromotionSection
-        sectionRef={sectionRefs.posters}
+        sectionRef={sectionRefs.type.posters}
         expanded={expandedSections.posters}
         onToggle={() => handleSectionToggle("posters")}
         icon={<Download sx={styles.sectionIcon} aria-hidden="true" />}
