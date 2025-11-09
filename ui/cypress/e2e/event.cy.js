@@ -122,10 +122,7 @@ describe("Event", () => {
 
     it("Should allow a team (up to 5) to sign up to the event and be brought to their account page where they can see their entry", () => {
       cy.interceptAmplifyAuth().stubUser(USER_ROLES.USER);
-
-      const CUSTOM_API_RESPONSE_MESSAGE =
-        "a custom message from the api to prove that we display the response to the ui";
-      stubTeamRegistration({ events, overrides: { [events[1].eventId]: CUSTOM_API_RESPONSE_MESSAGE } });
+      stubTeamRegistration({ events });
 
       stubUserSearch(events[1].eventId, [
         {
@@ -261,7 +258,7 @@ describe("Event", () => {
             },
           ]);
         })
-        .verifyToast(CUSTOM_API_RESPONSE_MESSAGE)
+        .verifyToast("Successfully registered team")
         .urlShouldBe("user/profile");
     });
 
@@ -462,10 +459,8 @@ describe("Event", () => {
     it("Should allow a user to register as a volunteer for a particular event and be brought to their account page where they can see their entry", () => {
       cy.interceptAmplifyAuth().stubUser(USER_ROLES.USER);
 
-      const CUSTOM_API_RESPONSE_MESSAGE =
-        "a custom message from the api to prove that we display the response to the ui";
       const ADDITIONAL_REQUIREMENT = "I cant walk very far so could I have a job in the HQ";
-      stubVolunteerRegistration({ events, overrides: { [events[1].eventId]: CUSTOM_API_RESPONSE_MESSAGE } });
+      stubVolunteerRegistration({ events });
 
       eventPage.open().registerAsVolunteerForEvent({ additionalRequirement: ADDITIONAL_REQUIREMENT });
 
@@ -475,7 +470,7 @@ describe("Event", () => {
             additionalRequirements: ADDITIONAL_REQUIREMENT,
           });
         })
-        .verifyToast(CUSTOM_API_RESPONSE_MESSAGE)
+        .verifyToast("Successfully registered as a volunteer")
         .urlShouldBe("user/profile");
     });
   });
