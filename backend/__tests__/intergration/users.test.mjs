@@ -292,6 +292,9 @@ describe("User functions", () => {
       dynamoDBMock.on(DeleteCommand).resolves();
 
       const event = generateHttpApiEvent({
+        queryStringParameters: {
+          userId: "12345678-1234-1234-1234-123456789012",
+        },
         method: "DELETE",
       });
 
@@ -299,6 +302,37 @@ describe("User functions", () => {
 
       expect(response.statusCode).toEqual(200);
       expect(JSON.parse(response.body)).toEqual({ success: true, userId: "12345678-1234-1234-1234-123456789012" });
+    });
+
+    it("should not allow an user to delete another users info", async () => {
+      const event = generateHttpApiEvent({
+        queryStringParameters: {
+          userId: "12345678-1234-1234-1234-123456789000",
+        },
+        method: "DELETE",
+      });
+
+      const response = await deleteUser(event);
+
+      expect(response.statusCode).toEqual(403);
+      expect(response.body).toEqual("Unauthorized to delete another user");
+    });
+
+    it("should allow an admin to update another users info", async () => {
+      dynamoDBMock.on(UpdateCommand).resolves();
+
+      const event = generateHttpApiEvent({
+        queryStringParameters: {
+          userId: "12345678-1234-1234-1234-123456789000",
+        },
+        method: "DELETE",
+        userRole: "Admin",
+      });
+
+      const response = await deleteUser(event);
+
+      expect(response.statusCode).toEqual(200);
+      expect(JSON.parse(response.body)).toEqual({ success: true, userId: "12345678-1234-1234-1234-123456789000" });
     });
 
     it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "PATCH", "POST", "GET", "CONNECT"])(
@@ -322,6 +356,9 @@ describe("User functions", () => {
       dynamoDBMock.on(DeleteCommand).rejects(rejectedValue);
 
       const event = generateHttpApiEvent({
+        queryStringParameters: {
+          userId: "12345678-1234-1234-1234-123456789012",
+        },
         method: "DELETE",
       });
 

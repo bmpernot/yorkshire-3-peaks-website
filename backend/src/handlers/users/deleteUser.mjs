@@ -18,7 +18,7 @@ const deleteUser = async (event) => {
     if (userId !== authenticatedUserId && !userRole.includes("Admin")) {
       return {
         statusCode: 403,
-        body: "Unauthorized to update someone else profile",
+        body: "Unauthorized to delete another user",
       };
     } else {
       const response = await deleteUserFunction({ userId });
