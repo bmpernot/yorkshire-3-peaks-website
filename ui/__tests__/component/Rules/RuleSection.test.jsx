@@ -1,24 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
 import RuleSection from "@/src/components/Rules/RuleSection.jsx";
-
-vi.mock("@/src/components/Rules/BulletedList.jsx", () => ({
-  default: ({ items, type }) => (
-    <div data-testid="bulleted-list" data-type={type}>
-      {items?.map((item, i) => (
-        <div key={i}>{item.text}</div>
-      ))}
-    </div>
-  ),
-}));
-
-vi.mock("@/src/styles/rules.mui.styles.jsx", () => ({
-  styles: {
-    accordion: {},
-    accordionSummary: {},
-    accordionDetails: {},
-  },
-}));
 
 const mockSection = {
   id: "test-section",
@@ -35,18 +18,23 @@ describe("RuleSection", () => {
     expect(screen.getByTestId("test-icon")).toBeInTheDocument();
   });
 
-  it("renders BulletedList with correct props", () => {
+  it("renders as collapsed accordion initially", () => {
     render(<RuleSection section={mockSection} />);
-    const list = screen.getByTestId("bulleted-list");
-    expect(list).toHaveAttribute("data-type", "rule");
+    const button = screen.getByRole("button");
+    expect(button).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("has correct accordion structure", () => {
+  it("expands when clicked", () => {
     render(<RuleSection section={mockSection} />);
-    expect(screen.getByRole("button")).toBeInTheDocument();
+
+    const button = screen.getByRole("button");
+    fireEvent.click(button);
+
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Test item")).toBeInTheDocument();
   });
 
-  it("sets correct aria attributes", () => {
+  it("has correct accessibility attributes", () => {
     render(<RuleSection section={mockSection} />);
     const button = screen.getByRole("button");
     expect(button).toHaveAttribute("aria-controls", "test-section-content");
