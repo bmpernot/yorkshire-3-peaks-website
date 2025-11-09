@@ -52,9 +52,16 @@ export default getUsers;
 
 function ensureCustomPrefix(fields, defaultFields) {
   return fields.map((field) => {
-    if (defaultFields.includes(field) || field.startsWith("custom:")) {
+    if (defaultFields.includes(field)) {
       return field;
     }
-    return `custom:${field}`;
+    if (field.startsWith("custom:")) {
+      return field;
+    }
+    // Add custom: prefix for non-standard attributes
+    if (["ice_number", "notify"].includes(field)) {
+      return `custom:${field}`;
+    }
+    return field;
   });
 }

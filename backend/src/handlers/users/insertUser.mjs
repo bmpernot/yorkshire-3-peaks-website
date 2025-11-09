@@ -1,12 +1,17 @@
 import insertUserFunction from "../../services/users/insertUser.mjs";
 
 const insertUser = async (event) => {
-  const userId = event.userName;
   const attributes = event.request.userAttributes;
+  const userId = attributes.sub;
 
   const firstName = attributes.given_name || "";
   const lastName = attributes.family_name || "";
   const email = attributes.email || "";
+
+  if (!userId || !firstName || !lastName || !email) {
+    console.error("Missing required user attributes", { userId, firstName, lastName, email });
+    return event;
+  }
 
   try {
     await insertUserFunction({ userId, firstName, lastName, email });

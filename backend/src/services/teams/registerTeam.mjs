@@ -23,7 +23,7 @@ const registerTeamFunction = async (eventId, teamInformation) => {
     const teamId = v4();
 
     const price =
-      eventInfo.earlyBirdEndDate && now <= new Date(eventInfo.earlyBirdEndDate)
+      eventInfo.earlyBirdCutoff && now <= new Date(eventInfo.earlyBirdCutoff)
         ? eventInfo.earlyBirdPrice
         : eventInfo.price;
 
@@ -43,6 +43,7 @@ const registerTeamFunction = async (eventId, teamInformation) => {
           Item: {
             eventId,
             teamId,
+            volunteer: false,
             cost: price * teamInformation.members.length,
             paid: 0,
           },

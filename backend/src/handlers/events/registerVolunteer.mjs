@@ -20,7 +20,13 @@ const registerVolunteer = async (event) => {
   }
 
   try {
-    await registerVolunteerFunction(eventId, authenticatedUserId, event.body);
+    let additionalRequirements = null;
+    if (event.body) {
+      const parsed = JSON.parse(event.body);
+      additionalRequirements = parsed.additionalRequirements || null;
+    }
+
+    await registerVolunteerFunction(eventId, authenticatedUserId, additionalRequirements);
 
     return {
       statusCode: 201,

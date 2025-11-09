@@ -62,7 +62,8 @@ const registerVolunteerFunction = async (eventId, userId, additionalRequirements
       eventId,
       teamId,
       userId,
-      additionalRequirements,
+      additionalRequirements: additionalRequirements || null,
+      willingToVolunteer: true,
     };
 
     await ddbDocClient.send(

@@ -25,6 +25,7 @@ Resources:
               - "dynamodb:Query"
             Resource:
               - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
         - Statement:
             Effect: "Allow"
             Action:
@@ -41,7 +42,7 @@ Resources:
         Variables:
           COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
           USERS_TABLE_NAME: !Ref UsersTable
-          TEAMS_TABLE_NAME: !Ref TeamsTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
 
   insertUser:
     Type: AWS::Serverless::Function
@@ -144,6 +145,11 @@ Resources:
               - "dynamodb:Query"
             Resource:
               - !GetAtt EntriesTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:BatchGetItem"
+            Resource:
               - !GetAtt TeamsTable.Arn
       Events:
         HttpApiEvent:
@@ -168,7 +174,7 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetCommand"
+              - "dynamodb:GetItem"
             Resource:
               - !GetAtt EventsTable.Arn
         - Statement:
@@ -197,7 +203,7 @@ Resources:
   registerVolunteer:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users/registerVolunteer.default
+      Handler: src/handlers/events/registerVolunteer.default
       Description: A function to register a member as a volunteer
       Policies:
         - Statement:
@@ -228,7 +234,7 @@ Resources:
   registerTeam:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/users/registerVolunteer.default
+      Handler: src/handlers/events/registerTeam.default
       Description: A function to register a team for an event
       Policies:
         - Statement:
@@ -243,13 +249,16 @@ Resources:
             Effect: "Allow"
             Action:
               - "dynamodb:GetItem"
+              - "dynamodb:Query"
             Resource:
               - !GetAtt EventsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
       Events:
         HttpApiEvent:
           Type: HttpApi
           Properties:
-            Path: /events/volunteer
+            Path: /events/team
             Method: POST
             ApiId: !Ref HttpApiGateway
       Environment:
@@ -342,6 +351,8 @@ Resources:
           AttributeType: S
         - AttributeName: teamId
           AttributeType: S
+        - AttributeName: volunteer
+          AttributeType: BOOL
       KeySchema:
         - AttributeName: eventId
           KeyType: HASH
@@ -549,7 +560,7 @@ Resources:
 
 Globals:
   Function:
-    Runtime: nodejs20.x
+    Runtime: nodejs22.x
     Architectures:
       - x86_64
     MemorySize: 128

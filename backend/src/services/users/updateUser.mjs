@@ -13,14 +13,14 @@ const updateUser = async ({ userId, firstName, lastName, email }) => {
       throw new Error("Missing required fields: userId, firstName, lastName and email");
     }
 
-    const searchValue = `${firstName.toLowerCase()} ${lastName.toLowerCase()}`;
+    const searchValue = `${firstName.toLowerCase()} ${lastName.toLowerCase()} ${email.toLowerCase()}`;
 
     await ddbDocClient.send(
       new UpdateCommand({
         TableName: usersTableName,
         Key: { userId },
         UpdateExpression:
-          "SET firstName = :firstName, lastName = :lastName, email = : email searchValue = :searchValue",
+          "SET firstName = :firstName, lastName = :lastName, email = :email, searchValue = :searchValue",
         ExpressionAttributeValues: {
           ":firstName": firstName,
           ":lastName": lastName,

@@ -16,13 +16,14 @@ const userSearch = async ({ eventId, searchTerm }) => {
       const teamMembersData = await ddbDocClient.send(
         new QueryCommand({
           TableName: teamMembersTableName,
+          IndexName: "EventIdIndex",
           KeyConditionExpression: "eventId = :eventId",
           ExpressionAttributeValues: { ":eventId": eventId },
           ProjectionExpression: "userId",
         }),
       );
 
-      const participatingUserIds = new Set(teamMembersData.Items.map((e) => e.userId));
+      const participatingUserIds = new Set((teamMembersData.Items || []).map((e) => e.userId));
       usersMatchingCriteria.push(participatingUserIds);
     }
 
@@ -37,7 +38,7 @@ const userSearch = async ({ eventId, searchTerm }) => {
         }),
       );
 
-      const usersMatchingSearchTerm = new Set(userData.Items.map((e) => e.userId));
+      const usersMatchingSearchTerm = new Set((userData.Items || []).map((e) => e.userId));
       usersMatchingCriteria.push(usersMatchingSearchTerm);
     }
 
