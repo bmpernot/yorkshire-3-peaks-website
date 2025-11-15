@@ -30,7 +30,7 @@ function DeleteAccountForm({ email, updateUser }) {
     setIsLoading(true);
 
     try {
-      await handleDeleteUser(router);
+      await handleDeleteUser();
 
       await deleteUser();
 
