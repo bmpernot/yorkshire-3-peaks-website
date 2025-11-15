@@ -76,7 +76,8 @@ const getEventInformation = async (eventId) => {
 
     entries.forEach(({ teamId, volunteer }) => {
       const count = teamCountsMap[teamId] || 0;
-      if (volunteer) {
+      const isVolunteer = volunteer ? volunteer.toString() === "true" : false;
+      if (isVolunteer) {
         numberOfVolunteers += count;
       } else {
         numberOfWalkers += count;

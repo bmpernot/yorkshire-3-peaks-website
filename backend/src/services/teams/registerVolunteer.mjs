@@ -45,7 +45,7 @@ const registerVolunteerFunction = async (eventId, userId, additionalRequirements
           "#eventId": "eventId",
         },
         ExpressionAttributeValues: {
-          ":true": true,
+          ":true": Buffer.from(String(true)),
           ":eventId": eventId,
         },
       }),

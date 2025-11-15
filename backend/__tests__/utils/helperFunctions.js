@@ -53,6 +53,7 @@ function generateEntries(eventId, teams, offset = 0) {
       start: baseDate.toISOString(),
       ...checkpoints,
       end: new Date(baseDate.valueOf() + 3600000 * 8 + Math.random() * 1800000).toISOString(),
+      volunteer: Buffer.from(String(false)),
     };
   });
 }
