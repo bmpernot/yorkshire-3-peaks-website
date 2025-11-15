@@ -112,17 +112,17 @@ function Home() {
         <div className="cta-container">
           <h2 className="cta-title">Ready for the Challenge?</h2>
           <p className="cta-subtitle">
-            Join hundreds of adventurers taking on Yorkshire's most iconic peaks while raising money for charity
+            Join thousands of adventurers taking on Yorkshire's most iconic peaks while raising money for charity
           </p>
 
           <div className="stats-card">
             <div className="stats-grid">
               <div className="stat-item">
-                <div className="stat-number">200+</div>
+                <div className="stat-number">3000+</div>
                 <div className="stat-label">Participants</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">£5k+</div>
+                <div className="stat-number">£200k+</div>
                 <div className="stat-label">Raised</div>
               </div>
               <div className="stat-item">

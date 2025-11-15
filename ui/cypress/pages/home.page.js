@@ -4,13 +4,13 @@ const pages = [
   "home",
   {
     label: "event",
-    links: ["current event", "route", "rules", "results", "promotion"],
+    links: ["current events", "route", "rules", "results", "promotion"],
   },
   "organisers",
   "admin",
 ];
 
-const navMenu = ["home", "route", "rules", "current event", "promotion", "results", "organisers", "admin"];
+const navMenu = ["home", "route", "rules", "current events", "promotion", "results", "organisers", "admin"];
 
 export default class homePage {
   open() {
@@ -117,9 +117,9 @@ export default class homePage {
       Account: () => {
         cy.get("[data-cy=user-settings-dropdown-account]").click();
       },
-      "Current Event": () => {
+      "Current Events": () => {
         cy.get("[data-cy=event] [data-cy=button]").click();
-        cy.get('[data-cy="event-dropdown-current event"]').click();
+        cy.get('[data-cy="event-dropdown-current events"]').click();
       },
       Promotion: () => {
         cy.get("[data-cy=event] [data-cy=button]").click();

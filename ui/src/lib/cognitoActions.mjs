@@ -171,17 +171,11 @@ export async function handleConfirmResetPassword(router, email, code, password) 
   }
 }
 
-export async function handleDeleteUser(router) {
+export async function handleDeleteUser() {
   try {
     await deleteUser();
   } catch (error) {
     throw new Error("An error occurred when trying to delete your account", { cause: error });
-  }
-
-  try {
-    router.push("/");
-  } catch (error) {
-    throw new Error("An error occurred when trying to redirect you to the home page", { cause: error });
   }
 }
 

@@ -19,6 +19,7 @@ describe("NavBar", () => {
   beforeEach(() => {
     cy.interceptAmplifyAuth();
     cy.stubUser();
+    cy.stubAPI();
   });
 
   for (const screenSize of screenSizes) {
@@ -55,7 +56,7 @@ describe("NavBar", () => {
             .urlShouldBe("user/profile")
             .goToPage("Account")
             .urlShouldBe("user/account")
-            .goToPage("Current Event")
+            .goToPage("Current Events")
             .urlShouldBe("event/current")
             .goToPage("Promotion")
             .urlShouldBe("event/promotion")

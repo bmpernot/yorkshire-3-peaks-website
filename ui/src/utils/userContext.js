@@ -51,11 +51,19 @@ export const UserProvider = ({ children }) => {
   }, [fetchUser]);
 
   const userContext = useMemo(() => {
-    const updateUser = async () => {
+    async function updateUser() {
       await fetchUser();
-    };
+    }
 
-    return { user, setUser, fetchUser, loading, updateUser };
+    function loggedIn() {
+      if (user.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    return { user, setUser, fetchUser, loading, updateUser, loggedIn };
   }, [user, loading, fetchUser]);
 
   return <UserContext.Provider value={userContext}>{children}</UserContext.Provider>;

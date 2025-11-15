@@ -100,8 +100,8 @@ export default class authPage {
     return this;
   }
 
-  verifyFormError(message) {
-    cy.get("#error-card").should("contain", message);
+  verifyFormError(message, key = "0") {
+    cy.get(`[id=error-card-${key}]`).should("contain", message);
     return this;
   }
 

@@ -86,7 +86,7 @@ function ForgotPassword({ open, setOpen, router }) {
         <Button
           onClick={() => {
             setSubmissionError(null);
-            setErrors({ email: [] });
+            setErrors({ "reset-password-for-email": [] });
             setOpen(false);
           }}
         >

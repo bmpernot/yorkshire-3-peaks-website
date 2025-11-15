@@ -6,6 +6,7 @@ describe("Authorisation", () => {
 
   beforeEach(() => {
     cy.interceptAmplifyAuth();
+    cy.stubAPI();
   });
 
   describe("Sign up page", () => {

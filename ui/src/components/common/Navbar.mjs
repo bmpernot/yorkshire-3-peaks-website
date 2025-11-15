@@ -40,7 +40,7 @@ const pages = [
   {
     label: "Event",
     links: [
-      { label: "Current Event", link: "/event/current", role: USER_ROLES.GUEST },
+      { label: "Current Events", link: "/event/current", role: USER_ROLES.GUEST },
       { label: "Route", link: "/event/route", role: USER_ROLES.GUEST },
       { label: "Rules", link: "/event/rules", role: USER_ROLES.GUEST },
       { label: "Results", link: "/event/results", role: USER_ROLES.GUEST },
