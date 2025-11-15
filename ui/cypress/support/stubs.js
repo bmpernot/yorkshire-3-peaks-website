@@ -85,7 +85,7 @@ function stubTeamRegistration({ events, overrides = {} }) {
 function stubUserSearch(eventId, users = []) {
   users.forEach((user) => {
     cy.intercept(
-      `${Cypress.env("NEXT_PUBLIC_API_URL")}users?searchTerm=${user.searchTerm}&eventId=${eventId}`,
+      `${Cypress.env("NEXT_PUBLIC_API_URL")}users?searchTerm=${encodeURIComponent(user.searchTerm)}&eventId=${encodeURIComponent(eventId)}`,
       user.response,
     ).as(`User-Search`);
   });
