@@ -4,9 +4,22 @@ import { get, patch, del, post } from "aws-amplify/api";
 
 export async function getUsers({ term, eventId }) {
   try {
+    if (!term && !eventId) {
+      throw new Error("Must provide at least one of the searching parameters");
+    }
+
+    const components = [];
+    if (term) {
+      components.push(`searchTerm=${encodeURIComponent(term)}`);
+    }
+    if (eventId) {
+      components.push(`eventId=${encodeURIComponent(eventId)}`);
+    }
+    const filter = components.join("&");
+
     const { response } = get({
       apiName: "api",
-      path: `users?searchTerm=${term}&eventId=${eventId}`,
+      path: `users?${filter}`,
       options: {},
     });
     const { body } = await response;
@@ -19,6 +32,10 @@ export async function getUsers({ term, eventId }) {
 
 export async function updateUser({ userId, firstName, lastName, email }) {
   try {
+    if (!userId || !firstName || !lastName || !email) {
+      throw new Error("Must provide all parameters");
+    }
+
     const { response } = patch({
       apiName: "api",
       path: "users",
@@ -57,9 +74,13 @@ export async function getEvents() {
 
 export async function getEntries({ eventId }) {
   try {
+    if (!eventId) {
+      throw new Error("Must provide an eventId");
+    }
+
     const { response } = get({
       apiName: "api",
-      path: `events/entries?eventId=${eventId}`,
+      path: `events/entries?eventId=${encodeURIComponent(eventId)}`,
       options: {},
     });
     const { body } = await response;
@@ -71,9 +92,13 @@ export async function getEntries({ eventId }) {
 
 export async function getEventInformation({ eventId }) {
   try {
+    if (!eventId) {
+      throw new Error("Must provide an eventId");
+    }
+
     const { response } = get({
       apiName: "api",
-      path: `events/information?eventId=${eventId}`,
+      path: `events/information?eventId=${encodeURIComponent(eventId)}`,
       options: {},
     });
     const { body } = await response;
@@ -85,9 +110,13 @@ export async function getEventInformation({ eventId }) {
 
 export async function registerTeam({ eventId, formData }) {
   try {
+    if (!eventId || !formData) {
+      throw new Error("Must provide an eventId and formData");
+    }
+
     return await post({
       apiName: "api",
-      path: `events/register?eventId=${eventId}`,
+      path: `events/register?eventId=${encodeURIComponent(eventId)}`,
       options: { body: formData },
     }).response;
   } catch (error) {
@@ -97,9 +126,13 @@ export async function registerTeam({ eventId, formData }) {
 
 export async function registerVolunteer({ eventId, registrationData }) {
   try {
+    if (!eventId || !registrationData) {
+      throw new Error("Must provide an eventId and registrationData");
+    }
+
     return await post({
       apiName: "api",
-      path: `events/volunteer?eventId=${eventId}`,
+      path: `events/volunteer?eventId=${encodeURIComponent(eventId)}`,
       options: { body: registrationData },
     }).response;
   } catch (error) {
