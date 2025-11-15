@@ -64,8 +64,6 @@ describe("Promotion Component", () => {
     const recruitmentChip = screen.getByText(/Recruitment Posts/);
     fireEvent.click(recruitmentChip);
 
-    vi.runAllTimers();
-
     expect(mockScrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
     expect(mockFocus).toHaveBeenCalled();
   });

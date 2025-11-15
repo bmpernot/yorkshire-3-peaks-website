@@ -9,9 +9,7 @@
     "lint": "next lint",
     "cy:open": "cypress open --e2e --browser edge",
     "cy:run": "cypress run --headless --browser edge",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test": "vitest"
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.6.2",
