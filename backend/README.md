@@ -104,7 +104,7 @@ enter as many times as there are checkpoints but follow the format
 | ----------- | -------- | ---------------------- |
 | eventId     | string   | Primary Key            |
 | teamId      | string   | Secondary Key          |
-| volunteer   | binary   | Global Secondary Index |
+| volunteer   | string   | Global Secondary Index |
 | ----------- | -------  | -------------          |
 | cost        | integer  | Required               |
 | paid        | integer  | Required               |

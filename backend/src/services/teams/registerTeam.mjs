@@ -43,7 +43,7 @@ const registerTeamFunction = async (eventId, teamInformation) => {
           Item: {
             eventId,
             teamId,
-            volunteer: Buffer.from(String(false)),
+            volunteer: String(false),
             cost: price * teamInformation.members.length,
             paid: 0,
           },

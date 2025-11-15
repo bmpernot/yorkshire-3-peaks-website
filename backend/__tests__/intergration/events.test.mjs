@@ -152,9 +152,9 @@ describe("Event functions", () => {
       const mockEvent = generateEvent(1);
 
       const entriesData = [
-        { teamId: 0, volunteer: Buffer.from(String(false)), paid: 160 },
-        { teamId: 1, volunteer: Buffer.from(String(false)), paid: 200 },
-        { teamId: 2, volunteer: Buffer.from(String(true)), paid: 0 },
+        { teamId: 0, volunteer: String(false), paid: 160 },
+        { teamId: 1, volunteer: String(false), paid: 200 },
+        { teamId: 2, volunteer: String(true), paid: 0 },
       ];
       const membersData = [
         { teamId: 0 },

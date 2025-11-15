@@ -73,6 +73,6 @@ function enrichEntries(allEntries, teamNameMap) {
   return allEntries.map((entry) => ({
     ...entry,
     teamName: teamNameMap.get(entry.teamId) || null,
-    volunteer: entry.volunteer ? entry.volunteer.toString() === "true" : false,
+    volunteer: entry.volunteer ? entry.volunteer === "true" : false,
   }));
 }

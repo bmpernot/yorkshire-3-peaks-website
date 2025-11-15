@@ -374,7 +374,7 @@ Resources:
         - AttributeName: teamId
           AttributeType: S
         - AttributeName: volunteer
-          AttributeType: B
+          AttributeType: S
       KeySchema:
         - AttributeName: eventId
           KeyType: HASH
