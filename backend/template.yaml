@@ -282,7 +282,7 @@ Resources:
         HttpApiEvent:
           Type: HttpApi
           Properties:
-            Path: /events/team
+            Path: /events/register
             Method: POST
             ApiId: !Ref HttpApiGateway
       Environment:
