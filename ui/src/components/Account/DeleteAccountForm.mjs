@@ -30,9 +30,9 @@ function DeleteAccountForm({ email, updateUser, userId }) {
     setIsLoading(true);
 
     try {
-      await handleDeleteUser();
-
       await deleteUser(userId);
+
+      await handleDeleteUser();
 
       try {
         router.push("/");
