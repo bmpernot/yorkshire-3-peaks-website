@@ -233,6 +233,8 @@ Resources:
             Action:
               - "dynamodb:Query"
             Resource:
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
               - !GetAtt EntriesTable.Arn
               - !Sub "${EntriesTable.Arn}/index/VolunteerIndex"
         - Statement:
