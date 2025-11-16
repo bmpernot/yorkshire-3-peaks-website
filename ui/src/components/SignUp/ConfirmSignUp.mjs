@@ -89,6 +89,9 @@ function ConfirmSignUp() {
         <Typography component="h1" variant="h4" sx={styles.signIn.title}>
           Confirm Account
         </Typography>
+        <Typography component="p" variant="p">
+          Check your spam folder
+        </Typography>
         {submissionError ? <ErrorCard error={submissionError} /> : null}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={styles.signIn.form}>
           <FormControl>

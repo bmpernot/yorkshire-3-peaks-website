@@ -1,5 +1,9 @@
 import { v4 } from "uuid";
 
+function generateRandomNumber({ min, max }) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function generateEvents({ numberOfEvents, overrides = [] }) {
   const events = [];
   for (let i = 0; i < numberOfEvents; i++) {
@@ -15,6 +19,10 @@ function generateEvents({ numberOfEvents, overrides = [] }) {
 }
 
 function generateEntries({ events, overrides = {} }) {
+  if (overrides.entries) {
+    return overrides.entries;
+  }
+
   const entries = {};
   events.forEach((event) => {
     entries[event.eventId] = [];
@@ -48,11 +56,34 @@ function generateEntries({ events, overrides = {} }) {
     }
   });
 
-  return overrides.entries || entries;
+  return entries;
 }
 
-function generateRandomNumber({ min, max }) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function generateEventInformation({ events, overrides = {} }) {
+  if (overrides.eventInformation) {
+    return overrides.eventInformation;
+  }
+
+  const eventInformation = {};
+
+  events.forEach((event) => {
+    const requiredVolunteers = generateRandomNumber({ min: 6, max: 15 });
+    const requiredWalkers = generateRandomNumber({ min: 160, max: 250 });
+    const currentVolunteers = generateRandomNumber({ min: 0, max: requiredVolunteers });
+    const currentWalkers = generateRandomNumber({ min: 0, max: requiredWalkers });
+    eventInformation[event.eventId] = {
+      requiredWalkers,
+      currentWalkers,
+      requiredVolunteers,
+      currentVolunteers,
+      moneyRaised: 40 * currentWalkers,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      eventId: event.eventId,
+    };
+  });
+
+  return eventInformation;
 }
 
-export { generateEvents, generateEntries, generateRandomNumber };
+export { generateEvents, generateEntries, generateRandomNumber, generateEventInformation };

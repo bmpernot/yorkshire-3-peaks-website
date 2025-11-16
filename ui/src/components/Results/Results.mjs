@@ -1,37 +1,44 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { get } from "aws-amplify/api";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Loading from "../common/Loading.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
 import Entries from "./Entries.mjs";
 import Events from "./Events.mjs";
+import { styles } from "@/src/styles/results.mui.styles.mjs";
+import { getEntries, getEvents } from "@/src/lib/backendActions.mjs";
 
 function Results() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [entriesCache, setEntriesCache] = useState({});
-  const [loadingMessage, setLoadingMessage] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Getting events");
   const [error, setError] = useState(false);
 
   const fetchEvents = useCallback(async () => {
     try {
       setLoadingMessage("Getting events");
 
-      const { body } = await get({ apiName: "api", path: "events", options: {} }).response;
-      const data = await body.json();
-      data.sort((a, b) => {
-        return new Date(b.startDate).valueOf() - new Date(a.startDate).valueOf();
-      });
-      setEvents(data);
+      const data = await getEvents();
 
-      if (data.length > 0 && !selectedEvent) {
-        setSelectedEvent(data[0]);
+      const previousEvents = data
+        .filter((event) => {
+          return new Date(event.startDate).valueOf() < Date.now();
+        })
+        .sort((a, b) => {
+          return new Date(b.startDate).valueOf() - new Date(a.startDate).valueOf();
+        });
+
+      setEvents(previousEvents);
+
+      if (previousEvents.length > 0 && !selectedEvent) {
+        setSelectedEvent(previousEvents[0]);
       }
     } catch (err) {
       console.error("Failed to fetch events", err);
-      setError({ location: "Page", message: "Failed to get events" });
+      setError({ message: "Failed to get events" });
+    } finally {
       setLoadingMessage(false);
     }
   }, []);
@@ -46,24 +53,24 @@ function Results() {
 
       const date = new Date(startDate);
 
-      setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth()}${date.getFullYear()}`);
+      setLoadingMessage(`Getting entries for ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
       try {
-        const { body } = await get({ apiName: "api", path: `events/entries?eventId=${eventId}`, options: {} }).response;
-        const data = await body.json();
-        data.forEach((entry) => {
+        const data = await getEntries({ eventId });
+        const filteredData = data.filter((entry) => !entry.volunteer);
+        filteredData.forEach((entry) => {
           if (entry.start && entry.end) {
             entry.time = new Date(entry.end).valueOf() - new Date(entry.start).valueOf();
           }
         });
-        data.sort((a, b) => {
+        filteredData.sort((a, b) => {
           const aTime = a.time || 9999999999;
           const bTime = b.time || 9999999999;
           return aTime - bTime;
         });
-        setEntriesCache((prev) => ({ ...prev, [eventId]: data }));
+        setEntriesCache((prev) => ({ ...prev, [eventId]: filteredData }));
       } catch (err) {
         console.error("Failed to fetch entries", err);
-        setError({ location: "Table", message: "Failed to get event data" });
+        setError({ message: "Failed to get event entries" });
       } finally {
         setLoadingMessage(false);
       }
@@ -87,13 +94,15 @@ function Results() {
     return <Loading message={loadingMessage} />;
   }
 
-  if (error && error.location === "Page") {
+  if (error) {
     return <ErrorCard error={error.message} />;
   }
 
   return (
     <Box display="grid" alignContent="left">
-      <h1 className="page-title">Results</h1>
+      <Typography variant="h3" component="h1" align="left" sx={styles.mainTitle}>
+        Results
+      </Typography>
       <Events
         events={events}
         selectedEvent={selectedEvent}

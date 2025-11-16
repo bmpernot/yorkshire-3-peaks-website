@@ -1,4 +1,4 @@
-import Home from "@/src/components/Home.mjs";
+import Home from "@/src/components/Home/Home.mjs";
 
 export default function HomePage() {
   return <Home />;

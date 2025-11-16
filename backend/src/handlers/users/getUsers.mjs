@@ -1,4 +1,7 @@
+import searchUsersFunction from "../../services/users/searchUser.mjs";
 import getUsersFunction from "../../services/users/getUsers.mjs";
+
+// TODO - clean this up and it's functions to make it more generic
 
 const getUsers = async (event) => {
   if (event.requestContext.http.method !== "GET") {
@@ -9,18 +12,30 @@ const getUsers = async (event) => {
   }
 
   const queryParams = event.queryStringParameters || {};
-  const fields = queryParams.fields && queryParams.fields.length > 0 ? queryParams.fields.split(",") : undefined;
   const claims = event.requestContext.authorizer.jwt.claims;
   const userRole = claims["cognito:groups"] ?? "User";
 
   try {
-    if (fields && !userRole.includes("Organiser") && !userRole.includes("Admin")) {
+    if (queryParams.fields && !userRole.includes("Organiser") && !userRole.includes("Admin")) {
       return {
         statusCode: 403,
         body: "Unauthorized to get more fields",
       };
     } else {
-      const users = await getUsersFunction(fields);
+      const { fields, ...searchFilters } = queryParams;
+      const response = await searchUsersFunction(searchFilters);
+
+      let users;
+      if (!searchFilters.searchTerm) {
+        users = await getUsersFunction(fields, response);
+      } else if (fields) {
+        users = await getUsersFunction(
+          fields,
+          response.map((user) => user.userId),
+        );
+      } else {
+        users = response;
+      }
 
       return {
         statusCode: 200,

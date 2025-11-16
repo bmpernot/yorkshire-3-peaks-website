@@ -4,7 +4,7 @@ function generateUsers(numberOfUsers, offset = 0) {
   for (let i = offset; i < offset + numberOfUsers; i++) {
     users.push({
       Username: `12345678-1234-1234-1234-123456789${i.toString().padStart(3, "0")}`,
-      Attributes: [
+      UserAttributes: [
         { Name: "sub", Value: `12345678-1234-1234-1234-123456789${i.toString().padStart(3, "0")}` },
         { Name: "email", Value: `user${i}@example.com` },
         { Name: "email_verified", Value: i % 2 === 0 ? "true" : "false" },
@@ -14,8 +14,8 @@ function generateUsers(numberOfUsers, offset = 0) {
         { Name: "custom:ice_number", Value: `01234567${i.toString().padStart(3, "0")}` },
         { Name: "phone_number", Value: `01234567${i.toString().padStart(3, "0")}` },
       ],
-      UserCreateDate: new Date(Date.now() - i * 1000 * 60 * 60 * 24).toISOString(),
-      UserLastModifiedDate: new Date(Date.now() - i * 1000 * 60 * 60).toISOString(),
+      UserCreateDate: new Date(Date.now() - i * 1000 * 60 * 60 * 24),
+      UserLastModifiedDate: new Date(Date.now() - i * 1000 * 60 * 60),
       Enabled: i % 2 === 0,
       UserStatus: i % 2 === 0 ? "CONFIRMED" : "UNCONFIRMED",
     });
@@ -53,6 +53,7 @@ function generateEntries(eventId, teams, offset = 0) {
       start: baseDate.toISOString(),
       ...checkpoints,
       end: new Date(baseDate.valueOf() + 3600000 * 8 + Math.random() * 1800000).toISOString(),
+      volunteer: String(false),
     };
   });
 }
@@ -83,6 +84,7 @@ function generateHttpApiEvent({
   userRole,
   eventOverrides,
   userSignedIn = true,
+  body,
 }) {
   const event = {
     queryStringParameters: queryStringParameters || {},
@@ -118,7 +120,40 @@ function generateHttpApiEvent({
     if (userRole) {
       event.requestContext.authorizer.jwt.claims["cognito:groups"] = userRole;
     }
+
+    if (body) {
+      event.body = typeof body === "string" ? body : JSON.stringify(body);
+    }
   }
+
+  return { ...event, ...eventOverrides };
+}
+
+function generatePostCreateEvent({ eventOverrides }) {
+  const event = {
+    version: "1",
+    triggerSource: "PostConfirmation_ConfirmSignUp",
+    region: "eu-west-1",
+    userPoolId: "eu-west-1_AbCdEfGHi",
+    userName: "12345678-1234-1234-1234-123456789012",
+    callerContext: {
+      awsSdkVersion: "aws-sdk-js-3.0.0",
+      clientId: "7gk4r1k9jvexample123",
+    },
+    request: {
+      userAttributes: {
+        sub: "12345678-1234-1234-1234-123456789012",
+        email_verified: "true",
+        "cognito:user_status": "CONFIRMED",
+        email: "testuser@example.com",
+        "custom:notify": "true",
+        "custom:ice_number": "+441234567890",
+        given_name: "John",
+        family_name: "Doe",
+      },
+    },
+    response: {},
+  };
 
   return { ...event, ...eventOverrides };
 }
@@ -127,4 +162,4 @@ function generateRandomNumber({ min, max }) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export { generateUsers, generateHttpApiEvent, generateTeams, generateEntries, generateEvent };
+export { generateUsers, generateHttpApiEvent, generatePostCreateEvent, generateTeams, generateEntries, generateEvent };

@@ -11,7 +11,11 @@ export default class resultsPage {
     cy.get("[id=events-list]").click();
     events.forEach((event) => {
       const date = new Date(event.startDate);
-      const formattedDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+      const formattedDate = date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
       cy.get(`[id=${event.eventId}]`).and("have.text", formattedDate);
     });
     cy.press(Cypress.Keyboard.Keys.TAB);
@@ -19,7 +23,11 @@ export default class resultsPage {
   }
   verifySelectedEvent(event) {
     const date = new Date(event.startDate);
-    const formattedDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
     cy.get("[id=events-list]").should("contain", formattedDate);
     return this;
   }
@@ -48,6 +56,16 @@ export default class resultsPage {
     }
     return this;
   }
+  verifyRowsExist(entries = []) {
+    if (entries.length === 0) {
+      cy.get("[id=entries-table]").should("not.exist");
+    } else {
+      entries.forEach((entry) => {
+        cy.get(`[data-id=team-id-${entry.teamId}]`).should("be.visible");
+      });
+    }
+    return this;
+  }
   refreshEvents() {
     cy.get("[id=refresh-events]").click();
     return this;
@@ -58,6 +76,11 @@ export default class resultsPage {
   }
   then(functionDef = () => {}) {
     cy.then(functionDef);
+    return this;
+  }
+  selectEvent(eventId) {
+    cy.get("[id=events-list]").click();
+    cy.get(`[id=${eventId}]`).click();
     return this;
   }
 }

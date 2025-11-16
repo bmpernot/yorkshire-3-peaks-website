@@ -17,8 +17,20 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "cognito-idp:ListUsers"
+              - "cognito-idp:AdminGetUser"
             Resource: !GetAtt CognitoUserPool.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Scan"
+            Resource: !GetAtt UsersTable.Arn
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -29,6 +41,73 @@ Resources:
       Environment:
         Variables:
           COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
+          USERS_TABLE_NAME: !Ref UsersTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+
+  insertUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/insertUser.default
+      Description: A function to insert a user row for searching
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:PutItem"
+            Resource: !GetAtt UsersTable.Arn
+      Events:
+        CognitoTrigger:
+          Type: Cognito
+          Properties:
+            UserPool: !Ref CognitoUserPool
+            Trigger: PostConfirmation
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+
+  updateUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/updateUser.default
+      Description: Updates the users' information in db
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:UpdateItem"
+            Resource: !GetAtt UsersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: PATCH
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+
+  deleteUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/users/deleteUser.default
+      Description: Deletes the users' information in db
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:DeleteItem"
+            Resource: !GetAtt UsersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: DELETE
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
 
   getTeams:
     Type: AWS::Serverless::Function
@@ -39,9 +118,6 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
-              - "dynamodb:Scan"
               - "dynamodb:BatchGetItem"
             Resource: !GetAtt TeamsTable.Arn
       Events:
@@ -64,8 +140,6 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
-              - "dynamodb:Query"
               - "dynamodb:Scan"
             Resource: !GetAtt EventsTable.Arn
       Events:
@@ -90,12 +164,14 @@ Resources:
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:GetItem"
               - "dynamodb:Query"
-              - "dynamodb:Scan"
-              - "dynamodb:BatchGetItem"
             Resource:
               - !GetAtt EntriesTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:BatchGetItem"
+            Resource:
               - !GetAtt TeamsTable.Arn
       Events:
         HttpApiEvent:
@@ -110,6 +186,112 @@ Resources:
         Variables:
           ENTRIES_TABLE_NAME: !Ref EntriesTable
           TEAMS_TABLE_NAME: !Ref TeamsTable
+
+  getEventInformation:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/events/getEventInformation.default
+      Description: A function to grab event information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+            Resource:
+              - !GetAtt EventsTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events/information
+            Method: GET
+            ApiId: !Ref HttpApiGateway
+            Auth:
+              Authorizer: NONE
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+
+  registerVolunteer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/events/registerVolunteer.default
+      Description: A function to register a member as a volunteer
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
+              - !GetAtt EntriesTable.Arn
+              - !Sub "${EntriesTable.Arn}/index/VolunteerIndex"
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:PutItem"
+            Resource:
+              - !GetAtt TeamMembersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events/volunteer
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+
+  registerTeam:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/events/registerTeam.default
+      Description: A function to register a team for an event
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:TransactWriteItems"
+              - "dynamodb:PutItem"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt EventsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events/register
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+          TEAMS_TABLE_NAME: !Ref TeamsTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
 
   ##### API Resources #####
 
@@ -129,6 +311,18 @@ Resources:
         - AttributeName: teamId
           KeyType: HASH
 
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: users
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+
   TeamMembersTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -137,13 +331,28 @@ Resources:
       AttributeDefinitions:
         - AttributeName: teamId
           AttributeType: S
-        - AttributeName: memberId
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: eventId
           AttributeType: S
       KeySchema:
         - AttributeName: teamId
           KeyType: HASH
-        - AttributeName: memberId
+        - AttributeName: userId
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: EventIdIndex
+          KeySchema:
+            - AttributeName: eventId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: UserIdIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
   EventsTable:
     Type: AWS::DynamoDB::Table
@@ -167,11 +376,26 @@ Resources:
           AttributeType: S
         - AttributeName: teamId
           AttributeType: S
+        - AttributeName: volunteer
+          AttributeType: S
       KeySchema:
         - AttributeName: eventId
           KeyType: HASH
         - AttributeName: teamId
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: TeamIdIndex
+          KeySchema:
+            - AttributeName: teamId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: VolunteerIndex
+          KeySchema:
+            - AttributeName: volunteer
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
   ##### DB Resources #####
 
@@ -192,6 +416,7 @@ Resources:
       EmailConfiguration:
         SourceArn: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/yorkshirepeaks@gmail.com
         # manually verified the email via AWS console so we don't have the ARN reference
+        # TODO - create a business email so that it is authed by DKIM so less risk of going into the spam folder - NEO mail
         ReplyToEmailAddress: yorkshirepeaks@gmail.com
         EmailSendingAccount: DEVELOPER
         From: The Yorkshire 3 Peaks Team <yorkshirepeaks@gmail.com>
@@ -201,9 +426,21 @@ Resources:
         - email
       VerificationMessageTemplate:
         DefaultEmailOption: CONFIRM_WITH_CODE
-        EmailMessage: >-
-          Here is your code: {####}
-        EmailSubject: Yorkshire 3 Peaks Account Code
+        EmailMessage: |
+          Hello,
+
+          Your Yorkshire Three Peaks verification code is:
+
+          {####}
+
+          Enter this code in the app or website to continue.
+
+          If you did not request this code, you can safely ignore this message.
+
+          Thank you,
+
+          The Yorkshire Three Peaks Team
+        EmailSubject: Yorkshire 3 Peaks - Your Verification Code
       UserAttributeUpdateSettings:
         AttributesRequireVerificationBeforeUpdate:
           - email
@@ -361,7 +598,7 @@ Resources:
 
 Globals:
   Function:
-    Runtime: nodejs20.x
+    Runtime: nodejs22.x
     Architectures:
       - x86_64
     MemorySize: 128

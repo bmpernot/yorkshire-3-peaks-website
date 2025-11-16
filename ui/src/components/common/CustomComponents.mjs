@@ -1,16 +1,16 @@
 import { Stack, Card } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(({ theme, nomaxwidth }) => ({
   display: "flex",
   flexDirection: "column",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   width: "100%",
   [theme.breakpoints.down("sm")]: {
-    width: "225px",
+    padding: theme.spacing(3),
   },
-  maxWidth: "290px",
+  maxWidth: nomaxwidth ? "" : "330px",
   alignItems: "center",
   justifyContent: "space-between",
   boxShadow: "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
@@ -19,14 +19,16 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }),
 }));
 
-const StyledContainer = styled(Stack)(({ theme }) => ({
+const StyledContainer = styled(Stack)(({ theme, paddingTop }) => ({
   minHeight: "100%",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: theme.spacing(2),
+  padding: paddingTop ? 0 : theme.spacing(2),
+  paddingY: paddingTop ? theme.spacing(2) : 0,
   [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
+    padding: paddingTop ? 0 : theme.spacing(4),
+    paddingY: paddingTop ? theme.spacing(2) : 0,
   },
 }));
 

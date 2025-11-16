@@ -27,7 +27,8 @@ export const styles = {
     alignItems: "center",
     padding: "1rem",
     justifyContent: "center",
-    width: "90%",
+    width: "100%",
+    marginBottom: "1rem",
   },
   formTextField: {
     "& .MuiFormHelperText-root": {

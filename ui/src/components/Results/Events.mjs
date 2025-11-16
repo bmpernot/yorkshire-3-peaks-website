@@ -6,23 +6,30 @@ import { styles } from "../../styles/results.mui.styles.mjs";
 
 function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
   return (
-    <Box paddingTop="1rem" display="flex" alignItems="center">
-      <FormControl>
-        <InputLabel id="demo-multiple-name-label">Event</InputLabel>
+    <Box sx={styles.eventsBox}>
+      <FormControl sx={{ minWidth: { xs: "100%", sm: 200 } }}>
+        <InputLabel id="events-list-label" sx={{ fontWeight: 500 }}>
+          Select Event
+        </InputLabel>
         <Select
           labelId="events-list-label"
           id="events-list"
-          value={selectedEvent?.eventId}
-          sx={styles.table}
+          value={selectedEvent}
+          label="Select Event"
           onChange={(event) => {
             setSelectedEvent(event.target.value);
           }}
+          size="medium"
         >
           {events.map((event) => {
             const date = new Date(event.startDate);
             return (
-              <MenuItem key={event.eventId} value={event.eventId} id={event.eventId}>
-                {date.getDate()}/{date.getMonth()}/{date.getFullYear()}
+              <MenuItem key={event.eventId} value={event} id={event.eventId}>
+                {date.toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </MenuItem>
             );
           })}
@@ -33,6 +40,8 @@ function Events({ events, selectedEvent, setSelectedEvent, fetchEvents }) {
         onClick={() => {
           fetchEvents();
         }}
+        sx={styles.eventsRefreshButton}
+        size="large"
       >
         <Refresh />
       </IconButton>

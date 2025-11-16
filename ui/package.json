@@ -9,9 +9,7 @@
     "lint": "next lint",
     "cy:open": "cypress open --e2e --browser edge",
     "cy:run": "cypress run --headless --browser edge",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test": "vitest"
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.6.2",
@@ -22,6 +20,7 @@
     "@fontsource/roboto": "^5.0.15",
     "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.1.0",
+    "@mui/x-charts": "^8.12.0",
     "@mui/x-data-grid": "^8.11.3",
     "aws-amplify": "^6.14.4",
     "dotenv": "^16.5.0",
