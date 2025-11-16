@@ -10,7 +10,8 @@ const teamMembersTableName = process.env.TEAM_MEMBERS_TABLE_NAME || "TeamMembers
 
 const userSearch = async ({ eventId, searchTerm }) => {
   try {
-    const usersMatchingCriteria = [];
+    let users;
+    const usersMatchingCriteria = {};
 
     if (eventId && eventId.length > 0) {
       const teamMembersData = await ddbDocClient.send(
@@ -24,7 +25,7 @@ const userSearch = async ({ eventId, searchTerm }) => {
       );
 
       const participatingUserIds = new Set((teamMembersData.Items || []).map((e) => e.userId));
-      usersMatchingCriteria.push(participatingUserIds);
+      usersMatchingCriteria.eventIdSet = participatingUserIds;
     }
 
     if (searchTerm && searchTerm.length > 0) {
@@ -38,16 +39,28 @@ const userSearch = async ({ eventId, searchTerm }) => {
         }),
       );
 
-      const usersMatchingSearchTerm = new Set((userData.Items || []).map((e) => e.userId));
-      usersMatchingCriteria.push(usersMatchingSearchTerm);
+      users = userData.Items || [];
+
+      const usersMatchingSearchTerm = new Set(users.map((e) => e.userId));
+      usersMatchingCriteria.searchTermSet = usersMatchingSearchTerm;
     }
 
-    const users = usersMatchingCriteria.reduce(
-      (acc, set) => acc.intersection(set),
-      usersMatchingCriteria[0] || new Set(),
-    );
+    const { eventIdSet, searchTermSet } = usersMatchingCriteria;
 
-    return [...users];
+    if (!eventIdSet && !searchTermSet) {
+      return [];
+    } else if (eventIdSet && !searchTermSet) {
+      return [...eventIdSet];
+    } else if (!eventIdSet && searchTermSet) {
+      return users;
+    } else {
+      const usersAlreadyParticipating = searchTermSet.intersection(eventIdSet);
+
+      return users.map((user) => ({
+        ...user,
+        alreadyParticipating: usersAlreadyParticipating.has(user.userId),
+      }));
+    }
   } catch (error) {
     throw new Error("Failed to search users from DynamoDB", { cause: error });
   }

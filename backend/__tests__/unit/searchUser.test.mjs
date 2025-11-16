@@ -10,35 +10,114 @@ describe("searchUser", () => {
     dynamoDBMock.reset();
   });
 
-  it("Should return a list of userIds that match the searchTerm", async () => {
+  it("Should return a users information that match the searchTerm", async () => {
     const users = generateUsers(1);
 
-    dynamoDBMock.on(ScanCommand).resolves({ Items: [{ userId: users[0].Username }] });
+    dynamoDBMock.on(ScanCommand).resolves({
+      Items: [
+        {
+          userId: users[0].Username,
+          firstName: users[0].UserAttributes[3].Value,
+          lastName: users[0].UserAttributes[4].Value,
+          email: users[0].UserAttributes[1].Value,
+          searchValue: `${users[0].UserAttributes[3].Value.toLowerCase()} ${users[0].UserAttributes[4].Value.toLowerCase()} ${users[0].UserAttributes[1].Value.toLowerCase()}`,
+        },
+      ],
+    });
 
     const response = await searchUser({ searchTerm: "example" });
 
-    expect(response).toEqual(["12345678-1234-1234-1234-123456789000"]);
+    expect(response).toEqual([
+      {
+        email: "user0@example.com",
+        firstName: "Alice0",
+        lastName: "Smith0",
+        searchValue: "alice0 smith0 user0@example.com",
+        userId: "12345678-1234-1234-1234-123456789000",
+      },
+    ]);
   });
 
   it("Should return a list of userIds that are in the event with the eventId passed in", async () => {
     const users = generateUsers(1);
 
-    dynamoDBMock.on(QueryCommand).resolves({ Items: [{ userId: users[0].Username }] });
+    dynamoDBMock.on(QueryCommand).resolves({
+      Items: [
+        {
+          userId: users[0].Username,
+          firstName: users[0].UserAttributes[3].Value,
+          lastName: users[0].UserAttributes[4].Value,
+          email: users[0].UserAttributes[1].Value,
+          searchValue: `${users[0].UserAttributes[3].Value.toLowerCase()} ${users[0].UserAttributes[4].Value.toLowerCase()} ${users[0].UserAttributes[1].Value.toLowerCase()}`,
+        },
+      ],
+    });
 
     const response = await searchUser({ eventId: "example" });
 
     expect(response).toEqual(["12345678-1234-1234-1234-123456789000"]);
   });
 
-  it("Should return a list of userIds that both match the searchTerm and are in the event with eventId", async () => {
+  it("Should return a users information that both match the searchTerm and specify if they are already participating in the event", async () => {
     const users = generateUsers(3);
 
-    dynamoDBMock.on(QueryCommand).resolves({ Items: [{ userId: users[0].Username }, { userId: users[2].Username }] });
-    dynamoDBMock.on(ScanCommand).resolves({ Items: [{ userId: users[1].Username }, { userId: users[2].Username }] });
+    dynamoDBMock.on(QueryCommand).resolves({
+      Items: [
+        {
+          userId: users[0].Username,
+          firstName: users[0].UserAttributes[3].Value,
+          lastName: users[0].UserAttributes[4].Value,
+          email: users[0].UserAttributes[1].Value,
+          searchValue: `${users[0].UserAttributes[3].Value.toLowerCase()} ${users[0].UserAttributes[4].Value.toLowerCase()} ${users[0].UserAttributes[1].Value.toLowerCase()}`,
+        },
+        {
+          userId: users[2].Username,
+          firstName: users[2].UserAttributes[3].Value,
+          lastName: users[2].UserAttributes[4].Value,
+          email: users[2].UserAttributes[1].Value,
+          searchValue: `${users[2].UserAttributes[3].Value.toLowerCase()} ${users[2].UserAttributes[4].Value.toLowerCase()} ${users[2].UserAttributes[1].Value.toLowerCase()}`,
+        },
+      ],
+    });
+    dynamoDBMock.on(ScanCommand).resolves({
+      Items: [
+        {
+          userId: users[1].Username,
+          firstName: users[1].UserAttributes[3].Value,
+          lastName: users[1].UserAttributes[4].Value,
+          email: users[1].UserAttributes[1].Value,
+          searchValue: `${users[1].UserAttributes[3].Value.toLowerCase()} ${users[1].UserAttributes[4].Value.toLowerCase()} ${users[1].UserAttributes[1].Value.toLowerCase()}`,
+        },
+        {
+          userId: users[2].Username,
+          firstName: users[2].UserAttributes[3].Value,
+          lastName: users[2].UserAttributes[4].Value,
+          email: users[2].UserAttributes[1].Value,
+          searchValue: `${users[2].UserAttributes[3].Value.toLowerCase()} ${users[2].UserAttributes[4].Value.toLowerCase()} ${users[2].UserAttributes[1].Value.toLowerCase()}`,
+        },
+      ],
+    });
 
     const response = await searchUser({ eventId: "example", searchTerm: "example" });
 
-    expect(response).toEqual(["12345678-1234-1234-1234-123456789002"]);
+    expect(response).toEqual([
+      {
+        alreadyParticipating: false,
+        email: "user1@example.com",
+        firstName: "Alice1",
+        lastName: "Smith1",
+        searchValue: "alice1 smith1 user1@example.com",
+        userId: "12345678-1234-1234-1234-123456789001",
+      },
+      {
+        alreadyParticipating: true,
+        email: "user2@example.com",
+        firstName: "Alice2",
+        lastName: "Smith2",
+        searchValue: "alice2 smith2 user2@example.com",
+        userId: "12345678-1234-1234-1234-123456789002",
+      },
+    ]);
   });
 
   it("Should be able to handle errors", async () => {

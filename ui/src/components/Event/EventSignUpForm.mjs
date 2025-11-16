@@ -191,7 +191,7 @@ function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
           id={`team-member-${membersIndex}`}
           options={users}
           noOptionsText={searchTerm === "" ? "Search by name or email" : `No results`}
-          getOptionLabel={(option) => (option ? `${option.given_name} ${option.family_name} (${option.email})` : "")}
+          getOptionLabel={(option) => (option ? `${option.firstName} ${option.lastName} (${option.email})` : "")}
           getOptionDisabled={(option) => {
             if (option.alreadyParticipating) {
               return true;
@@ -207,8 +207,8 @@ function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
             setUserSearching(false);
             updateMember(membersIndex, {
               userId: value?.userId || null,
-              given_name: value?.given_name || "",
-              family_name: value?.family_name || "",
+              firstName: value?.firstName || "",
+              lastName: value?.lastName || "",
               email: value?.email || "",
             });
           }}

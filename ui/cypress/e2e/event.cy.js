@@ -82,8 +82,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks@gmail.com",
-              family_name: "Pernot",
-              given_name: "Benjamin",
+              lastName: "Pernot",
+              firstName: "Benjamin",
               userId: "12345678-1234-1234-1234-123456789000",
               alreadyParticipating: false,
             },
@@ -105,8 +105,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks@gmail.com",
-              family_name: "Pernot",
-              given_name: "Benjamin",
+              lastName: "Pernot",
+              firstName: "Benjamin",
               userId: "12345678-1234-1234-1234-123456789000",
               alreadyParticipating: false,
             },
@@ -130,8 +130,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-1@gmail.com",
-              family_name: "Pernot-1",
-              given_name: "Benjamin-1",
+              lastName: "Pernot-1",
+              firstName: "Benjamin-1",
               userId: "76420294-00e1-700b-74d6-a22a780eeae1",
               alreadyParticipating: false,
             },
@@ -142,8 +142,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-2@gmail.com",
-              family_name: "Pernot-2",
-              given_name: "Benjamin-2",
+              lastName: "Pernot-2",
+              firstName: "Benjamin-2",
               userId: "12345678-1234-1234-1234-123456789001",
               alreadyParticipating: false,
             },
@@ -154,8 +154,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-3@gmail.com",
-              family_name: "Pernot-3",
-              given_name: "Benjamin-3",
+              lastName: "Pernot-3",
+              firstName: "Benjamin-3",
               userId: "12345678-1234-1234-1234-123456789002",
               alreadyParticipating: false,
             },
@@ -166,8 +166,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-4@gmail.com",
-              family_name: "Pernot-4",
-              given_name: "Benjamin-4",
+              lastName: "Pernot-4",
+              firstName: "Benjamin-4",
               userId: "12345678-1234-1234-1234-123456789003",
               alreadyParticipating: false,
             },
@@ -178,8 +178,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-5@gmail.com",
-              family_name: "Pernot-5",
-              given_name: "Benjamin-5",
+              lastName: "Pernot-5",
+              firstName: "Benjamin-5",
               userId: "12345678-1234-1234-1234-123456789004",
               alreadyParticipating: false,
             },
@@ -218,40 +218,40 @@ describe("Event", () => {
           expect(interception.request.body.members).to.deep.equal([
             {
               email: "yorkshirepeaks-1@gmail.com",
-              family_name: "Pernot-1",
-              given_name: "Benjamin-1",
+              lastName: "Pernot-1",
+              firstName: "Benjamin-1",
               userId: "76420294-00e1-700b-74d6-a22a780eeae1",
               additionalRequirements: "a",
               willingToVolunteer: true,
             },
             {
               email: "yorkshirepeaks-2@gmail.com",
-              family_name: "Pernot-2",
-              given_name: "Benjamin-2",
+              lastName: "Pernot-2",
+              firstName: "Benjamin-2",
               userId: "12345678-1234-1234-1234-123456789001",
               additionalRequirements: "b",
               willingToVolunteer: true,
             },
             {
               email: "yorkshirepeaks-3@gmail.com",
-              family_name: "Pernot-3",
-              given_name: "Benjamin-3",
+              lastName: "Pernot-3",
+              firstName: "Benjamin-3",
               userId: "12345678-1234-1234-1234-123456789002",
               additionalRequirements: "c",
               willingToVolunteer: true,
             },
             {
               email: "yorkshirepeaks-4@gmail.com",
-              family_name: "Pernot-4",
-              given_name: "Benjamin-4",
+              lastName: "Pernot-4",
+              firstName: "Benjamin-4",
               userId: "12345678-1234-1234-1234-123456789003",
               additionalRequirements: "d",
               willingToVolunteer: true,
             },
             {
               email: "yorkshirepeaks-5@gmail.com",
-              family_name: "Pernot-5",
-              given_name: "Benjamin-5",
+              lastName: "Pernot-5",
+              firstName: "Benjamin-5",
               userId: "12345678-1234-1234-1234-123456789004",
               additionalRequirements: "e",
               willingToVolunteer: true,
@@ -270,8 +270,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-1@gmail.com",
-              family_name: "Pernot-1",
-              given_name: "Benjamin-1",
+              lastName: "Pernot-1",
+              firstName: "Benjamin-1",
               userId: "76420294-00e1-700b-74d6-a22a780eeae1",
               alreadyParticipating: false,
             },
@@ -282,8 +282,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-2@gmail.com",
-              family_name: "Pernot-2",
-              given_name: "Benjamin-2",
+              lastName: "Pernot-2",
+              firstName: "Benjamin-2",
               userId: "12345678-1234-1234-1234-123456789001",
               alreadyParticipating: false,
             },
@@ -310,8 +310,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-1@gmail.com",
-              family_name: "Pernot-1",
-              given_name: "Benjamin-1",
+              lastName: "Pernot-1",
+              firstName: "Benjamin-1",
               userId: "12345678-1234-1234-1234-123456789001",
               alreadyParticipating: false,
             },
@@ -322,8 +322,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-2@gmail.com",
-              family_name: "Pernot-2",
-              given_name: "Benjamin-2",
+              lastName: "Pernot-2",
+              firstName: "Benjamin-2",
               userId: "12345678-1234-1234-1234-123456789002",
               alreadyParticipating: false,
             },
@@ -334,8 +334,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-3@gmail.com",
-              family_name: "Pernot-3",
-              given_name: "Benjamin-3",
+              lastName: "Pernot-3",
+              firstName: "Benjamin-3",
               userId: "12345678-1234-1234-1234-123456789003",
               alreadyParticipating: false,
             },
@@ -364,8 +364,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-1@gmail.com",
-              family_name: "Pernot-1",
-              given_name: "Benjamin-1",
+              lastName: "Pernot-1",
+              firstName: "Benjamin-1",
               userId: "76420294-00e1-700b-74d6-a22a780eeae1",
               alreadyParticipating: false,
             },
@@ -376,8 +376,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-2@gmail.com",
-              family_name: "Pernot-2",
-              given_name: "Benjamin-2",
+              lastName: "Pernot-2",
+              firstName: "Benjamin-2",
               userId: "12345678-1234-1234-1234-123456789002",
               alreadyParticipating: false,
             },
@@ -388,8 +388,8 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-3@gmail.com",
-              family_name: "Pernot-3",
-              given_name: "Benjamin-3",
+              lastName: "Pernot-3",
+              firstName: "Benjamin-3",
               userId: "12345678-1234-1234-1234-123456789003",
               alreadyParticipating: false,
             },
@@ -417,15 +417,15 @@ describe("Event", () => {
           response: [
             {
               email: "yorkshirepeaks-1@gmail.com",
-              family_name: "Pernot-1",
-              given_name: "Benjamin-1",
+              lastName: "Pernot-1",
+              firstName: "Benjamin-1",
               userId: "12345678-1234-1234-1234-123456789001",
               alreadyParticipating: true,
             },
             {
               email: "yorkshirepeaks-2@gmail.com",
-              family_name: "Pernot-2",
-              given_name: "Benjamin-2",
+              lastName: "Pernot-2",
+              firstName: "Benjamin-2",
               userId: "76420294-00e1-700b-74d6-a22a780eeae1",
               alreadyParticipating: false,
             },

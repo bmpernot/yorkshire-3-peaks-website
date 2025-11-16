@@ -25,13 +25,21 @@ describe("User functions", () => {
   });
 
   describe("getUsers", () => {
-    it("Should return a list of users that match the search results", async () => {
+    it("Should return a users information that match the search criteria", async () => {
       const users = generateUsers(1);
 
       dynamoDBMock.on(QueryCommand).resolves({ Items: [{ userId: users[0].Username }] });
-      dynamoDBMock.on(ScanCommand).resolves({ Items: [{ userId: users[0].Username }] });
-
-      cognitoMock.on(AdminGetUserCommand).resolves(users[0]);
+      dynamoDBMock.on(ScanCommand).resolves({
+        Items: [
+          {
+            userId: users[0].Username,
+            firstName: users[0].UserAttributes[3].Value,
+            lastName: users[0].UserAttributes[4].Value,
+            email: users[0].UserAttributes[1].Value,
+            searchValue: `${users[0].UserAttributes[3].Value.toLowerCase()} ${users[0].UserAttributes[4].Value.toLowerCase()} ${users[0].UserAttributes[1].Value.toLowerCase()}`,
+          },
+        ],
+      });
 
       const event = generateHttpApiEvent({ queryStringParameters: { searchTerm: "example", eventId: "example" } });
 
@@ -40,10 +48,12 @@ describe("User functions", () => {
       expect(response.statusCode).toEqual(200);
       expect(JSON.parse(response.body)).toEqual([
         {
-          sub: "12345678-1234-1234-1234-123456789000",
+          userId: "12345678-1234-1234-1234-123456789000",
           email: "user0@example.com",
-          given_name: `Alice0`,
-          family_name: `Smith0`,
+          firstName: `Alice0`,
+          lastName: `Smith0`,
+          searchValue: "alice0 smith0 user0@example.com",
+          alreadyParticipating: true,
         },
       ]);
     });

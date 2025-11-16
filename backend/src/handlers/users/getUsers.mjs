@@ -1,6 +1,8 @@
 import searchUsersFunction from "../../services/users/searchUser.mjs";
 import getUsersFunction from "../../services/users/getUsers.mjs";
 
+// TODO - clean this up and it's functions to make it more generic
+
 const getUsers = async (event) => {
   if (event.requestContext.http.method !== "GET") {
     return {
@@ -21,8 +23,19 @@ const getUsers = async (event) => {
       };
     } else {
       const { fields, ...searchFilters } = queryParams;
-      const userIds = await searchUsersFunction(searchFilters);
-      const users = await getUsersFunction(fields, userIds);
+      const response = await searchUsersFunction(searchFilters);
+
+      let users;
+      if (!searchFilters.searchTerm) {
+        users = await getUsersFunction(fields, response);
+      } else if (fields) {
+        users = await getUsersFunction(
+          fields,
+          response.map((user) => user.userId),
+        );
+      } else {
+        users = response;
+      }
 
       return {
         statusCode: 200,
