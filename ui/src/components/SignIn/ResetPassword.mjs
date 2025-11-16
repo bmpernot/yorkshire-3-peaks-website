@@ -89,6 +89,9 @@ function ResetPassword() {
         <Typography component="h1" variant="h4" sx={styles.signIn.title}>
           Reset Password
         </Typography>
+        <Typography component="p" variant="p">
+          Check your spam folder
+        </Typography>
         {submissionError ? <ErrorCard error={submissionError} /> : null}
         <Box component="form" onSubmit={handleSubmit} sx={styles.signIn.form} method="POST">
           <FormControl>
