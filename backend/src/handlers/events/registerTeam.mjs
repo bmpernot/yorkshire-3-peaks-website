@@ -1,5 +1,5 @@
 import registerTeamFunction from "../../services/teams/registerTeam.mjs";
-import userSearch from "../../services/users/searchUser.mjs";
+import userSearchFunction from "../../services/users/searchUser.mjs";
 
 const registerTeam = async (event) => {
   if (event.requestContext.http.method !== "POST") {
@@ -79,7 +79,7 @@ async function validateRequest(userId, eventId, data) {
       invalidDataReasons.push("Duplicate members are not allowed in a team");
     }
 
-    const participatingUserIds = await userSearch({ eventId });
+    const participatingUserIds = await userSearchFunction({ eventId });
     const alreadyParticipating = userIds.filter((id) => participatingUserIds.includes(id));
 
     if (alreadyParticipating.length > 0) {
