@@ -8,7 +8,7 @@ const updateUser = async (event) => {
     };
   }
 
-  const body = event.body || {};
+  const body = JSON.parse(event.body) || {};
   const claims = event.requestContext.authorizer.jwt.claims;
   const userRole = claims["cognito:groups"] ?? "User";
   const authenticatedUserId = claims.sub;
