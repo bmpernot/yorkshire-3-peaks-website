@@ -12,7 +12,7 @@ import ErrorCard from "../common/ErrorCard.mjs";
 import { toast } from "react-toastify";
 import { deleteUser } from "@/src/lib/backendActions.mjs";
 
-function DeleteAccountForm({ email, updateUser }) {
+function DeleteAccountForm({ email, updateUser, userId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({ confirmDeletion: [] });
   const [submissionError, setSubmissionError] = useState(false);
@@ -32,7 +32,7 @@ function DeleteAccountForm({ email, updateUser }) {
     try {
       await handleDeleteUser();
 
-      await deleteUser();
+      await deleteUser(userId);
 
       try {
         router.push("/");

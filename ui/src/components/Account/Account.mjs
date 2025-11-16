@@ -39,7 +39,7 @@ function Account() {
         <PasswordForm />
       </Grid2>
       <Grid2 size={{ xs: 12, md: 4 }}>
-        <DeleteAccountForm email={user.email} updateUser={updateUser} />
+        <DeleteAccountForm email={user.email} updateUser={updateUser} userId={user.id} />
       </Grid2>
     </Grid2>
   );

@@ -14,7 +14,14 @@ const deleteUser = async (event) => {
   const authenticatedUserId = claims.sub;
 
   try {
-    let { userId } = queryParams;
+    const { userId } = queryParams;
+
+    if (!userId) {
+      return {
+        statusCode: 400,
+        body: "userId required",
+      };
+    }
 
     if (userId !== authenticatedUserId && !userRole.includes("Admin")) {
       return {
@@ -22,10 +29,6 @@ const deleteUser = async (event) => {
         body: "Unauthorized to delete another user",
       };
     } else {
-      if (!userId) {
-        userId = authenticatedUserId;
-      }
-
       const response = await deleteUserFunction({ userId });
 
       return {

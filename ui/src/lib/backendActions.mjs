@@ -48,9 +48,9 @@ export async function updateUser({ userId, firstName, lastName, email }) {
   }
 }
 
-export async function deleteUser() {
+export async function deleteUser(userId) {
   try {
-    const { response } = del({ apiName: "api", path: "users", options: {} });
+    const { response } = del({ apiName: "api", path: `users?userId=${encodeURIComponent(userId)}`, options: {} });
     const { statusCode } = await response;
     return statusCode;
   } catch (error) {
