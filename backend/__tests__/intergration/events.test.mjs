@@ -246,11 +246,11 @@ describe("Event functions", () => {
       });
 
       const members = [
-        { userId: "12345678-1234-1234-1234-123456789011", additionalRequirements: "1", WillingToVolunteer: true },
-        { userId: "12345678-1234-1234-1234-123456789012", additionalRequirements: "2", WillingToVolunteer: true },
-        { userId: "12345678-1234-1234-1234-123456789013", additionalRequirements: "3", WillingToVolunteer: false },
-        { userId: "12345678-1234-1234-1234-123456789014", additionalRequirements: "4", WillingToVolunteer: false },
-        { userId: "12345678-1234-1234-1234-123456789015", additionalRequirements: "5", WillingToVolunteer: true },
+        { userId: "12345678-1234-1234-1234-123456789011", additionalRequirements: "1", willingToVolunteer: true },
+        { userId: "12345678-1234-1234-1234-123456789012", additionalRequirements: "2", willingToVolunteer: true },
+        { userId: "12345678-1234-1234-1234-123456789013", additionalRequirements: "3", willingToVolunteer: false },
+        { userId: "12345678-1234-1234-1234-123456789014", additionalRequirements: "4", willingToVolunteer: false },
+        { userId: "12345678-1234-1234-1234-123456789015", additionalRequirements: "5", willingToVolunteer: true },
       ];
 
       const event = generateHttpApiEvent({
@@ -277,10 +277,10 @@ describe("Event functions", () => {
 
       const teamName = "example";
       const members = [
-        { userId: "12345678-1234-1234-1234-123456789011", additionalRequirements: "1", WillingToVolunteer: true },
-        { userId: "12345678-1234-1234-1234-123456789012", additionalRequirements: "2", WillingToVolunteer: true },
-        { userId: "12345678-1234-1234-1234-123456789013", additionalRequirements: "3", WillingToVolunteer: false },
-        { userId: "12345678-1234-1234-1234-123456789013", additionalRequirements: "3", WillingToVolunteer: false },
+        { userId: "12345678-1234-1234-1234-123456789011", additionalRequirements: "1", willingToVolunteer: true },
+        { userId: "12345678-1234-1234-1234-123456789012", additionalRequirements: "2", willingToVolunteer: true },
+        { userId: "12345678-1234-1234-1234-123456789013", additionalRequirements: "3", willingToVolunteer: false },
+        { userId: "12345678-1234-1234-1234-123456789013", additionalRequirements: "3", willingToVolunteer: false },
       ];
 
       const event1 = generateHttpApiEvent({

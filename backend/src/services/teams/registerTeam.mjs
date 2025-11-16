@@ -57,7 +57,7 @@ const registerTeamFunction = async (eventId, teamInformation) => {
             userId: member.userId,
             eventId,
             additionalRequirements: member.additionalRequirements || null,
-            willingToVolunteer: member.WillingToVolunteer || false,
+            willingToVolunteer: member.willingToVolunteer || false,
           },
           ConditionExpression: "attribute_not_exists(teamId) AND attribute_not_exists(userId)",
         },
