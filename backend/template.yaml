@@ -413,6 +413,7 @@ Resources:
       EmailConfiguration:
         SourceArn: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/yorkshirepeaks@gmail.com
         # manually verified the email via AWS console so we don't have the ARN reference
+        # TODO - create a business email so that it is authed by DKIM so less risk of going into the spam folder - NEO mail
         ReplyToEmailAddress: yorkshirepeaks@gmail.com
         EmailSendingAccount: DEVELOPER
         From: The Yorkshire 3 Peaks Team <yorkshirepeaks@gmail.com>
@@ -422,9 +423,21 @@ Resources:
         - email
       VerificationMessageTemplate:
         DefaultEmailOption: CONFIRM_WITH_CODE
-        EmailMessage: >-
-          Here is your code: {####}
-        EmailSubject: Yorkshire 3 Peaks Account Code
+        EmailMessage: |
+          Hello,
+
+          Your Yorkshire Three Peaks verification code is:
+
+          {####}
+
+          Enter this code in the app or website to continue.
+
+          If you did not request this code, you can safely ignore this message.
+
+          Thank you,
+
+          The Yorkshire Three Peaks Team
+        EmailSubject: Yorkshire 3 Peaks - Your Verification Code
       UserAttributeUpdateSettings:
         AttributesRequireVerificationBeforeUpdate:
           - email
