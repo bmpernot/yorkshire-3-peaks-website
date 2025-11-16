@@ -46,13 +46,13 @@ const getEventInformation = async (eventId) => {
         endDate: event.endDate,
         requiredWalkers: event.requiredWalkers,
         requiredVolunteers: event.requiredVolunteers,
-        numberOfVolunteers: 0,
-        numberOfWalkers: 0,
+        currentVolunteers: 0,
+        currentWalkers: 0,
         moneyRaised: 0,
       };
     }
 
-    const moneyRaised = entries.reduce((sum, entry) => sum + (entry.paid || 0), 0);
+    const moneyRaised = entries.reduce((sum, entry) => sum + (Number(entry.paid) || 0), 0);
 
     const membersData = await ddbDocClient.send(
       new QueryCommand({
@@ -71,16 +71,16 @@ const getEventInformation = async (eventId) => {
       teamCountsMap[teamId] = (teamCountsMap[teamId] || 0) + 1;
     });
 
-    let numberOfVolunteers = 0;
-    let numberOfWalkers = 0;
+    let currentVolunteers = 0;
+    let currentWalkers = 0;
 
     entries.forEach(({ teamId, volunteer }) => {
       const count = teamCountsMap[teamId] || 0;
       const isVolunteer = volunteer ? volunteer === "true" : false;
       if (isVolunteer) {
-        numberOfVolunteers += count;
+        currentVolunteers += count;
       } else {
-        numberOfWalkers += count;
+        currentWalkers += count;
       }
     });
 
@@ -90,8 +90,8 @@ const getEventInformation = async (eventId) => {
       endDate: event.endDate,
       requiredWalkers: event.requiredWalkers,
       requiredVolunteers: event.requiredVolunteers,
-      numberOfVolunteers,
-      numberOfWalkers,
+      currentVolunteers,
+      currentWalkers,
       moneyRaised,
     };
   } catch (error) {
