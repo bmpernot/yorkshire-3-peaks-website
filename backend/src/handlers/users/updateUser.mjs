@@ -8,13 +8,13 @@ const updateUser = async (event) => {
     };
   }
 
-  const queryParams = event.queryStringParameters || {};
+  const body = event.body || {};
   const claims = event.requestContext.authorizer.jwt.claims;
   const userRole = claims["cognito:groups"] ?? "User";
   const authenticatedUserId = claims.sub;
 
   try {
-    const { userId, firstName, lastName, email } = queryParams;
+    const { userId, firstName, lastName, email } = body;
     if (userId !== authenticatedUserId && !userRole.includes("Organiser") && !userRole.includes("Admin")) {
       return {
         statusCode: 403,
