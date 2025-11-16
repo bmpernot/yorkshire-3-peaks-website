@@ -122,7 +122,7 @@ function generateHttpApiEvent({
     }
 
     if (body) {
-      event.body = body;
+      event.body = typeof body === "string" ? body : JSON.stringify(body);
     }
   }
 

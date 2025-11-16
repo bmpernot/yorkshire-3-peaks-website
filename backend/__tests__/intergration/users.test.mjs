@@ -195,7 +195,7 @@ describe("User functions", () => {
       });
 
       const event = generateHttpApiEvent({
-        queryStringParameters: {
+        body: {
           userId: "12345678-1234-1234-1234-123456789012",
           firstName: "bruce",
           lastName: "wayne",
@@ -218,7 +218,7 @@ describe("User functions", () => {
       });
 
       const event = generateHttpApiEvent({
-        queryStringParameters: {
+        body: {
           userId: "12345678-1234-1234-1234-123456789000",
           firstName: "bruce",
           lastName: "wayne",
@@ -243,7 +243,7 @@ describe("User functions", () => {
         });
 
         const event = generateHttpApiEvent({
-          queryStringParameters: {
+          body: {
             userId: "12345678-1234-1234-1234-123456789000",
             firstName: "bruce",
             lastName: "wayne",
@@ -281,7 +281,7 @@ describe("User functions", () => {
       dynamoDBMock.on(UpdateCommand).rejects(rejectedValue);
 
       const event = generateHttpApiEvent({
-        queryStringParameters: {
+        body: {
           userId: "12345678-1234-1234-1234-123456789012",
           firstName: "bruce",
           lastName: "wayne",
