@@ -8,6 +8,10 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 const teamsTableName = process.env.TEAMS_TABLE_NAME || "TeamsTable";
 
 const getTeamsFunction = async (teamIds) => {
+  // get all team names
+  // get all members of teams
+  // get all entry data for teams
+  // get event information for teams
   try {
     if (!Array.isArray(teamIds) || teamIds.length === 0) {
       throw new Error("teamIds must be a non-empty array");
