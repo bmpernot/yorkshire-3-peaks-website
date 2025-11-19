@@ -1,4 +1,4 @@
-import paymentIntentFunction from "../../services/teams/paymentIntent.mjs";
+import createPaymentIntentFunction from "../../services/teams/createPaymentIntent.mjs";
 
 const paymentIntent = async (event) => {
   if (event.requestContext.http.method !== "POST") {
@@ -8,14 +8,16 @@ const paymentIntent = async (event) => {
     };
   }
 
-  const queryParams = event.queryStringParameters;
-  const teamId = queryParams.teamId;
+  const { teamId, eventId } = event.queryStringParameters;
+  const body = JSON.parse(event.body);
 
   try {
-    await paymentIntentFunction(teamId, JSON.parse(event.body));
+    const response = await createPaymentIntentFunction(teamId, eventId, body.amount);
 
     return {
       statusCode: 201,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(response),
     };
   } catch (error) {
     console.error(error);

@@ -1,4 +1,4 @@
-import paymentSucceededFunction from "../../services/teams/paymentSucceeded.mjs";
+import updateEntryWithPaidAmountFunction from "../../services/teams/updateEntryWithPaidAmount.mjs";
 
 const paymentSucceeded = async (event) => {
   if (event.requestContext.http.method !== "POST") {
@@ -8,14 +8,12 @@ const paymentSucceeded = async (event) => {
     };
   }
 
-  const queryParams = event.queryStringParameters;
-  const teamId = queryParams.teamId;
+  const stripeSignature = event.headers["stripe-signature"];
 
   try {
-    await paymentSucceededFunction(teamId, JSON.parse(event.body));
-
+    await updateEntryWithPaidAmountFunction(stripeSignature, JSON.parse(event.body));
     return {
-      statusCode: 201,
+      statusCode: 200,
     };
   } catch (error) {
     console.error(error);
