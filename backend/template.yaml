@@ -113,7 +113,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/teams/getTeams.default
-      Description: A function to grab teams' information
+      Description: A function to get teams' information
       Policies:
         - Statement:
             Effect: "Allow"
@@ -126,6 +126,28 @@ Resources:
           Properties:
             Path: /teams
             Method: GET
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          TEAMS_TABLE_NAME: !Ref TeamsTable
+
+  updateTeams:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/updateTeams.default
+      Description: A function to update a team's information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:BatchGetItem"
+            Resource: !GetAtt TeamsTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams
+            Method: PATCH
             ApiId: !Ref HttpApiGateway
       Environment:
         Variables:
@@ -292,6 +314,41 @@ Resources:
           TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
           TEAMS_TABLE_NAME: !Ref TeamsTable
           EVENTS_TABLE_NAME: !Ref EventsTable
+
+  paymentIntent:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/updateTeams.default
+      Description: A function to update a team's information
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams/paymentIntent
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+
+  paymentSucceeded:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/updateTeams.default
+      Description: A function to update a team's information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:UpdateItem"
+            Resource: !GetAtt EntriesTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams/paymentSucceeded
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
 
   ##### API Resources #####
 
