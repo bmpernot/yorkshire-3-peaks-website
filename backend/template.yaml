@@ -119,7 +119,15 @@ Resources:
             Effect: "Allow"
             Action:
               - "dynamodb:BatchGetItem"
-            Resource: !GetAtt TeamsTable.Arn
+            Resource:
+              - !GetAtt TeamsTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:QueryCommand"
+            Resource:
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -130,6 +138,7 @@ Resources:
       Environment:
         Variables:
           TEAMS_TABLE_NAME: !Ref TeamsTable
+          TeamsMembersTable: !Ref TeamMembersTable
 
   updateTeams:
     Type: AWS::Serverless::Function
@@ -346,6 +355,8 @@ Resources:
             Path: /teams/paymentSucceeded
             Method: POST
             ApiId: !Ref HttpApiGateway
+            Auth:
+              Authorizer: NONE
       Environment:
         Variables:
           ENTRIES_TABLE_NAME: !Ref EntriesTable
