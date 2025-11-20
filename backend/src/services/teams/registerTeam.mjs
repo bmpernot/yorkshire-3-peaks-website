@@ -7,7 +7,7 @@ const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
 const teamsTableName = process.env.TEAMS_TABLE_NAME || "TeamsTable";
-const EntriesTableName = process.env.ENTRIES_TABLE_NAME || "EntriesTable";
+const entriesTableName = process.env.ENTRIES_TABLE_NAME || "EntriesTable";
 const TeamMembersTableName = process.env.TEAM_MEMBERS_TABLE_NAME || "TeamMembersTable";
 const eventsTableName = process.env.EVENTS_TABLE_NAME || "EventsTable";
 
@@ -39,7 +39,7 @@ const registerTeamFunction = async (eventId, teamInformation) => {
       },
       {
         Put: {
-          TableName: EntriesTableName,
+          TableName: entriesTableName,
           Item: {
             eventId,
             teamId,
