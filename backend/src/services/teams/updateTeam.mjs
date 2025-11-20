@@ -10,7 +10,7 @@ const teamsTableName = process.env.TEAMS_TABLE_NAME || "TeamsTable";
 const updateTeamsFunction = async (teamId, body) => {
   // based on the body of what is being updated, update the following:
   //  - team name
-  //  - team members (this might be a replacement or a )
+  //  - team members (this might be a replacement or an update of an existing member)
   try {
     if (!teamId || Object.keys(body).length === 0) {
       throw new Error("teamIds and updates must be passed in to the function");

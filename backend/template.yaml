@@ -120,7 +120,11 @@ Resources:
             Action:
               - "dynamodb:BatchGetItem"
             Resource:
+              - !GetAtt EntriesTable.Arn
               - !GetAtt TeamsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+              - !GetAtt EventsTable.Arn
+              - !GetAtt UsersTable.Arn
         - Statement:
             Effect: "Allow"
             Action:
@@ -137,8 +141,11 @@ Resources:
             ApiId: !Ref HttpApiGateway
       Environment:
         Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
           TEAMS_TABLE_NAME: !Ref TeamsTable
-          TeamsMembersTable: !Ref TeamMembersTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
+          USERS_TABLE_NAME: !Ref UsersTable
 
   updateTeams:
     Type: AWS::Serverless::Function
