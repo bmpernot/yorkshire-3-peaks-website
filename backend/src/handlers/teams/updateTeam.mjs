@@ -12,7 +12,7 @@ const updateTeams = async (event) => {
   const queryParams = event.queryStringParameters;
   const claims = event.requestContext.authorizer.jwt.claims;
   const userRole = claims["cognito:groups"] ?? "User";
-  const teamId = queryParams.teamId;
+  const { teamId, eventId } = queryParams;
 
   try {
     const userTeamIds = await getUserTeamsFunction(claims.sub);
@@ -24,7 +24,7 @@ const updateTeams = async (event) => {
       };
     }
 
-    const team = await updateTeamFunction(teamId, JSON.parse(event.body));
+    const team = await updateTeamFunction(teamId, eventId, JSON.parse(event.body));
 
     return {
       statusCode: 200,
