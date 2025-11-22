@@ -29,7 +29,7 @@ const getTeams = async (event) => {
   }
 
   try {
-    const teams = await getTeamsFunction(teamIds);
+    const teams = await getTeamsFunction(teamIds, userRole);
 
     return {
       statusCode: 200,
