@@ -1,11 +1,11 @@
 import updateTeamFunction from "../../services/teams/updateTeam.mjs";
 import getUserTeamsFunction from "../../services/users/getTeams.mjs";
 
-const updateTeams = async (event) => {
+const updateTeam = async (event) => {
   if (event.requestContext.http.method !== "PATCH") {
     return {
       statusCode: 405,
-      body: `updateTeams only accepts PATCH method, you tried: ${event.requestContext.http.method}`,
+      body: `updateTeam only accepts PATCH method, you tried: ${event.requestContext.http.method}`,
     };
   }
 
@@ -15,7 +15,8 @@ const updateTeams = async (event) => {
   const { teamId, eventId } = queryParams;
 
   try {
-    const userTeamIds = await getUserTeamsFunction(claims.sub);
+    const userTeams = await getUserTeamsFunction(claims.sub);
+    const userTeamIds = userTeams.map((userTeam) => userTeam.teamId);
 
     if (!userTeamIds.includes(teamId) && !userRole.includes("Organiser") && !userRole.includes("Admin")) {
       return {
@@ -24,7 +25,7 @@ const updateTeams = async (event) => {
       };
     }
 
-    const team = await updateTeamFunction(teamId, eventId, JSON.parse(event.body));
+    const team = await updateTeamFunction(teamId, eventId, JSON.parse(event.body).actions);
 
     return {
       statusCode: 200,
@@ -41,4 +42,4 @@ const updateTeams = async (event) => {
   }
 };
 
-export default updateTeams;
+export default updateTeam;
