@@ -19,16 +19,16 @@ const getTeams = async (event) => {
       body: "Unauthorized to get specific teams",
     };
   }
-
-  let teamIds = [];
-
-  if (queryParams.teamIds) {
-    teamIds = queryParams.teamIds.split(",");
-  } else {
-    teamIds = await getUserTeamsFunction(claims.sub);
-  }
-
   try {
+    let teamIds = [];
+
+    if (queryParams.teamIds) {
+      teamIds = queryParams.teamIds.split(",");
+    } else {
+      const teams = await getUserTeamsFunction(claims.sub);
+      teamIds = teams.map((team) => team.teamId);
+    }
+
     const teams = await getTeamsFunction(teamIds, userRole);
 
     return {
