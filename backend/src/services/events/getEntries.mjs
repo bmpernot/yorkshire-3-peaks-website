@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClientConfig } from "../../utils/infrastructureConfig.mjs";
-import getTeamsFunction from "../teams/getTeams.mjs";
+import getTeamNamesFunction from "../teams/getTeamNames.mjs";
 
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -61,7 +61,7 @@ function extractUniqueTeamIds(allEntries) {
 
 async function getTeamNamesForTeamIds(teamIds) {
   try {
-    const teams = await getTeamsFunction(teamIds);
+    const teams = await getTeamNamesFunction(teamIds);
     const teamNameMap = new Map(teams.map((team) => [team.teamId, team.teamName]));
     return teamNameMap;
   } catch (error) {
