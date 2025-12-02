@@ -86,4 +86,42 @@ function generateEventInformation({ events, overrides = {} }) {
   return eventInformation;
 }
 
-export { generateEvents, generateEntries, generateRandomNumber, generateEventInformation };
+function generateTeams({ numberOfTeams, overrides = [] }) {
+  const teams = [];
+  for (let index = 0; index < numberOfTeams; index++) {
+    const numberOfMembers = generateRandomNumber({ min: 3, max: 5 });
+    const numberOfMembersPaid = generateRandomNumber({ min: 3, max: 5 });
+
+    const teamMembers = [];
+
+    for (let index = 0; index < numberOfMembers; index++) {
+      teamMembers.push({
+        userId: index,
+        firstName: `first-name-${index}`,
+        lastName: `last-name-${index}`,
+        email: `email-${index}`,
+        searchValue: `first-name-${index} last-name-${index} email-${index}`,
+        additionalRequirements: null,
+        willingToVolunteer: false,
+      });
+    }
+
+    teams.push({
+      teamId: index,
+      teamName: `teamName-${index}`,
+      teamMembers,
+      volunteer: false,
+      cost: numberOfMembers * 40,
+      paid: Math.min(numberOfMembers, numberOfMembersPaid) * 40,
+      eventId: index,
+      startDate: new Date(`${new Date().getFullYear() + index}/06/06 12:00`).toISOString(),
+      endDate: new Date(`${new Date().getFullYear() + index}/06/08 12:00`).toISOString(),
+    });
+  }
+
+  overrides.forEach((override) => teams.push(override));
+
+  return teams;
+}
+
+export { generateEvents, generateEntries, generateRandomNumber, generateEventInformation, generateTeams };

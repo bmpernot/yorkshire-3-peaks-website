@@ -124,7 +124,7 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
   );
 }
 
-function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
+export function TeamMemberSection({ formData, setFormData, membersIndex, eventId, disabled = false }) {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -188,6 +188,7 @@ function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
 
       <FormControl fullWidth sx={styles.formGap}>
         <Autocomplete
+          disabled={disabled}
           id={`team-member-${membersIndex}`}
           options={users}
           noOptionsText={searchTerm === "" ? "Search by name or email" : `No results`}
@@ -230,6 +231,7 @@ function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
       <FormControlLabel
         control={
           <Checkbox
+            disabled={disabled}
             checked={formData.members[membersIndex]?.willingToVolunteer || false}
             onChange={(event) => updateMember(membersIndex, { willingToVolunteer: event.target.checked })}
             id={`team-member-happy-to-volunteer-${membersIndex}`}
@@ -243,6 +245,7 @@ function TeamMemberSection({ formData, setFormData, membersIndex, eventId }) {
       <FormControl fullWidth>
         <FormLabel sx={styles.formLabel}>Additional Requirements</FormLabel>
         <TextField
+          disabled={disabled}
           id={`requirements-${membersIndex}`}
           name={`requirements-${membersIndex}`}
           multiline

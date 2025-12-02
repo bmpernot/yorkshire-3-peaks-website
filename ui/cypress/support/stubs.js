@@ -1,4 +1,4 @@
-import { generateEvents, generateEntries, generateEventInformation } from "./generators";
+import { generateEvents, generateEntries, generateEventInformation, generateTeams } from "./generators";
 
 function stubEvents({ numberOfEvents, overrides = {} }) {
   const events = generateEvents({ numberOfEvents, overrides: overrides.events });
@@ -91,6 +91,55 @@ function stubUserSearch(eventId, users = []) {
   });
 }
 
+function stubTeams({ numberOfTeams, overrides = {} }) {
+  const teamsInformation = generateTeams({ numberOfTeams, overrides: overrides.teams });
+
+  const errorConfig = overrides.errors;
+  let failCount = errorConfig?.times ?? 0;
+
+  cy.intercept("GET", `${Cypress.env("NEXT_PUBLIC_API_URL")}teams`, (req) => {
+    if (failCount > 0) {
+      failCount--;
+      req.reply({
+        statusCode: errorConfig.statusCode ?? 500,
+        body: { message: errorConfig.message ?? "Simulated network error" },
+      });
+    } else {
+      req.reply(teamsInformation);
+    }
+  }).as(`getTeams`);
+
+  return teamsInformation;
+}
+
+function stubUpdateTeams({ numberOfTeams, overrides = {} }) {
+  const teamsInformation = generateTeams({ numberOfTeams, overrides });
+
+  const errorConfig = overrides.errors;
+  let failCount = errorConfig?.times ?? 0;
+
+  cy.intercept("PATCH", `${Cypress.env("NEXT_PUBLIC_API_URL")}teams`, (req) => {
+    if (failCount > 0) {
+      failCount--;
+      req.reply({
+        statusCode: errorConfig.statusCode ?? 500,
+        body: { message: errorConfig.message ?? "Simulated network error" },
+      });
+    } else {
+      req.reply(teamsInformation);
+    }
+  }).as(`updateTeams`);
+
+  return teamsInformation;
+}
+
+function stubPaymentIntents({ teamId, eventId }) {
+  cy.intercept("GET", `${Cypress.env("NEXT_PUBLIC_API_URL")}teams/paymentIntent?teamId=${teamId}&eventId=${eventId}`, {
+    paymentIntentId: "1",
+    clientSecret: "test_client_secret_1",
+  }).as(`paymentIntent`);
+}
+
 export {
   stubEvents,
   stubEntries,
@@ -98,4 +147,7 @@ export {
   stubVolunteerRegistration,
   stubTeamRegistration,
   stubUserSearch,
+  stubTeams,
+  stubUpdateTeams,
+  stubPaymentIntents,
 };
