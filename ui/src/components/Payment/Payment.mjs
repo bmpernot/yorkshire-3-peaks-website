@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import Loading from "../common/Loading.mjs";
 
-export default function DonatePage() {
+function Payment() {
   const params = useSearchParams();
   const clientSecret = params.get("clientSecret");
   const [isLoading, setIsLoading] = useState(true);
@@ -61,3 +61,5 @@ export default function DonatePage() {
     </>
   );
 }
+
+export default Payment;

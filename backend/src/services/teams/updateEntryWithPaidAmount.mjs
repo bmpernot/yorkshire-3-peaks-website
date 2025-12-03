@@ -11,7 +11,6 @@ const entriesTableName = process.env.ENTRIES_TABLE_NAME || "EntriesTable";
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "sk_test_123456789";
 const stripeWebhookSecretKey = process.env.STRIPE_WEBHOOK_SECRET_KEY || "sk_test_987654321";
 
-// TODO - update to the latest api version before deployment
 const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2025-11-17.clover",
   typescript: true,
