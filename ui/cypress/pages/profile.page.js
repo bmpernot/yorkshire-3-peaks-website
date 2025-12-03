@@ -29,7 +29,7 @@ export default class resultsPage {
       const eventData = `${new Date(team.startDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} → ${new Date(team.endDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}`;
 
       cy.get(`#entry-card-${team.teamId} #card-title`).should("contain.text", team.teamName);
-      cy.get(`#entry-card-${team.teamId} #card-members`).should("contain.text", `${team.teamMembers.length} members`);
+      cy.get(`#entry-card-${team.teamId} #card-members`).should("contain.text", `${team.members.length} members`);
       cy.get(`#entry-card-${team.teamId} #card-paid`).should("contain.text", paidAmount);
       cy.get(`#entry-card-${team.teamId} #card-paid-amount`).should(
         "contain.text",
