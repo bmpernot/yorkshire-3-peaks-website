@@ -20,7 +20,9 @@ function TeamDialog({ open, onClose, team, setTeams }) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>
-        <Typography sx={styles.mainTitle}>{team.teamName}</Typography>
+        <Typography variant="h4" sx={styles.mainTitle}>
+          {team.teamName}
+        </Typography>
       </DialogTitle>
 
       <DialogContent>
@@ -40,13 +42,20 @@ function TeamDialog({ open, onClose, team, setTeams }) {
         <Button onClick={onClose} variant="outlined">
           Close
         </Button>
-        <Button
-          variant="contained"
-          onClick={() => handleSaveTeamChanges({ team, updatedTeam, setTeams, setIsLoading, setErrors })}
-          disabled={!canEdit}
-        >
-          Save Team Changes
-        </Button>
+        {canEdit ? (
+          <>
+            <Button
+              variant="contained"
+              onClick={() => handleSaveTeamChanges({ team, updatedTeam, setTeams, setIsLoading, setErrors })}
+              disabled={!canEdit}
+            >
+              Save Team Changes
+            </Button>
+            <Button onClick={() => setUpdatedTeam(null)} variant="outlined" color="error">
+              Delete Team
+            </Button>
+          </>
+        ) : null}
       </DialogActions>
     </Dialog>
   );
