@@ -4,10 +4,14 @@ import { TextField, Typography, Button, Box } from "@mui/material";
 import { useState } from "react";
 import { paymentIntent } from "@/src/lib/backendActions.mjs";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/src/utils/userContext";
 
 function Payment({ teamId, eventId, cost, paid, isLoading, setIsLoading }) {
+  const { user } = useUser();
   const [paymentAmount, setPaymentAmount] = useState("");
   const remainingCost = cost - paid;
+  const router = useRouter();
 
   return (
     <>
@@ -29,7 +33,7 @@ function Payment({ teamId, eventId, cost, paid, isLoading, setIsLoading }) {
         <Button
           variant="contained"
           disabled={!paymentAmount || Boolean(isLoading)}
-          onClick={() => handleSubmitPayment({ teamId, eventId, paymentAmount, setIsLoading })}
+          onClick={() => handleSubmitPayment({ router, teamId, eventId, paymentAmount, setIsLoading, userId: user.id })}
         >
           Pay Now
         </Button>
@@ -38,13 +42,11 @@ function Payment({ teamId, eventId, cost, paid, isLoading, setIsLoading }) {
   );
 }
 
-async function handleSubmitPayment({ teamId, eventId, paymentAmount, setIsLoading }) {
+async function handleSubmitPayment({ router, teamId, eventId, paymentAmount, setIsLoading, userId }) {
   try {
     setIsLoading("Creating Payment");
-    const response = await paymentIntent({ teamId, eventId, paymentAmount });
-    console.log(response);
-    // TODO - using the response with the client and secret pass it into the next page
-    // TODO - create the page with the embedded stripe component to allow them to pay
+    const response = await paymentIntent({ teamId, eventId, userId, paymentAmount });
+    router.push(`/payment?eventId=${eventId}&teamId=${teamId}&clientSecret=${response.clientSecret}`);
   } catch (error) {
     console.error("Failed to initiate payment", { cause: error });
     toast.error("Failed to initiate payment");
