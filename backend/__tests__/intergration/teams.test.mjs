@@ -379,7 +379,7 @@ describe("Team functions", () => {
       const event = generateHttpApiEvent({
         method: "POST",
         body: JSON.stringify({ amount: 5000 }),
-        queryStringParameters: { teamId: "", eventId: "" },
+        queryStringParameters: { teamId: "", eventId: "", userId: "" },
       });
 
       const result = await paymentIntent(event);

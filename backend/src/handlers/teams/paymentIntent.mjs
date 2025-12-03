@@ -8,11 +8,11 @@ const paymentIntent = async (event) => {
     };
   }
 
-  const { teamId, eventId } = event.queryStringParameters;
+  const { teamId, eventId, userId } = event.queryStringParameters;
   const body = JSON.parse(event.body);
 
   try {
-    const response = await createPaymentIntentFunction(teamId, eventId, body.amount);
+    const response = await createPaymentIntentFunction(teamId, eventId, userId, body.amount);
 
     return {
       statusCode: 201,

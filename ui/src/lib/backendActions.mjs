@@ -172,11 +172,11 @@ export async function updateTeam({ teamId, eventId, actions }) {
   }
 }
 
-export async function paymentIntent({ teamId, eventId, amount }) {
+export async function paymentIntent({ teamId, eventId, userId, amount }) {
   try {
     const { response } = post({
       apiName: "api",
-      path: `teams/paymentIntent?teamId=${teamId}&eventId=${eventId}`,
+      path: `teams/paymentIntent?teamId=${teamId}&eventId=${eventId}&userId=${userId}`,
       options: { body: { amount } },
     });
     const { body } = await response;
