@@ -92,10 +92,10 @@ function generateTeams({ numberOfTeams, overrides = [] }) {
     const numberOfMembers = generateRandomNumber({ min: 3, max: 5 });
     const numberOfMembersPaid = generateRandomNumber({ min: 3, max: 5 });
 
-    const teamMembers = [];
+    const members = [];
 
     for (let index = 0; index < numberOfMembers; index++) {
-      teamMembers.push({
+      members.push({
         userId: index,
         firstName: `first-name-${index}`,
         lastName: `last-name-${index}`,
@@ -109,7 +109,7 @@ function generateTeams({ numberOfTeams, overrides = [] }) {
     teams.push({
       teamId: index,
       teamName: `teamName-${index}`,
-      teamMembers,
+      members,
       volunteer: false,
       cost: numberOfMembers * 40,
       paid: Math.min(numberOfMembers, numberOfMembersPaid) * 40,

@@ -36,12 +36,12 @@ const getTeamsFunction = async (teamIds, userRole) => {
 
     const {
       [teamsTableName]: teams,
-      [teamMembersTableName]: teamMembers,
+      [teamMembersTableName]: members,
       [entriesTableName]: entries,
     } = (await ddbDocClient.send(new BatchGetCommand(firstParams))).Responses;
 
     const eventIdKeys = entries.map(({ eventId }) => ({ eventId }));
-    const userIdKeys = teamMembers.map(({ userId }) => ({ userId }));
+    const userIdKeys = members.map(({ userId }) => ({ userId }));
 
     const secondParams = {
       RequestItems: {
@@ -80,25 +80,23 @@ const getTeamsFunction = async (teamIds, userRole) => {
 
     const teamObjects = teamIds.map((teamId) => {
       const team = teams.find((team) => team.teamId === teamId);
-      const teamMembersEventInformation = teamMembers.filter((teamMember) => teamMember.teamId === teamId);
-      const teamMemberIds = teamMembersEventInformation.map((teamMember) => teamMember.userId);
+      const membersEventInformation = members.filter((teamMember) => teamMember.teamId === teamId);
+      const teamMemberIds = membersEventInformation.map((teamMember) => teamMember.userId);
       const entry = entries.find((entry) => entry.teamId === teamId);
       const event = events.find((event) => event.eventId === entry.eventId);
-      const teamMembersPersonalInformation = users.filter((user) => teamMemberIds.includes(user.userId));
+      const membersPersonalInformation = users.filter((user) => teamMemberIds.includes(user.userId));
 
       return {
         teamId: teamId,
         teamName: team.teamName,
-        teamMembers: teamMemberIds.map((teamMemberId) => {
-          const teamMemberEventInformation = teamMembersEventInformation.find((user) => user.userId === teamMemberId);
-          const teamMemberPersonalInformation = teamMembersPersonalInformation.find(
-            (user) => user.userId === teamMemberId,
-          );
+        members: teamMemberIds.map((teamMemberId) => {
+          const memberEventInformation = membersEventInformation.find((user) => user.userId === teamMemberId);
+          const memberPersonalInformation = membersPersonalInformation.find((user) => user.userId === teamMemberId);
 
           return {
-            ...teamMemberPersonalInformation,
-            additionalRequirements: teamMemberEventInformation.additionalRequirements || null,
-            willingToVolunteer: teamMemberEventInformation.willingToVolunteer || false,
+            ...memberPersonalInformation,
+            additionalRequirements: memberEventInformation.additionalRequirements || null,
+            willingToVolunteer: memberEventInformation.willingToVolunteer || false,
           };
         }),
         volunteer: entry.volunteer,

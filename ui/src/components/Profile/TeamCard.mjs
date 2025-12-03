@@ -7,7 +7,7 @@ import TeamDialog from "./TeamDialog.mjs";
 export default function TeamCard({ team, setTeams }) {
   const [open, setOpen] = useState(false);
 
-  const memberCount = team.teamMembers?.length ?? 0;
+  const memberCount = team.members?.length ?? 0;
   const amountRemaining = team.cost - team.paid;
   const progress = (team.paid / team.cost) * 100;
 

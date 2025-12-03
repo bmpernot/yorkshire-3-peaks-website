@@ -83,7 +83,7 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
           }
           break;
 
-        case "teamMembers":
+        case "members":
           if (action === "add") {
             transactItems.push({
               Put: {

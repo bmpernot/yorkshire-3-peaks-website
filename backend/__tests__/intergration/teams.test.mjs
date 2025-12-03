@@ -66,7 +66,7 @@ describe("Team functions", () => {
           paid: 0,
           startDate: "2024-06-06T12:00:00.000Z",
           teamId: "1",
-          teamMembers: [
+          members: [
             {
               additionalRequirements: "qwerty",
               email: "yorkshirepeaks1@gmail.com",
@@ -94,7 +94,7 @@ describe("Team functions", () => {
           paid: 80,
           startDate: "2025-06-06T12:00:00.000Z",
           teamId: "2",
-          teamMembers: [
+          members: [
             {
               additionalRequirements: null,
               email: "yorkshirepeaks1@gmail.com",
@@ -168,7 +168,7 @@ describe("Team functions", () => {
             paid: 0,
             startDate: "2024-06-06T12:00:00.000Z",
             teamId: "1",
-            teamMembers: [
+            members: [
               {
                 additionalRequirements: "qwerty",
                 email: "user0@example.com",
@@ -200,7 +200,7 @@ describe("Team functions", () => {
             paid: 80,
             startDate: "2025-06-06T12:00:00.000Z",
             teamId: "2",
-            teamMembers: [
+            members: [
               {
                 additionalRequirements: null,
                 email: "user0@example.com",
@@ -269,15 +269,15 @@ describe("Team functions", () => {
             { action: "modify", type: "teamName", newValues: { teamName: "qwerty" } },
             {
               action: "add",
-              type: "teamMembers",
+              type: "member",
               newValues: { userId: "1", additionalRequirements: "i am batman", willingToVolunteer: true },
             },
             {
               action: "modify",
-              type: "teamMembers",
+              type: "member",
               newValues: { additionalRequirements: "no, i am batman", willingToVolunteer: false },
             },
-            { action: "delete", type: "teamMembers", newValues: { userId: "1" } },
+            { action: "delete", type: "member", newValues: { userId: "1" } },
           ],
         },
       });
@@ -329,15 +329,15 @@ describe("Team functions", () => {
               { action: "modify", type: "teamName", newValues: { teamName: "qwerty" } },
               {
                 action: "add",
-                type: "teamMembers",
+                type: "member",
                 newValues: { userId: "1", additionalRequirements: "i am batman", willingToVolunteer: true },
               },
               {
                 action: "modify",
-                type: "teamMembers",
+                type: "member",
                 newValues: { additionalRequirements: "no, i am batman", willingToVolunteer: false },
               },
-              { action: "delete", type: "teamMembers", newValues: { userId: "1" } },
+              { action: "delete", type: "member", newValues: { userId: "1" } },
             ],
           },
         });
