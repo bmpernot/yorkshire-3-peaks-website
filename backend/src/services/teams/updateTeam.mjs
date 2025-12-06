@@ -69,7 +69,7 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
 
   const participatingUserIds = await userSearchFunction({ eventId });
   const team = await getTeamsFunction([teamId], []);
-  const members = team.members;
+  const members = team[0].members;
 
   try {
     const transactItems = [];
@@ -79,9 +79,13 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
       switch (type) {
         case "teamName":
           if (action === "modify") {
-            if (!newValues.teamName || typeof teamName !== "string" || newValues.teamName.trim().length === 0) {
+            if (
+              !newValues.teamName ||
+              typeof newValues.teamName !== "string" ||
+              newValues.teamName.trim().length === 0
+            ) {
               validationErrors.push("Team name is required");
-              return;
+              continue;
             }
             transactItems.push({
               Update: {
@@ -94,12 +98,12 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
           }
           break;
 
-        case "members":
+        case "member":
           if (action === "add") {
             const alreadyParticipating = participatingUserIds.includes(newValues.userId);
             if (alreadyParticipating) {
               validationErrors.push("Unable to add a user who is already participating in the event");
-              return;
+              continue;
             }
 
             transactItems.push({
@@ -138,7 +142,7 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
           if (action === "delete") {
             if (!members.map((member) => member.userId).includes(newValues.userId)) {
               validationErrors.push("To delete a member they must be a part of the team first");
-              return;
+              continue;
             }
 
             transactItems.push({
@@ -152,7 +156,7 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
       }
     }
     if (validationErrors.length !== 0) {
-      return { actions: "null", validationErrors };
+      return { action: "null", validationErrors };
     }
 
     if (transactItems.length === 0) {
