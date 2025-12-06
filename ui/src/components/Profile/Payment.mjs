@@ -19,7 +19,7 @@ function Payment({ teamId, eventId, cost, paid }) {
   const isInvalidAmount =
     !paymentAmount ||
     Number(paymentAmount) <= 0 ||
-    Number(paymentAmount) > 1000 ||
+    Number(paymentAmount) > 10000 ||
     !Number.isInteger(Number(paymentAmount));
 
   const progress = (paid / cost) * 100;
@@ -105,7 +105,7 @@ async function handleSubmitPayment({ router, teamId, eventId, paymentAmount, set
   try {
     setIsLoading("Creating Payment");
     const paymentAmountInPenceToNearestPound = Math.round(paymentAmount) * 100;
-    const response = await paymentIntent({ teamId, eventId, userId, paymentAmountInPenceToNearestPound });
+    const response = await paymentIntent({ teamId, eventId, userId, amount: paymentAmountInPenceToNearestPound });
     router.push(`/payment?eventId=${eventId}&teamId=${teamId}&clientSecret=${response.clientSecret}`);
   } catch (error) {
     console.error("Failed to initiate payment", { cause: error });

@@ -25,7 +25,7 @@ function Profile() {
     } finally {
       setIsLoading(false);
     }
-  });
+  }, []);
 
   useEffect(() => {
     fetchTeams();

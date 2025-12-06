@@ -6,12 +6,12 @@ function generateActions({ team, updatedTeam, deletingTeam }) {
   }
 
   if (team.teamName !== updatedTeam.teamName) {
-    actions.push({ action: "modify", type: "teamName", newValue: updatedTeam.teamName });
+    actions.push({ action: "modify", type: "teamName", newValues: updatedTeam.teamName });
   }
 
   team.members.forEach((member) => {
     if (!updatedTeam.members.map((member) => member.userId).includes(member.userId)) {
-      actions.push({ action: "delete", type: "member", newValue: { userId: member.userId } });
+      actions.push({ action: "delete", type: "member", newValues: { userId: member.userId } });
     }
   });
 
@@ -21,7 +21,7 @@ function generateActions({ team, updatedTeam, deletingTeam }) {
       actions.push({
         action: "add",
         type: "member",
-        newValue: {
+        newValues: {
           userId: updatedMember.userId,
           additionalRequirements: updatedMember.additionalRequirements || null,
           willingToVolunteer: updatedMember.willingToVolunteer || false,
@@ -35,7 +35,7 @@ function generateActions({ team, updatedTeam, deletingTeam }) {
         actions.push({
           action: "modify",
           type: "member",
-          newValue: {
+          newValues: {
             userId: updatedMember.userId,
             additionalRequirements: updatedMember.additionalRequirements || null,
             willingToVolunteer: updatedMember.willingToVolunteer || false,

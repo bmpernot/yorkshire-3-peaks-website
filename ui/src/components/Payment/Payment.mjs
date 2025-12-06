@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import Loading from "../common/Loading.mjs";
 import { styles } from "@/src/styles/payment.mui.styles.mjs";
+import ErrorCard from "../common/ErrorCard.mjs";
 
 function Payment() {
   const params = useSearchParams();
@@ -44,7 +45,7 @@ function Payment() {
   }, [clientSecret]);
 
   if (isLoading) {
-    <Loading message={"Loading payment"} />;
+    return <Loading message={"Loading payment"} />;
   }
 
   return (
