@@ -6,6 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import Loading from "../common/Loading.mjs";
+import { styles } from "@/src/styles/payment.mui.styles.mjs";
 
 function Payment() {
   const params = useSearchParams();
@@ -48,7 +49,7 @@ function Payment() {
 
   return (
     <>
-      <Typography variant="h2" sx={{ mb: 1 }}>
+      <Typography variant="h2" sx={styles.mainTitle}>
         Payment
       </Typography>
       {errors.length > 0 ? (

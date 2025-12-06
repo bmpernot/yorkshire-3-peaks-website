@@ -6,6 +6,7 @@ import { paymentIntent } from "@/src/lib/backendActions.mjs";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/src/utils/userContext";
+import { styles } from "@/src/styles/profile.mui.styles.mjs";
 
 function Payment({ teamId, eventId, cost, paid }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,25 +35,18 @@ function Payment({ teamId, eventId, cost, paid }) {
         backgroundColor: "background.paper",
       }}
     >
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+      <Typography variant="h6" sx={styles.mainTitle}>
         Event Payment
       </Typography>
 
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="subtitle2" sx={{ mb: 1 }}>
+      <Box sx={styles.marginBottom2}>
+        <Typography variant="subtitle2" sx={styles.marginBottom}>
           Payment Progress
         </Typography>
 
-        <LinearProgress
-          variant="determinate"
-          value={progress}
-          sx={{
-            height: 10,
-            borderRadius: 5,
-          }}
-        />
+        <LinearProgress variant="determinate" value={progress} sx={styles.lineBar} />
 
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+        <Box sx={styles.paidAmount}>
           <Typography variant="body2">
             £{paid}/{cost} paid
           </Typography>
@@ -60,13 +54,13 @@ function Payment({ teamId, eventId, cost, paid }) {
         </Box>
       </Box>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={styles.divider} />
 
-      <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 500 }}>
+      <Typography variant="subtitle1" sx={styles.amountToPay}>
         Enter an amount to pay:
       </Typography>
 
-      <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+      <Box sx={styles.amountToPayBox}>
         <TextField
           label="Payment Amount (£)"
           type="number"
@@ -80,7 +74,7 @@ function Payment({ teamId, eventId, cost, paid }) {
         <Button
           variant="contained"
           size="medium"
-          sx={{ whiteSpace: "nowrap", px: 3 }}
+          sx={styles.payButton}
           disabled={isInvalidAmount || isLoading}
           onClick={() =>
             handleSubmitPayment({
@@ -99,7 +93,7 @@ function Payment({ teamId, eventId, cost, paid }) {
       </Box>
 
       {remainingCost <= 0 && (
-        <Typography sx={{ mt: 2, color: "success.main" }}>
+        <Typography sx={styles.successText}>
           You've already paid the full amount! However you are welcome to donate more.
         </Typography>
       )}

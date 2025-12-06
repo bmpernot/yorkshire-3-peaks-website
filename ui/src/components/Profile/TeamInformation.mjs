@@ -8,7 +8,8 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import { styles } from "@/src/styles/event.mui.styles.mjs";
+import { styles as eventStyles } from "@/src/styles/event.mui.styles.mjs";
+import { styles as profileStyles } from "@/src/styles/profile.mui.styles.mjs";
 import { useState, useMemo } from "react";
 import { updateTeam } from "@/src/lib/backendActions.mjs";
 import TeamRegistrationInformation from "../common/TeamRegistrationInformation.mjs";
@@ -70,7 +71,7 @@ function TeamInformation({ team, setTeams, onClose }) {
       <DialogContent>
         {canEdit ? (
           <>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={profileStyles.marginBottom2}>
               Team Management
             </Typography>
             <TeamRegistrationInformation />
@@ -82,8 +83,8 @@ function TeamInformation({ team, setTeams, onClose }) {
                 return <ErrorCard error={error} index={index} key={`error-card-${index}`} />;
               })
             : null}
-          <FormControl fullWidth sx={styles.form}>
-            <FormLabel sx={styles.formLabel}>Team Name</FormLabel>
+          <FormControl fullWidth sx={eventStyles.form}>
+            <FormLabel sx={eventStyles.formLabel}>Team Name</FormLabel>
             <TextField
               disabled={!canEdit}
               id="teamName"

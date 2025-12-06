@@ -1,5 +1,6 @@
 "use client";
 
+import { styles } from "@/src/styles/profile.mui.styles.mjs";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, Link } from "@mui/material";
 
 function DeleteTeamDialog({ open, onClose, onConfirm, isLoading }) {
@@ -10,7 +11,7 @@ function DeleteTeamDialog({ open, onClose, onConfirm, isLoading }) {
       </DialogTitle>
 
       <DialogContent>
-        <Typography id="delete-team-warning" sx={{ mb: 2 }}>
+        <Typography id="delete-team-warning" sx={styles.marginBottom2}>
           You are about to delete the team, please consider the following:
         </Typography>
         <Typography id="delete-team-warnings">
@@ -20,7 +21,7 @@ function DeleteTeamDialog({ open, onClose, onConfirm, isLoading }) {
             component="a"
             href="mailto:yorkshirepeaks@gmail.com?subject=Refund"
             underline="hover"
-            sx={{ mx: 0.5, fontWeight: 700 }}
+            sx={styles.hyperlink}
           >
             refund
           </Link>{" "}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card, CardActionArea, CardContent, Typography, Box, Chip, Stack, LinearProgress } from "@mui/material";
 import TeamDialog from "./TeamDialog.mjs";
+import { styles } from "@/src/styles/profile.mui.styles.mjs";
 
 export default function TeamCard({ team, setTeams }) {
   const [open, setOpen] = useState(false);
@@ -16,23 +17,14 @@ export default function TeamCard({ team, setTeams }) {
 
   return (
     <>
-      <Card
-        id={`entry-card-${team.teamId}`}
-        sx={{
-          borderRadius: 3,
-          boxShadow: 3,
-          transition: "0.2s",
-          height: "100%",
-          "&:hover": { boxShadow: 6, transform: "translateY(-3px)" },
-        }}
-      >
-        <CardActionArea onClick={() => setOpen(true)} sx={{ height: "100%" }}>
+      <Card id={`entry-card-${team.teamId}`} sx={styles.card}>
+        <CardActionArea onClick={() => setOpen(true)} sx={styles.cardActionArea}>
           <CardContent>
             <Typography variant="h6" fontWeight={600} id="card-title">
               {team.teamName}
             </Typography>
 
-            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+            <Stack direction="row" spacing={1} sx={styles.marginTop}>
               <Chip label={`${memberCount} members`} variant="outlined" size="small" id="card-members" />
               <Chip
                 label={amountRemaining <= 0 ? "Fully Paid" : `£${amountRemaining} Left`}
@@ -42,21 +34,14 @@ export default function TeamCard({ team, setTeams }) {
               />
             </Stack>
 
-            <Box sx={{ mt: 2 }}>
-              <LinearProgress
-                variant="determinate"
-                value={progress}
-                sx={{
-                  height: 8,
-                  borderRadius: 5,
-                }}
-              />
-              <Typography variant="caption" sx={{ display: "block", mt: 0.5 }} id="card-paid-amount">
+            <Box sx={styles.marginTop2}>
+              <LinearProgress variant="determinate" value={progress} sx={styles.lineBar} />
+              <Typography variant="caption" sx={styles.cardPaidAmount} id="card-paid-amount">
                 £{team.paid} / £{team.cost} paid
               </Typography>
             </Box>
 
-            <Typography variant="body2" sx={{ mt: 2 }} id="card-event-date">
+            <Typography variant="body2" sx={styles.marginTop2} id="card-event-date">
               {eventStart.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} →{" "}
               {eventEnd.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
             </Typography>
