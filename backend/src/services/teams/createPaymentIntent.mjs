@@ -9,7 +9,11 @@ const stripe = new Stripe(stripeSecretKey, {
 
 const createPaymentIntentFunction = async (teamId, eventId, userId, amount) => {
   if (!teamId || !eventId || !userId || !amount) {
-    throw new Error("Amount is required");
+    throw new Error("teamId, eventId, userId, and amount are required");
+  }
+
+  if (typeof amount !== "number" || amount < 100 || amount > 1000000 || !Number.isInteger(amount)) {
+    throw new Error("Amount must be an integer between 100 (£1) and 1000000 (£10000) pence");
   }
 
   try {

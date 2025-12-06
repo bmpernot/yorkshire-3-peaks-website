@@ -14,6 +14,24 @@ const updateTeam = async (event) => {
   const userRole = claims["cognito:groups"] ?? "User";
   const { teamId, eventId } = queryParams;
 
+  if (!teamId || !eventId) {
+    return {
+      statusCode: 400,
+      body: "teamId and eventId are required",
+    };
+  }
+
+  let actions;
+  try {
+    const body = JSON.parse(event.body);
+    actions = body.actions;
+  } catch {
+    return {
+      statusCode: 400,
+      body: "Invalid JSON in request body",
+    };
+  }
+
   try {
     const userTeams = await getUserTeamsFunction(claims.sub);
     const userTeamIds = userTeams.map((userTeam) => userTeam.teamId);
@@ -21,11 +39,11 @@ const updateTeam = async (event) => {
     if (!userTeamIds.includes(teamId) && !userRole.includes("Organiser") && !userRole.includes("Admin")) {
       return {
         statusCode: 403,
-        body: "Unauthorized to update teams your are not apart of",
+        body: "Unauthorized to update teams you are not a part of",
       };
     }
 
-    const response = await updateTeamFunction(teamId, eventId, JSON.parse(event.body).actions);
+    const response = await updateTeamFunction(teamId, eventId, actions);
 
     return {
       statusCode: 200,

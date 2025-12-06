@@ -11,7 +11,7 @@ const paymentSucceeded = async (event) => {
   const stripeSignature = event.headers["stripe-signature"];
 
   try {
-    await updateEntryWithPaidAmountFunction(stripeSignature, JSON.parse(event.body));
+    await updateEntryWithPaidAmountFunction(stripeSignature, event.body);
     return {
       statusCode: 200,
     };

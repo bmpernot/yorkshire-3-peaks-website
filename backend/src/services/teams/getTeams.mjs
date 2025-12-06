@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, BatchGetCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, BatchGetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClientConfig } from "../../utils/infrastructureConfig.mjs";
 import getUsersFunction from "../../services/users/getUsers.mjs";
 
@@ -18,98 +18,129 @@ const getTeamsFunction = async (teamIds, userRole) => {
       throw new Error("teamIds must be a non-empty array");
     }
 
-    const teamIdKeys = teamIds.map(({ teamId }) => ({ teamId }));
+    const teamIdKeys = teamIds.map((teamId) => ({ teamId }));
 
-    const firstParams = {
-      RequestItems: {
-        [teamsTableName]: {
-          Keys: teamIdKeys,
+    const teamsResult = await ddbDocClient.send(
+      new BatchGetCommand({
+        RequestItems: {
+          [teamsTableName]: {
+            Keys: teamIdKeys,
+          },
         },
-        [teamMembersTableName]: {
-          Keys: teamIdKeys,
+      }),
+    );
+
+    const teams = teamsResult.Responses[teamsTableName] || [];
+
+    const memberQueries = teamIds.map((teamId) =>
+      ddbDocClient.send(
+        new QueryCommand({
+          TableName: teamMembersTableName,
+          KeyConditionExpression: "teamId = :teamId",
+          ExpressionAttributeValues: { ":teamId": teamId },
+        }),
+      ),
+    );
+
+    const memberResults = await Promise.all(memberQueries);
+    const allMembers = memberResults.flatMap((result) => result.Items);
+
+    const entryQueries = teamIds.map((teamId) =>
+      ddbDocClient.send(
+        new QueryCommand({
+          TableName: entriesTableName,
+          IndexName: "TeamIdIndex",
+          KeyConditionExpression: "teamId = :teamId",
+          ExpressionAttributeValues: { ":teamId": teamId },
+        }),
+      ),
+    );
+
+    const entryResults = await Promise.all(entryQueries);
+    const allEntries = entryResults.flatMap((result) => result.Items);
+
+    const eventIdKeys = [...new Set(allEntries.map((entry) => entry.eventId))].map((eventId) => ({ eventId }));
+
+    const eventsResult = await ddbDocClient.send(
+      new BatchGetCommand({
+        RequestItems: {
+          [eventsTableName]: {
+            Keys: eventIdKeys,
+          },
         },
-        [entriesTableName]: {
-          Keys: teamIdKeys,
-        },
-      },
-    };
+      }),
+    );
 
-    const {
-      [teamsTableName]: teams,
-      [teamMembersTableName]: members,
-      [entriesTableName]: entries,
-    } = (await ddbDocClient.send(new BatchGetCommand(firstParams))).Responses;
+    const events = eventsResult.Responses[eventsTableName] || [];
 
-    const eventIdKeys = entries.map(({ eventId }) => ({ eventId }));
-    const userIdKeys = members.map(({ userId }) => ({ userId }));
+    const uniqueUserIds = [...new Set(allMembers.map((member) => member.userId))].map((userId) => ({ userId }));
 
-    const secondParams = {
-      RequestItems: {
-        [eventsTableName]: {
-          Keys: eventIdKeys,
-        },
-      },
-    };
+    let users;
 
-    let users, events;
+    const isPrivileged = userRole.includes("Organiser") || userRole.includes("Admin");
 
-    if (!userRole.includes("Organiser") && !userRole.includes("Admin")) {
-      secondParams.RequestItems[usersTableName] = {
-        Keys: userIdKeys,
-      };
+    if (!isPrivileged) {
+      if (uniqueUserIds.length > 0) {
+        const usersResult = await ddbDocClient.send(
+          new BatchGetCommand({
+            RequestItems: {
+              [usersTableName]: { Keys: uniqueUserIds },
+            },
+          }),
+        );
 
-      const data = (await ddbDocClient.send(new BatchGetCommand(secondParams))).Responses;
-
-      events = data[eventsTableName];
-      users = data[usersTableName];
+        users = usersResult.Responses[usersTableName] || [];
+      } else {
+        users = [];
+      }
     } else {
-      const [data, usersData] = await Promise.all([
-        ddbDocClient.send(new BatchGetCommand(secondParams)),
-        getUsersFunction("sub,given_name,family_name,email,ice_number,phone_number", userIdKeys),
-      ]);
-      events = data.Responses[eventsTableName];
-      users = usersData.map((userData) => ({
-        userId: userData.sub,
-        email: userData.email,
-        firstName: userData.given_name,
-        lastName: userData.family_name,
-        iceNumber: userData["custom:ice_number"],
-        number: userData.phone_number,
+      const rawUsers = await getUsersFunction(
+        "sub,given_name,family_name,email,ice_number,phone_number",
+        uniqueUserIds,
+      );
+
+      users = rawUsers.map((user) => ({
+        userId: user.sub,
+        email: user.email,
+        firstName: user.given_name,
+        lastName: user.family_name,
+        iceNumber: user["custom:ice_number"],
+        number: user.phone_number,
       }));
     }
 
     const teamObjects = teamIds.map((teamId) => {
       const team = teams.find((team) => team.teamId === teamId);
-      const membersEventInformation = members.filter((teamMember) => teamMember.teamId === teamId);
-      const teamMemberIds = membersEventInformation.map((teamMember) => teamMember.userId);
-      const entry = entries.find((entry) => entry.teamId === teamId);
+      const members = allMembers.filter((member) => member.teamId === teamId);
+      const entry = allEntries.find((entry) => entry.teamId === teamId);
+
       const event = events.find((event) => event.eventId === entry.eventId);
-      const membersPersonalInformation = users.filter((user) => teamMemberIds.includes(user.userId));
+
+      const memberDetails = members.map((memberRow) => {
+        const personal = users.find((user) => user.userId === memberRow.userId);
+        return {
+          ...personal,
+          additionalRequirements: memberRow.additionalRequirements ?? null,
+          willingToVolunteer: memberRow.willingToVolunteer ?? false,
+        };
+      });
 
       return {
-        teamId: teamId,
-        teamName: team.teamName,
-        members: teamMemberIds.map((teamMemberId) => {
-          const memberEventInformation = membersEventInformation.find((user) => user.userId === teamMemberId);
-          const memberPersonalInformation = membersPersonalInformation.find((user) => user.userId === teamMemberId);
-
-          return {
-            ...memberPersonalInformation,
-            additionalRequirements: memberEventInformation.additionalRequirements || null,
-            willingToVolunteer: memberEventInformation.willingToVolunteer || false,
-          };
-        }),
-        volunteer: entry.volunteer,
-        cost: entry.cost,
-        paid: entry.paid,
-        eventId: event.eventId,
-        startDate: event.startDate,
-        endDate: event.endDate,
+        teamId,
+        teamName: team?.teamName,
+        members: memberDetails,
+        volunteer: entry?.volunteer,
+        cost: entry?.cost,
+        paid: entry?.paid,
+        eventId: event?.eventId,
+        startDate: event?.startDate,
+        endDate: event?.endDate,
       };
     });
 
     return teamObjects;
   } catch (error) {
+    console.error("getTeamsFunction error:", { teamIds, userRole, error: error.message });
     throw new Error("Failed to get teams", { cause: error });
   }
 };

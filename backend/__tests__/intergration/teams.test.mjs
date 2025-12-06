@@ -18,41 +18,61 @@ describe("Team functions", () => {
 
   describe("getTeams", () => {
     it("Should return user's teams information", async () => {
-      dynamoDBMock.on(QueryCommand).resolves({
-        Items: [
-          { teamId: "1", teamName: "team1" },
-          { teamId: "2", teamName: "team2" },
-        ],
-      });
-
-      dynamoDBMock.on(BatchGetCommand).resolves({
-        Responses: {
-          TeamsTable: [
+      dynamoDBMock
+        .on(QueryCommand)
+        .resolvesOnce({
+          Items: [
             { teamId: "1", teamName: "team1" },
             { teamId: "2", teamName: "team2" },
           ],
-          EntriesTable: [
-            { teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 },
-            { teamId: "2", eventId: "2", volunteer: false, cost: 120, paid: 80 },
-          ],
-          TeamMembersTable: [
+        })
+        .resolvesOnce({
+          Items: [
             { teamId: "1", userId: "1", additionalRequirements: "qwerty", willingToVolunteer: true },
             { teamId: "1", userId: "2", additionalRequirements: "qwerty", willingToVolunteer: true },
+          ],
+        })
+        .resolvesOnce({
+          Items: [
             { teamId: "2", userId: "1", willingToVolunteer: false },
             { teamId: "2", userId: "2" },
             { teamId: "2", userId: "3", additionalRequirements: "qwerty", willingToVolunteer: true },
           ],
-          UsersTable: [
-            { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
-            { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
-            { userId: "3", firstName: "Ben3", lastName: "Pernot3", email: "yorkshirepeaks3@gmail.com" },
-          ],
-          EventsTable: [
-            { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
-            { eventId: "2", startDate: new Date("2025-06-06 12:00"), endDate: new Date("2025-06-08 12:00") },
-          ],
-        },
-      });
+        })
+        .resolvesOnce({
+          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+        })
+        .resolvesOnce({
+          Items: [{ teamId: "2", eventId: "2", volunteer: false, cost: 120, paid: 80 }],
+        });
+
+      dynamoDBMock
+        .on(BatchGetCommand)
+        .resolvesOnce({
+          Responses: {
+            TeamsTable: [
+              { teamId: "1", teamName: "team1" },
+              { teamId: "2", teamName: "team2" },
+            ],
+          },
+        })
+        .resolvesOnce({
+          Responses: {
+            EventsTable: [
+              { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
+              { eventId: "2", startDate: new Date("2025-06-06 12:00"), endDate: new Date("2025-06-08 12:00") },
+            ],
+          },
+        })
+        .resolvesOnce({
+          Responses: {
+            UsersTable: [
+              { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
+              { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
+              { userId: "3", firstName: "Ben3", lastName: "Pernot3", email: "yorkshirepeaks3@gmail.com" },
+            ],
+          },
+        });
 
       const event = generateHttpApiEvent({});
       const response = await getTeams(event);
@@ -131,28 +151,45 @@ describe("Team functions", () => {
       async (userRole) => {
         const users = generateUsers(2);
 
-        dynamoDBMock.on(BatchGetCommand).resolves({
-          Responses: {
-            TeamsTable: [
-              { teamId: "1", teamName: "team1" },
-              { teamId: "2", teamName: "team2" },
-            ],
-            EntriesTable: [
-              { teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 },
-              { teamId: "2", eventId: "2", volunteer: false, cost: 120, paid: 80 },
-            ],
-            TeamMembersTable: [
+        dynamoDBMock
+          .on(QueryCommand)
+          .resolvesOnce({
+            Items: [
               { teamId: "1", userId: users[0].Username, additionalRequirements: "qwerty", willingToVolunteer: true },
               { teamId: "1", userId: users[1].Username, additionalRequirements: "qwerty", willingToVolunteer: true },
+            ],
+          })
+          .resolvesOnce({
+            Items: [
               { teamId: "2", userId: users[0].Username, willingToVolunteer: false },
               { teamId: "2", userId: users[1].Username },
             ],
-            EventsTable: [
-              { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
-              { eventId: "2", startDate: new Date("2025-06-06 12:00"), endDate: new Date("2025-06-08 12:00") },
-            ],
-          },
-        });
+          })
+          .resolvesOnce({
+            Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+          })
+          .resolvesOnce({
+            Items: [{ teamId: "2", eventId: "2", volunteer: false, cost: 120, paid: 80 }],
+          });
+
+        dynamoDBMock
+          .on(BatchGetCommand)
+          .resolvesOnce({
+            Responses: {
+              TeamsTable: [
+                { teamId: "1", teamName: "team1" },
+                { teamId: "2", teamName: "team2" },
+              ],
+            },
+          })
+          .resolvesOnce({
+            Responses: {
+              EventsTable: [
+                { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
+                { eventId: "2", startDate: new Date("2025-06-06 12:00"), endDate: new Date("2025-06-08 12:00") },
+              ],
+            },
+          });
 
         cognitoMock.on(AdminGetUserCommand).resolvesOnce(users[0]).resolvesOnce(users[1]);
 
@@ -260,28 +297,44 @@ describe("Team functions", () => {
     it("Should be able to update the team based on the actions passed in the body", async () => {
       dynamoDBMock
         .on(QueryCommand)
-        .resolvesOnce({ Items: [{ teamId: "1" }] })
+        .resolvesOnce({
+          Items: [{ teamId: "1", teamName: "team1" }],
+        })
         .resolvesOnce({
           Items: [],
-        });
-
-      dynamoDBMock.on(BatchGetCommand).resolves({
-        Responses: {
-          TeamsTable: [{ teamId: "1", teamName: "team1" }],
-          EntriesTable: [{ teamId: "1", eventId: "1", volunteer: false, cost: 120, paid: 80 }],
-          TeamMembersTable: [
+        })
+        .resolvesOnce({
+          Items: [
             { teamId: "1", userId: "1", additionalRequirements: "qwerty", willingToVolunteer: true },
             { teamId: "1", userId: "2", additionalRequirements: "qwerty", willingToVolunteer: true },
           ],
-          UsersTable: [
-            { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
-            { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
-          ],
-          EventsTable: [
-            { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
-          ],
-        },
-      });
+        })
+        .resolvesOnce({
+          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+        });
+
+      dynamoDBMock
+        .on(BatchGetCommand)
+        .resolvesOnce({
+          Responses: {
+            TeamsTable: [{ teamId: "1", teamName: "team1" }],
+          },
+        })
+        .resolvesOnce({
+          Responses: {
+            EventsTable: [
+              { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
+            ],
+          },
+        })
+        .resolvesOnce({
+          Responses: {
+            UsersTable: [
+              { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
+              { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
+            ],
+          },
+        });
 
       dynamoDBMock.on(TransactWriteCommand).resolves();
       const event = generateHttpApiEvent({
@@ -293,7 +346,7 @@ describe("Team functions", () => {
             {
               action: "add",
               type: "member",
-              newValues: { userId: "1", additionalRequirements: "i am batman", willingToVolunteer: true },
+              newValues: { userId: "7", additionalRequirements: "i am batman", willingToVolunteer: true },
             },
             {
               action: "modify",
@@ -330,37 +383,60 @@ describe("Team functions", () => {
 
     it("Should not be able to update team information you are not apart of the team", async () => {
       dynamoDBMock.on(QueryCommand).resolves({ Items: [] });
-      const event = generateHttpApiEvent({ method: "PATCH", queryStringParameters: { teamId: "1", eventId: "1" } });
+      const event = generateHttpApiEvent({
+        method: "PATCH",
+        queryStringParameters: { teamId: "1", eventId: "1" },
+        body: { actions: [] },
+      });
       const response = await updateTeam(event);
 
       expect(response.statusCode).toEqual(403);
-      expect(response.body).toEqual("Unauthorized to update teams your are not apart of");
+      expect(response.body).toEqual("Unauthorized to update teams you are not a part of");
     });
 
     it.each(["Organiser", "Admin"])(
       "Should be able to update team information you are not apart of the team if you are an %s",
       async (userRole) => {
-        dynamoDBMock.on(QueryCommand).resolvesOnce({ Items: [] }).resolvesOnce({
-          Items: [],
-        });
-
-        dynamoDBMock.on(BatchGetCommand).resolves({
-          Responses: {
-            TeamsTable: [{ teamId: "1", teamName: "team1" }],
-            EntriesTable: [{ teamId: "1", eventId: "1", volunteer: false, cost: 120, paid: 80 }],
-            TeamMembersTable: [
+        dynamoDBMock
+          .on(QueryCommand)
+          .resolvesOnce({
+            Items: [],
+          })
+          .resolvesOnce({
+            Items: [],
+          })
+          .resolvesOnce({
+            Items: [
               { teamId: "1", userId: "1", additionalRequirements: "qwerty", willingToVolunteer: true },
               { teamId: "1", userId: "2", additionalRequirements: "qwerty", willingToVolunteer: true },
             ],
-            UsersTable: [
-              { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
-              { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
-            ],
-            EventsTable: [
-              { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
-            ],
-          },
-        });
+          })
+          .resolvesOnce({
+            Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+          });
+
+        dynamoDBMock
+          .on(BatchGetCommand)
+          .resolvesOnce({
+            Responses: {
+              TeamsTable: [{ teamId: "1", teamName: "team1" }],
+            },
+          })
+          .resolvesOnce({
+            Responses: {
+              EventsTable: [
+                { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
+              ],
+            },
+          })
+          .resolvesOnce({
+            Responses: {
+              UsersTable: [
+                { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
+                { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
+              ],
+            },
+          });
 
         dynamoDBMock.on(TransactWriteCommand).resolves();
         const event = generateHttpApiEvent({
@@ -394,28 +470,44 @@ describe("Team functions", () => {
     it("Should return validation errors if the actions will put the group in an incorrect state", async () => {
       dynamoDBMock
         .on(QueryCommand)
-        .resolvesOnce({ Items: [{ teamId: "1" }] })
+        .resolvesOnce({
+          Items: [{ teamId: "1", teamName: "team1" }],
+        })
         .resolvesOnce({
           Items: [{ userId: "1" }],
-        });
-
-      dynamoDBMock.on(BatchGetCommand).resolves({
-        Responses: {
-          TeamsTable: [{ teamId: "1", teamName: "team1" }],
-          EntriesTable: [{ teamId: "1", eventId: "1", volunteer: false, cost: 120, paid: 80 }],
-          TeamMembersTable: [
+        })
+        .resolvesOnce({
+          Items: [
             { teamId: "1", userId: "1", additionalRequirements: "qwerty", willingToVolunteer: true },
             { teamId: "1", userId: "2", additionalRequirements: "qwerty", willingToVolunteer: true },
           ],
-          UsersTable: [
-            { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
-            { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
-          ],
-          EventsTable: [
-            { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
-          ],
-        },
-      });
+        })
+        .resolvesOnce({
+          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+        });
+
+      dynamoDBMock
+        .on(BatchGetCommand)
+        .resolvesOnce({
+          Responses: {
+            TeamsTable: [{ teamId: "1", teamName: "team1" }],
+          },
+        })
+        .resolvesOnce({
+          Responses: {
+            EventsTable: [
+              { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
+            ],
+          },
+        })
+        .resolvesOnce({
+          Responses: {
+            UsersTable: [
+              { userId: "1", firstName: "Ben1", lastName: "Pernot1", email: "yorkshirepeaks1@gmail.com" },
+              { userId: "2", firstName: "Ben2", lastName: "Pernot2", email: "yorkshirepeaks2@gmail.com" },
+            ],
+          },
+        });
 
       dynamoDBMock.on(TransactWriteCommand).resolves();
       const event = generateHttpApiEvent({
@@ -453,7 +545,11 @@ describe("Team functions", () => {
 
     it("Should return an error if an error occurs during the update", async () => {
       dynamoDBMock.on(QueryCommand).rejects({ message: "failed" });
-      const event = generateHttpApiEvent({ method: "PATCH", queryStringParameters: { teamId: "1", eventId: "1" } });
+      const event = generateHttpApiEvent({
+        method: "PATCH",
+        queryStringParameters: { teamId: "1", eventId: "1" },
+        body: { actions: [] },
+      });
       const response = await updateTeam(event);
 
       expect(response.statusCode).toEqual(500);

@@ -17,10 +17,18 @@ const stripe = new Stripe(stripeSecretKey, {
 });
 
 const updateEntryWithPaidAmountFunction = async (stripeSignature, webhookBody) => {
+  if (!stripeSignature) {
+    throw new Error("Missing stripe-signature header");
+  }
+  if (!webhookBody) {
+    throw new Error("Missing webhook body");
+  }
+
   let event;
   try {
     event = stripe.webhooks.constructEvent(webhookBody, stripeSignature, stripeWebhookSecretKey);
   } catch (error) {
+    console.error("Webhook signature verification failed:", error.message);
     throw new Error("Webhook signature verification failed", { cause: error });
   }
 
@@ -28,6 +36,11 @@ const updateEntryWithPaidAmountFunction = async (stripeSignature, webhookBody) =
     if (event.type === "payment_intent.succeeded") {
       const { metadata, amount_received } = event.data.object;
       const { teamId, eventId } = metadata;
+
+      if (!teamId || !eventId) {
+        throw new Error(`Missing required metadata: teamId=${teamId}, eventId=${eventId}`);
+      }
+
       const amountPaid = amount_received / 100;
 
       const response = await ddbDocClient.send(
@@ -46,6 +59,7 @@ const updateEntryWithPaidAmountFunction = async (stripeSignature, webhookBody) =
       return response;
     }
   } catch (error) {
+    console.error("Failed to update entry with amount paid:", error);
     throw new Error("Failed to update entry with amount paid", { cause: error });
   }
 };

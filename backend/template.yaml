@@ -120,16 +120,16 @@ Resources:
             Action:
               - "dynamodb:BatchGetItem"
             Resource:
-              - !GetAtt EntriesTable.Arn
               - !GetAtt TeamsTable.Arn
-              - !GetAtt TeamMembersTable.Arn
               - !GetAtt EventsTable.Arn
               - !GetAtt UsersTable.Arn
         - Statement:
             Effect: "Allow"
             Action:
-              - "dynamodb:QueryCommand"
+              - "dynamodb:Query"
             Resource:
+              - !GetAtt EntriesTable.Arn
+              - !Sub "${EntriesTable.Arn}/index/TeamIdIndex"
               - !GetAtt TeamMembersTable.Arn
               - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
       Events:
@@ -157,7 +157,30 @@ Resources:
             Effect: "Allow"
             Action:
               - "dynamodb:BatchGetItem"
-            Resource: !GetAtt TeamsTable.Arn
+            Resource:
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt EventsTable.Arn
+              - !GetAtt UsersTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !Sub "${EntriesTable.Arn}/index/TeamIdIndex"
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:TransactWriteItems"
+              - "dynamodb:PutItem"
+              - "dynamodb:UpdateItem"
+              - "dynamodb:DeleteItem"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -334,7 +357,7 @@ Resources:
   paymentIntent:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/teams/updateTeams.default
+      Handler: src/handlers/teams/paymentIntent.default
       Description: A function to update a team's information
       Events:
         HttpApiEvent:
@@ -350,7 +373,7 @@ Resources:
   paymentSucceeded:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/teams/updateTeams.default
+      Handler: src/handlers/teams/paymentSucceeded.default
       Description: A function to update a team's information
       Policies:
         - Statement:
