@@ -1,6 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, TransactWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClientConfig } from "../../utils/infrastructureConfig.mjs";
+import { userSearchFunction } from "../users/searchUser.mjs";
 
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -65,6 +66,8 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
     }
   }
 
+  const participatingUserIds = await userSearchFunction({ eventId });
+
   try {
     const transactItems = [];
 
@@ -85,6 +88,11 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
 
         case "members":
           if (action === "add") {
+            const alreadyParticipating = participatingUserIds.includes(newValues.userId);
+            if (alreadyParticipating) {
+              throw new Error("Unable to add a user who is already participating in the event");
+            }
+
             transactItems.push({
               Put: {
                 TableName: teamMembersTableName,

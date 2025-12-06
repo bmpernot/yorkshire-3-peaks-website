@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/src/utils/userContext";
 
-function Payment({ teamId, eventId, cost, paid, isLoading, setIsLoading }) {
+function Payment({ teamId, eventId, cost, paid }) {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { user } = useUser();
   const [paymentAmount, setPaymentAmount] = useState("");
@@ -73,6 +74,7 @@ function Payment({ teamId, eventId, cost, paid, isLoading, setIsLoading }) {
           value={paymentAmount}
           onChange={(e) => setPaymentAmount(e.target.value)}
           size="small"
+          id="payment-amount"
         />
 
         <Button
@@ -90,6 +92,7 @@ function Payment({ teamId, eventId, cost, paid, isLoading, setIsLoading }) {
               userId: user.id,
             })
           }
+          id="pay"
         >
           {isLoading ? "Processing..." : "Pay Now"}
         </Button>
@@ -107,7 +110,8 @@ function Payment({ teamId, eventId, cost, paid, isLoading, setIsLoading }) {
 async function handleSubmitPayment({ router, teamId, eventId, paymentAmount, setIsLoading, userId }) {
   try {
     setIsLoading("Creating Payment");
-    const response = await paymentIntent({ teamId, eventId, userId, paymentAmount });
+    const paymentAmountInPenceToNearestPound = Math.round(paymentAmount) * 100;
+    const response = await paymentIntent({ teamId, eventId, userId, paymentAmountInPenceToNearestPound });
     router.push(`/payment?eventId=${eventId}&teamId=${teamId}&clientSecret=${response.clientSecret}`);
   } catch (error) {
     console.error("Failed to initiate payment", { cause: error });

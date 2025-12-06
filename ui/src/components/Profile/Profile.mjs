@@ -40,13 +40,7 @@ function Profile() {
   }
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1100,
-        px: 2,
-        mt: 1,
-      }}
-    >
+    <Box sx={styles.area}>
       <Typography variant="h3" component="h1" sx={styles.mainTitle} id="title">
         Profile
       </Typography>

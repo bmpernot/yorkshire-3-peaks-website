@@ -1,92 +1,195 @@
-import { TextField, Typography, Box, FormControl, FormLabel } from "@mui/material";
+import {
+  TextField,
+  Typography,
+  Box,
+  FormControl,
+  FormLabel,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
-import { TeamMemberSection } from "../Event/EventSignUpForm.mjs";
+import { useState, useMemo } from "react";
+import { updateTeam } from "@/src/lib/backendActions.mjs";
+import TeamRegistrationInformation from "../common/TeamRegistrationInformation.mjs";
+import TeamMemberLookup from "../common/TeamMemberLookUp.mjs";
+import { toast } from "react-toastify";
+import generateActions from "./generateActions.mjs";
+import DeleteTeamDialog from "./DeleteTeamDialog.mjs";
+import ErrorCard from "../common/ErrorCard.mjs";
 
-function TeamInformation({ updatedTeam, setUpdatedTeam, canEdit, errors }) {
+function TeamInformation({ team, setTeams, onClose }) {
+  const [updatedTeam, setUpdatedTeam] = useState(team);
+  const [errors, setErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const eventEnd = new Date(team.endDate);
+  const eventHasEnded = useMemo(() => Date.now() >= eventEnd.getTime(), [team]);
+  const canEdit = !eventHasEnded;
+
+  async function handleSaveTeamChanges({ updatedTeam, deletingTeam = false }) {
+    try {
+      if (!deletingTeam) {
+        const errorsInFormData = validateFormData(updatedTeam);
+        if (errorsInFormData.length > 0) {
+          setErrors(errorsInFormData);
+          return;
+        }
+      }
+
+      setIsLoading(true);
+      const actions = generateActions({ team, updatedTeam, deletingTeam });
+      if (actions.length > 0) {
+        await updateTeam({ teamId: team.teamId, eventId: team.eventId, actions });
+        if (deletingTeam) {
+          setTeams((teams) => teams.filter((t) => t.teamId !== team.teamId));
+          toast.success("Team Deleted");
+        } else {
+          setTeams((teams) => teams.map((t) => (t.teamId === team.teamId ? updatedTeam : t)));
+          toast.success("Team Updated");
+        }
+      } else {
+        toast.warn("Nothing to update");
+      }
+    } catch (error) {
+      console.error("Failed to update teams information", { cause: error });
+      toast.error("Failed to update teams information");
+      setErrors(["Failed to update teams information"]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <>
-      {canEdit ? (
-        <>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Team Management
-          </Typography>
-          <Box sx={styles.box}>
-            <Typography variant="body1" sx={styles.description} id="team-registration-information">
-              • Teams must have <strong>3 - 5 members</strong> and must include yourself.
-              <br />
-              • Payment is managed on your profile page. Each member can contribute, but your team must meet or exceed
-              the full amount.
-              <br />
-              • You can edit your team details anytime from your profile.
-              <br />
-              • All team members will have access to update the entry.
-              <br />
-              • Disabled users in the user search are ones that have already signed up to a team.
-              <br />
+      <DialogContent>
+        {canEdit ? (
+          <>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Team Management
             </Typography>
-          </Box>
-        </>
-      ) : null}
-      <Box component="form">
-        {errors.length > 0
-          ? errors.map((error, index) => {
-              return <ErrorCard error={error} index={index} />;
-            })
-          : null}
-        <FormControl fullWidth sx={styles.form}>
-          <FormLabel sx={styles.formLabel}>Team Name</FormLabel>
-          <TextField
-            disabled={!canEdit}
-            id="teamName"
-            name="teamName"
-            value={updatedTeam.teamName}
-            onChange={(e) => setUpdatedTeam({ ...updatedTeam, teamName: e.target.value })}
-            placeholder="Enter your team name"
-            variant="outlined"
-            size="medium"
-          />
-        </FormControl>
+            <TeamRegistrationInformation />
+          </>
+        ) : null}
+        <Box component="form">
+          {errors.length > 0
+            ? errors.map((error, index) => {
+                return <ErrorCard error={error} index={index} key={`error-card-${index}`} />;
+              })
+            : null}
+          <FormControl fullWidth sx={styles.form}>
+            <FormLabel sx={styles.formLabel}>Team Name</FormLabel>
+            <TextField
+              disabled={!canEdit}
+              id="teamName"
+              name="teamName"
+              value={updatedTeam.teamName}
+              onChange={(e) => setUpdatedTeam({ ...updatedTeam, teamName: e.target.value })}
+              placeholder="Enter your team name"
+              variant="outlined"
+              size="medium"
+            />
+          </FormControl>
 
-        <TeamMemberSection
-          disabled={!canEdit}
-          formData={updatedTeam}
-          setFormData={setUpdatedTeam}
-          membersIndex={0}
-          eventId={setUpdatedTeam.eventId}
-        />
-        <TeamMemberSection
-          disabled={!canEdit}
-          formData={updatedTeam}
-          setFormData={setUpdatedTeam}
-          membersIndex={1}
-          eventId={setUpdatedTeam.eventId}
-        />
-        <TeamMemberSection
-          disabled={!canEdit}
-          formData={updatedTeam}
-          setFormData={setUpdatedTeam}
-          membersIndex={2}
-          eventId={setUpdatedTeam.eventId}
-        />
-        {updatedTeam.members.length >= 3 && canEdit ? (
-          <TeamMemberSection
+          <TeamMemberLookup
+            disabled={!canEdit}
             formData={updatedTeam}
             setFormData={setUpdatedTeam}
-            membersIndex={3}
-            eventId={setUpdatedTeam.eventId}
+            membersIndex={0}
+            eventId={team.eventId}
           />
-        ) : null}
-        {updatedTeam.members.length >= 4 && canEdit ? (
-          <TeamMemberSection
+          <TeamMemberLookup
+            disabled={!canEdit}
             formData={updatedTeam}
             setFormData={setUpdatedTeam}
-            membersIndex={4}
-            eventId={setUpdatedTeam.eventId}
+            membersIndex={1}
+            eventId={team.eventId}
           />
+          <TeamMemberLookup
+            disabled={!canEdit}
+            formData={updatedTeam}
+            setFormData={setUpdatedTeam}
+            membersIndex={2}
+            eventId={team.eventId}
+          />
+          {updatedTeam.members.length >= 3 && canEdit ? (
+            <TeamMemberLookup
+              formData={updatedTeam}
+              setFormData={setUpdatedTeam}
+              membersIndex={3}
+              eventId={team.eventId}
+            />
+          ) : null}
+          {updatedTeam.members.length >= 4 && canEdit ? (
+            <TeamMemberLookup
+              formData={updatedTeam}
+              setFormData={setUpdatedTeam}
+              membersIndex={4}
+              eventId={team.eventId}
+            />
+          ) : null}
+        </Box>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose} variant="outlined">
+          Close
+        </Button>
+        {canEdit ? (
+          <>
+            <Button
+              variant="contained"
+              onClick={() => handleSaveTeamChanges({ updatedTeam })}
+              loading={isLoading}
+              loadingPosition="end"
+              id="save-team-changes"
+            >
+              Save Team Changes
+            </Button>
+            <Button
+              onClick={() => setDeleteOpen(true)}
+              variant="outlined"
+              color="error"
+              disabled={isLoading}
+              id="delete-team"
+            >
+              Delete Team
+            </Button>
+          </>
         ) : null}
-      </Box>
+      </DialogActions>
+      <DeleteTeamDialog
+        open={deleteOpen}
+        team={team}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={async () => {
+          const teamWithDeletedAttributes = { ...team, teamName: null, members: [] };
+          handleSaveTeamChanges({ updatedTeam: teamWithDeletedAttributes, deletingTeam: true });
+        }}
+        isLoading={isLoading}
+      />
     </>
   );
+}
+
+function validateFormData(formData) {
+  const messages = [];
+  if (formData.members.length < 3 || formData.members.length > 5) {
+    messages.push("Teams must have 3 to 5 members.");
+  }
+
+  const memberIds = formData.members.map((member) => member.userId);
+  const allMembersAreUnique = new Set(memberIds).size === formData.members.length;
+  if (!allMembersAreUnique) {
+    messages.push("All team members must be unique.");
+  }
+
+  if (!formData.teamName.trim()) {
+    messages.push("Team name is required.");
+  }
+
+  return messages;
 }
 
 export default TeamInformation;
