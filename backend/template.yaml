@@ -343,6 +343,9 @@ Resources:
             Path: /teams/paymentIntent
             Method: POST
             ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
 
   paymentSucceeded:
     Type: AWS::Serverless::Function
@@ -367,6 +370,8 @@ Resources:
       Environment:
         Variables:
           ENTRIES_TABLE_NAME: !Ref EntriesTable
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+          STRIPE_WEBHOOK_SECRET_KEY: !Ref StripeWebhookSecretKey
 
   ##### API Resources #####
 
@@ -683,4 +688,15 @@ Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod"
     Value: "https://api.yorkshirepeaks.co.uk/"
+
 ##### API Gateway #####
+
+##### Parameters #####
+Parameters:
+  StripeSecretKey:
+    Type: String
+    NoEcho: true
+  StripeWebhookSecretKey:
+    Type: String
+    NoEcho: true
+##### Parameters #####
