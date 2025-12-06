@@ -106,6 +106,8 @@ function generateTeams({ numberOfTeams, overrides = [] }) {
       });
     }
 
+    const eventYear = new Date().getFullYear() + 1 + index;
+
     teams.push({
       teamId: index,
       teamName: `teamName-${index}`,
@@ -114,8 +116,8 @@ function generateTeams({ numberOfTeams, overrides = [] }) {
       cost: numberOfMembers * 40,
       paid: Math.min(numberOfMembers, numberOfMembersPaid) * 40,
       eventId: index,
-      startDate: new Date(`${new Date().getFullYear() + index}/06/06 12:00`).toISOString(),
-      endDate: new Date(`${new Date().getFullYear() + index}/06/08 12:00`).toISOString(),
+      startDate: new Date(`${eventYear}/06/06 12:00`).toISOString(),
+      endDate: new Date(`${eventYear}/06/08 12:00`).toISOString(),
     });
   }
 
