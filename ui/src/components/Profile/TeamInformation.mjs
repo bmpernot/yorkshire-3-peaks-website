@@ -41,7 +41,11 @@ function TeamInformation({ team, setTeams, onClose }) {
       setIsLoading(true);
       const actions = generateActions({ team, updatedTeam, deletingTeam });
       if (actions.length > 0) {
-        await updateTeam({ teamId: team.teamId, eventId: team.eventId, actions });
+        const response = await updateTeam({ teamId: team.teamId, eventId: team.eventId, actions });
+        if (response.validationErrors) {
+          setErrors(response.validationErrors);
+          toast.error("Failed to update teams information");
+        }
         if (deletingTeam) {
           setTeams((teams) => teams.filter((t) => t.teamId !== team.teamId));
           toast.success("Team Deleted");

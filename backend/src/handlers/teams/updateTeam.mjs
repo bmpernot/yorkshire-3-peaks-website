@@ -25,12 +25,12 @@ const updateTeam = async (event) => {
       };
     }
 
-    const team = await updateTeamFunction(teamId, eventId, JSON.parse(event.body).actions);
+    const response = await updateTeamFunction(teamId, eventId, JSON.parse(event.body).actions);
 
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(team),
+      body: JSON.stringify(response),
     };
   } catch (error) {
     console.error(error);

@@ -1,7 +1,8 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, TransactWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClientConfig } from "../../utils/infrastructureConfig.mjs";
-import { userSearchFunction } from "../users/searchUser.mjs";
+import userSearchFunction from "../users/searchUser.mjs";
+import getTeamsFunction from "../teams/getTeams.mjs";
 
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -67,14 +68,21 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
   }
 
   const participatingUserIds = await userSearchFunction({ eventId });
+  const team = await getTeamsFunction([teamId], []);
+  const members = team.members;
 
   try {
     const transactItems = [];
+    const validationErrors = [];
 
     for (const { action, type, newValues } of actions) {
       switch (type) {
         case "teamName":
           if (action === "modify") {
+            if (!newValues.teamName || typeof teamName !== "string" || newValues.teamName.trim().length === 0) {
+              validationErrors.push("Team name is required");
+              return;
+            }
             transactItems.push({
               Update: {
                 TableName: teamsTableName,
@@ -90,7 +98,8 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
           if (action === "add") {
             const alreadyParticipating = participatingUserIds.includes(newValues.userId);
             if (alreadyParticipating) {
-              throw new Error("Unable to add a user who is already participating in the event");
+              validationErrors.push("Unable to add a user who is already participating in the event");
+              return;
             }
 
             transactItems.push({
@@ -127,6 +136,11 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
           }
 
           if (action === "delete") {
+            if (!members.map((member) => member.userId).includes(newValues.userId)) {
+              validationErrors.push("To delete a member they must be a part of the team first");
+              return;
+            }
+
             transactItems.push({
               Delete: {
                 TableName: teamMembersTableName,
@@ -136,6 +150,9 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
           }
           break;
       }
+    }
+    if (validationErrors.length !== 0) {
+      return { actions: "null", validationErrors };
     }
 
     if (transactItems.length === 0) {
