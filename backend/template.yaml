@@ -170,6 +170,7 @@ Resources:
               - !Sub "${EntriesTable.Arn}/index/TeamIdIndex"
               - !GetAtt TeamMembersTable.Arn
               - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
         - Statement:
             Effect: "Allow"
             Action:
@@ -191,6 +192,8 @@ Resources:
       Environment:
         Variables:
           TEAMS_TABLE_NAME: !Ref TeamsTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
 
   getEvents:
     Type: AWS::Serverless::Function
