@@ -150,7 +150,7 @@ Resources:
   updateTeams:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/teams/updateTeams.default
+      Handler: src/handlers/teams/updateTeam.default
       Description: A function to update a team's information
       Policies:
         - Statement:
