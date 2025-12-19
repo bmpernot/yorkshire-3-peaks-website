@@ -11,7 +11,15 @@ const registerTeam = async (event) => {
 
   const claims = event.requestContext.authorizer.jwt.claims;
   const authenticatedUserId = claims.sub;
-  const eventId = event.queryStringParameters.eventId;
+  const queryParams = event.queryStringParameters || {};
+  const { eventId } = queryParams;
+
+  if (!eventId) {
+    return {
+      statusCode: 400,
+      body: `registerTeam requires a filter of eventId`,
+    };
+  }
 
   const [invalidDataReasons, data] = await validateRequest(authenticatedUserId, eventId, event.body);
 

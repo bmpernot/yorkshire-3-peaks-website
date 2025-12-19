@@ -578,13 +578,25 @@ describe("Team functions", () => {
       const event = generateHttpApiEvent({
         method: "POST",
         body: JSON.stringify({ amount: 5000 }),
-        queryStringParameters: { teamId: "", eventId: "", userId: "" },
+        queryStringParameters: { teamId: "1", eventId: "1", userId: "1" },
       });
 
       const result = await paymentIntent(event);
 
       expect(result.body).toEqual("Failed to create payment intent");
       expect(result.statusCode).toEqual(500);
+    });
+
+    it("Should require filters in order to functions", async () => {
+      const event = generateHttpApiEvent({
+        method: "POST",
+        body: JSON.stringify({ amount: 5000 }),
+      });
+
+      const result = await paymentIntent(event);
+
+      expect(result.body).toEqual("teamId, eventId and userId are required");
+      expect(result.statusCode).toEqual(400);
     });
 
     it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "GET", "PATCH", "CONNECT"])(

@@ -8,7 +8,16 @@ const paymentIntent = async (event) => {
     };
   }
 
-  const { teamId, eventId, userId } = event.queryStringParameters;
+  const queryParams = event.queryStringParameters || {};
+  const { teamId, eventId, userId } = queryParams;
+
+  if (!teamId || !eventId || !userId) {
+    return {
+      statusCode: 400,
+      body: "teamId, eventId and userId are required",
+    };
+  }
+
   const body = JSON.parse(event.body);
 
   try {

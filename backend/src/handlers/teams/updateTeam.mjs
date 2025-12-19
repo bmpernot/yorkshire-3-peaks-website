@@ -9,7 +9,7 @@ const updateTeam = async (event) => {
     };
   }
 
-  const queryParams = event.queryStringParameters;
+  const queryParams = event.queryStringParameters || {};
   const claims = event.requestContext.authorizer.jwt.claims;
   const userRole = claims["cognito:groups"] ?? "User";
   const { teamId, eventId } = queryParams;

@@ -8,7 +8,8 @@ const getEventInformation = async (event) => {
     };
   }
 
-  const eventId = event.queryStringParameters.eventId;
+  const queryParams = event.queryStringParameters || {};
+  const { eventId } = queryParams;
 
   if (!eventId) {
     return {
