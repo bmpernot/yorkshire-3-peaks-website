@@ -194,6 +194,8 @@ Resources:
           TEAMS_TABLE_NAME: !Ref TeamsTable
           TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
           ENTRIES_TABLE_NAME: !Ref EntriesTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
+          USERS_TABLE_NAME: !Ref UsersTable
 
   getEvents:
     Type: AWS::Serverless::Function
