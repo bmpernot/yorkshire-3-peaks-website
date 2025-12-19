@@ -46,6 +46,7 @@ function TeamInformation({ team, setTeams, onClose }) {
         if (response.validationErrors) {
           setErrors(response.validationErrors);
           toast.error("Failed to update teams information");
+          return;
         }
         if (deletingTeam) {
           setTeams((teams) => teams.filter((t) => t.teamId !== team.teamId));
