@@ -5,7 +5,7 @@ import { getTeams } from "@/src/lib/backendActions.mjs";
 import { toast } from "react-toastify";
 import Loading from "../common/Loading.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
-import { Typography, Box, Grid2 } from "@mui/material";
+import { Typography, Box, Grid } from "@mui/material";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
 import TeamCard from "./TeamCard.mjs";
 
@@ -46,13 +46,13 @@ function Profile() {
       </Typography>
 
       {teams?.length > 0 ? (
-        <Grid2 container={true} spacing={3} alignItems="stretch">
+        <Grid container={true} spacing={3} alignItems="stretch">
           {teams.map((team) => (
-            <Grid2 key={team.teamId} display="flex">
+            <Grid key={team.teamId} display="flex">
               <TeamCard team={team} setTeams={setTeams} />
-            </Grid2>
+            </Grid>
           ))}
-        </Grid2>
+        </Grid>
       ) : (
         <Typography variant="h5" id="no-teams">
           You are not currently part of any teams.

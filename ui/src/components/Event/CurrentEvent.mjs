@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Typography, Grid2, Box } from "@mui/material";
+import { Typography, Grid, Box } from "@mui/material";
 import EventInformation from "./EventInformation.mjs";
 import EventSignUpForm from "./EventSignUpForm.mjs";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
@@ -114,17 +114,17 @@ function CurrentEvent() {
       {events.length === 0 ? (
         <NoEvents />
       ) : (
-        <Grid2 container={true} spacing={{ xs: 2, sm: 3, md: 4 }} sx={styles.gridPadding}>
-          <Grid2 size={12}>
+        <Grid container={true} spacing={{ xs: 2, sm: 3, md: 4 }} sx={styles.gridPadding}>
+          <Grid size={12}>
             <EventInformation eventInformation={eventInformation} />
-          </Grid2>
-          <Grid2 size={{ xs: 12, lg: 6 }}>
+          </Grid>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <EventSignUpForm eventId={eventInformation.eventId} router={router} isLoggedIn={isLoggedIn} user={user} />
-          </Grid2>
-          <Grid2 size={{ xs: 12, lg: 6 }}>
+          </Grid>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <VolunteeringSignUpForm eventId={eventInformation.eventId} router={router} isLoggedIn={isLoggedIn} />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       )}
     </Box>
   );
