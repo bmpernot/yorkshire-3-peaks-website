@@ -7,9 +7,9 @@ import getTeamsFunction from "../teams/getTeams.mjs";
 const client = new DynamoDBClient(DynamoDBClientConfig);
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-const teamsTableName = process.env.TEAMS_TABLE_NAME;
-const teamMembersTableName = process.env.TEAM_MEMBERS_TABLE_NAME;
-const entriesTableName = process.env.ENTRIES_TABLE_NAME;
+const teamsTableName = process.env.TEAMS_TABLE_NAME || "TeamsTable";
+const teamMembersTableName = process.env.TEAM_MEMBERS_TABLE_NAME || "TeamMembersTable";
+const entriesTableName = process.env.ENTRIES_TABLE_NAME || "EntriesTable";
 
 const updateTeamFunction = async (teamId, eventId, actions) => {
   if (!teamId || !eventId || !Array.isArray(actions) || actions.length === 0) {
