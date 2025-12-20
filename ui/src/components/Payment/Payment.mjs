@@ -1,66 +1,33 @@
 "use client";
 
-import { Typography } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 import { useSearchParams } from "next/navigation";
-import { toast } from "react-toastify";
+import { Typography, Box } from "@mui/material";
 import Loading from "../common/Loading.mjs";
 import { styles } from "@/src/styles/payment.mui.styles.mjs";
-import ErrorCard from "../common/ErrorCard.mjs";
+import CheckoutForm from "./checkoutForm.mjs";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 function Payment() {
   const params = useSearchParams();
   const clientSecret = params.get("clientSecret");
-  const [isLoading, setIsLoading] = useState(true);
-  const [errors, setErrors] = useState([]);
 
-  const loadStripeComponent = useCallback(
-    async (clientSecret) => {
-      try {
-        setIsLoading(true);
-        const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-        const checkoutComponent = await stripe.initEmbeddedCheckout({
-          clientSecret,
-        });
-
-        checkoutComponent.mount("#checkout");
-      } catch (error) {
-        console.error("Failed to load payment component", { cause: error });
-        toast.error("Failed to load payment component");
-        setErrors("Failed to load payment component");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [clientSecret],
-  );
-
-  useEffect(() => {
-    if (!clientSecret) {
-      return;
-    }
-
-    loadStripeComponent();
-  }, [clientSecret]);
-
-  if (isLoading) {
-    return <Loading message={"Loading payment"} />;
+  if (!clientSecret) {
+    return <Loading message="Initializing payment..." />;
   }
 
   return (
-    <>
+    <Box sx={styles.paymentBox}>
       <Typography variant="h2" sx={styles.mainTitle}>
         Payment
       </Typography>
-      {errors.length > 0 ? (
-        errors.map((error, index) => {
-          return <ErrorCard error={error} index={index} />;
-        })
-      ) : (
-        <div id="checkout" />
-      )}
-    </>
+
+      <Elements stripe={stripePromise} options={{ clientSecret }}>
+        <CheckoutForm />
+      </Elements>
+    </Box>
   );
 }
 
