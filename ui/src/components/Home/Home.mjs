@@ -11,7 +11,7 @@ function Home() {
           <p className="hero-subtitle">Conquer Pen-y-ghent, Whernside & Ingleborough in one epic day</p>
           <div className="hero-buttons">
             <Button href="/event/current" variant="contained" size="large">
-              Register Now
+              Register Team Now
             </Button>
           </div>
         </div>
@@ -133,7 +133,7 @@ function Home() {
           </div>
 
           <Button href="/event/current" variant="contained" size="large">
-            Register Now
+            Register Team Now
           </Button>
         </div>
       </section>
