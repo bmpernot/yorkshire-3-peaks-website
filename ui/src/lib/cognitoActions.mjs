@@ -58,7 +58,8 @@ export async function handleSendEmailVerificationCode(email) {
 export async function handleConfirmSignUp(router, email, code, updateUser) {
   let confirmSignUpResponse;
   try {
-    confirmSignUpResponse = await confirmSignUp({ username: email, confirmationCode: code });
+    const formattedCode = code.replaceAll(" ", "");
+    confirmSignUpResponse = await confirmSignUp({ username: email, confirmationCode: formattedCode });
   } catch (error) {
     throw new Error("An error has occurred when trying to confirm your account", { cause: error });
   }
