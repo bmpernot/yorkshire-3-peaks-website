@@ -155,6 +155,32 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
           break;
       }
     }
+
+    const numberOfCurrentMembers = members.length;
+    const membersAdded = actions.filter((a) => a.type === "member" && a.action === "add").length;
+
+    const membersDeleted = actions.filter((a) => a.type === "member" && a.action === "delete").length;
+
+    const numberOfMembers = numberOfCurrentMembers + membersAdded - membersDeleted;
+
+    if (numberOfCurrentMembers !== numberOfMembers) {
+      const price = team.cost / numberOfCurrentMembers;
+      const newCost = Math.round(price * numberOfMembers);
+      transactItems.push({
+        Update: {
+          TableName: entriesTableName,
+          Key: { teamId, eventId },
+          UpdateExpression: "SET #cost = :cost",
+          ExpressionAttributeNames: {
+            "#cost": "cost",
+          },
+          ExpressionAttributeValues: {
+            ":cost": newCost,
+          },
+        },
+      });
+    }
+
     if (validationErrors.length !== 0) {
       return { action: "null", validationErrors };
     }
