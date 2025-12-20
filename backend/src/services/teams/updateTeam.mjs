@@ -160,7 +160,7 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
     }
 
     if (transactItems.length === 0) {
-      return { action: "null", teamId, eventId };
+      return { action: "null", validationErrors: ["No items to update"] };
     }
 
     await ddbDocClient.send(new TransactWriteCommand({ TransactItems: transactItems }));

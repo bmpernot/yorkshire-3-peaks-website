@@ -45,6 +45,14 @@ const updateTeam = async (event) => {
 
     const response = await updateTeamFunction(teamId, eventId, actions);
 
+    if (response.action == "null") {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(response),
+      };
+    }
+
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },

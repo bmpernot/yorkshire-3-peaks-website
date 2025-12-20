@@ -6,7 +6,7 @@ function generateActions({ team, updatedTeam, deletingTeam }) {
   }
 
   if (team.teamName !== updatedTeam.teamName) {
-    actions.push({ action: "modify", type: "teamName", newValues: updatedTeam.teamName });
+    actions.push({ action: "modify", type: "teamName", newValues: { teamName: updatedTeam.teamName } });
   }
 
   team.members.forEach((member) => {

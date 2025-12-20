@@ -44,8 +44,9 @@ function TeamInformation({ team, setTeams, onClose }) {
       if (actions.length > 0) {
         const response = await updateTeam({ teamId: team.teamId, eventId: team.eventId, actions });
         if (response.validationErrors) {
-          setErrors(response.validationErrors);
+          console.error("Failed to update teams information", { cause: response.validationErrors });
           toast.error("Failed to update teams information");
+          setErrors(response.validationErrors);
           return;
         }
         if (deletingTeam) {
