@@ -26,7 +26,7 @@ function UserDetailsForm({ user }) {
     lname: user.lastName,
     number: user.number,
     iceNumber: user.iceNumber,
-    notify: Boolean(user.notify),
+    notify: user.notify,
   });
 
   const handleInputChange = (e, value) => {
