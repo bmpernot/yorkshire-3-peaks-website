@@ -12,7 +12,7 @@ const cypressPluginRecommendedRules = cypressPlugin.configs.recommended;
 const eslintJSRecommendedRules = js.configs.recommended.rules;
 const prettierRecommendedRules = prettier.rules;
 const jestRecommendedRules = jest.configs["flat/recommended"];
-const nextRecommendedRules = next.rules;
+const nextRecommendedRules = next.configs["flat/recommended"];
 const reactRecommendedRules = react.configs.flat.recommended.rules;
 
 export default [
