@@ -103,7 +103,7 @@ export default class resultsPage {
   }
   removeMember({ teamMemberIndex }) {
     cy.get(`[id=team-member-${teamMemberIndex}]`).click();
-    cy.get(`[data-testid="CloseIcon"] :eq(${teamMemberIndex})`).click();
+    cy.get(`[id=team-member-${teamMemberIndex}]`).siblings().eq(0).click();
     return this;
   }
   saveTeamChanges() {
