@@ -70,7 +70,7 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
   const participatingUserIds = await userSearchFunction({ eventId });
   const teams = await getTeamsFunction([teamId], []);
   const team = teams[0];
-  const members = team[0].members;
+  const members = team.members;
 
   try {
     const transactItems = [];

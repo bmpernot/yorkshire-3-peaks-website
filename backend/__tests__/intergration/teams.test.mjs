@@ -40,7 +40,7 @@ describe("Team functions", () => {
           ],
         })
         .resolvesOnce({
-          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 200, paid: 100 }],
         })
         .resolvesOnce({
           Items: [{ teamId: "2", eventId: "2", volunteer: false, cost: 120, paid: 80 }],
@@ -80,10 +80,10 @@ describe("Team functions", () => {
       expect(response.statusCode).toEqual(200);
       expect(JSON.parse(response.body)).toEqual([
         {
-          cost: 0,
+          cost: 200,
           endDate: "2024-06-08T12:00:00.000Z",
           eventId: "1",
-          paid: 0,
+          paid: 100,
           startDate: "2024-06-06T12:00:00.000Z",
           teamId: "1",
           members: [
@@ -166,7 +166,7 @@ describe("Team functions", () => {
             ],
           })
           .resolvesOnce({
-            Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+            Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 200, paid: 100 }],
           })
           .resolvesOnce({
             Items: [{ teamId: "2", eventId: "2", volunteer: false, cost: 120, paid: 80 }],
@@ -199,10 +199,10 @@ describe("Team functions", () => {
         expect(response.statusCode).toEqual(200);
         expect(JSON.parse(response.body)).toEqual([
           {
-            cost: 0,
+            cost: 200,
             endDate: "2024-06-08T12:00:00.000Z",
             eventId: "1",
-            paid: 0,
+            paid: 100,
             startDate: "2024-06-06T12:00:00.000Z",
             teamId: "1",
             members: [
@@ -310,7 +310,7 @@ describe("Team functions", () => {
           ],
         })
         .resolvesOnce({
-          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 200, paid: 100 }],
         });
 
       dynamoDBMock
@@ -412,7 +412,7 @@ describe("Team functions", () => {
             ],
           })
           .resolvesOnce({
-            Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+            Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 200, paid: 100 }],
           });
 
         dynamoDBMock
@@ -483,7 +483,7 @@ describe("Team functions", () => {
           ],
         })
         .resolvesOnce({
-          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 0, paid: 0 }],
+          Items: [{ teamId: "1", eventId: "1", volunteer: true, cost: 200, paid: 100 }],
         });
 
       dynamoDBMock
@@ -532,7 +532,7 @@ describe("Team functions", () => {
       });
       const response = await updateTeam(event);
 
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(400);
       expect(JSON.parse(response.body)).toEqual({
         action: "null",
         validationErrors: [
