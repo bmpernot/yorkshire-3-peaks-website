@@ -59,8 +59,8 @@ describe("Team functions", () => {
         .resolvesOnce({
           Responses: {
             EventsTable: [
-              { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
-              { eventId: "2", startDate: new Date("2025-06-06 12:00"), endDate: new Date("2025-06-08 12:00") },
+              { eventId: "1", startDate: new Date("2024-06-06T12:00:00Z"), endDate: new Date("2024-06-08T12:00:00Z") },
+              { eventId: "2", startDate: new Date("2025-06-06T12:00:00Z"), endDate: new Date("2025-06-08T12:00:00Z") },
             ],
           },
         })
@@ -185,8 +185,16 @@ describe("Team functions", () => {
           .resolvesOnce({
             Responses: {
               EventsTable: [
-                { eventId: "1", startDate: new Date("2024-06-06 12:00"), endDate: new Date("2024-06-08 12:00") },
-                { eventId: "2", startDate: new Date("2025-06-06 12:00"), endDate: new Date("2025-06-08 12:00") },
+                {
+                  eventId: "1",
+                  startDate: new Date("2024-06-06T12:00:00Z"),
+                  endDate: new Date("2024-06-08T12:00:00Z"),
+                },
+                {
+                  eventId: "2",
+                  startDate: new Date("2025-06-06T12:00:00Z"),
+                  endDate: new Date("2025-06-08T12:00:00Z"),
+                },
               ],
             },
           });
