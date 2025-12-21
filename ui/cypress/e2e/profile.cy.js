@@ -120,19 +120,19 @@ describe("Profile", () => {
               {
                 action: "modify",
                 type: "teamName",
-                newValue: "new team name",
+                newValues: { teamName: "new team name" },
               },
               {
                 action: "delete",
                 type: "member",
-                newValue: {
+                newValues: {
                   userId: "1",
                 },
               },
               {
                 action: "modify",
                 type: "member",
-                newValue: {
+                newValues: {
                   userId: "0",
                   additionalRequirements: "additional requirements",
                   willingToVolunteer: true,
@@ -141,7 +141,7 @@ describe("Profile", () => {
               {
                 action: "add",
                 type: "member",
-                newValue: {
+                newValues: {
                   userId: "12345678-1234-1234-1234-123456789003",
                   additionalRequirements: "additional requirements",
                   willingToVolunteer: true,
@@ -352,7 +352,7 @@ describe("Profile", () => {
           .waitFor(["@getTeams"])
           .openTeam(0)
           .pay(40)
-          .urlShouldBe(`payment?eventId=${events[0].eventId}&teamId=0&clientSecret=test_client_secret_1`);
+          .urlShouldBe(`payment?clientSecret=test_client_secret_1`);
       });
 
       it("Should not be able to pay in a non-integer", () => {
