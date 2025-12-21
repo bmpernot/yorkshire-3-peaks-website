@@ -106,7 +106,7 @@ async function handleSubmitPayment({ router, teamId, eventId, paymentAmount, set
     setIsLoading("Creating Payment");
     const paymentAmountInPenceToNearestPound = Math.round(paymentAmount) * 100;
     const response = await paymentIntent({ teamId, eventId, userId, amount: paymentAmountInPenceToNearestPound });
-    router.push(`/payment?eventId=${eventId}&teamId=${teamId}&clientSecret=${response.clientSecret}`);
+    router.push(`/payment?clientSecret=${response.clientSecret}`);
   } catch (error) {
     console.error("Failed to initiate payment", { cause: error });
     toast.error("Failed to initiate payment");
