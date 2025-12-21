@@ -1,5 +1,10 @@
 import Payment from "@/src/components/Payment/Payment.mjs";
+import { Suspense } from "react";
 
 export default function PaymentPage() {
-  return <Payment />;
+  return (
+    <Suspense>
+      <Payment />;
+    </Suspense>
+  );
 }

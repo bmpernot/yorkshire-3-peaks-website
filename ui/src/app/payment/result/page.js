@@ -1,5 +1,10 @@
 import PaymentResult from "@/src/components/Payment/PaymentResult.mjs";
+import { Suspense } from "react";
 
 export default function PaymentSuccessPage() {
-  return <PaymentResult />;
+  return (
+    <Suspense>
+      <PaymentResult />;
+    </Suspense>
+  );
 }
