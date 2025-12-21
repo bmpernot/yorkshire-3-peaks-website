@@ -176,8 +176,8 @@ function UserDetailsForm({ user }) {
             id="updateDetails"
             fullWidth
             variant="contained"
-            disabled={isLoading}
-            loading={String(isLoading)}
+            loading={isLoading}
+            loadingPosition="end"
           >
             Update details
           </Button>

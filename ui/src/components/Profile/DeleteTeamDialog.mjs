@@ -33,7 +33,14 @@ function DeleteTeamDialog({ open, onClose, onConfirm, isLoading }) {
         <Button variant="outlined" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="contained" color="error" onClick={onConfirm} loading={isLoading} id="confirm-delete-team">
+        <Button
+          variant="contained"
+          color="error"
+          onClick={onConfirm}
+          loading={isLoading}
+          loadingPosition="end"
+          id="confirm-delete-team"
+        >
           Delete Team
         </Button>
       </DialogActions>

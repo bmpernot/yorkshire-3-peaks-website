@@ -158,7 +158,8 @@ function TeamInformation({ team, setTeams, onClose }) {
               onClick={() => setDeleteOpen(true)}
               variant="outlined"
               color="error"
-              disabled={isLoading}
+              loading={isLoading}
+              loadingPosition="end"
               id="delete-team"
             >
               Delete Team

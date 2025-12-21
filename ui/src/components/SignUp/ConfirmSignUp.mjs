@@ -114,7 +114,7 @@ function ConfirmSignUp() {
               sx={styles.signIn.codeInput}
             />
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" disabled={isLoadingSubmit}>
+          <Button type="submit" fullWidth variant="contained" loading={isLoadingSubmit} loadingPosition="end">
             Submit
           </Button>
           <Button
@@ -123,7 +123,8 @@ function ConfirmSignUp() {
             onClick={() => {
               handleResendCode();
             }}
-            disabled={isLoadingResendCode}
+            loading={isLoadingResendCode}
+            loadingPosition="end"
             id="resendCode"
           >
             Resend code

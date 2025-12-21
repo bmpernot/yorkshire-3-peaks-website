@@ -75,7 +75,9 @@ function Payment({ teamId, eventId, cost, paid }) {
           variant="contained"
           size="medium"
           sx={styles.payButton}
-          disabled={isInvalidAmount || isLoading}
+          loading={isLoading}
+          loadingPosition="end"
+          disabled={isInvalidAmount}
           onClick={() =>
             handleSubmitPayment({
               router,

@@ -80,7 +80,14 @@ function DeleteAccountForm({ email, updateUser, userId }) {
               sx={styles.formTextField}
             />
           </FormControl>
-          <Button type="submit" id="deleteAccount" fullWidth variant="contained" disabled={isLoading}>
+          <Button
+            type="submit"
+            id="deleteAccount"
+            fullWidth
+            variant="contained"
+            loading={isLoading}
+            loadingPosition="end"
+          >
             Delete Account
           </Button>
         </Box>

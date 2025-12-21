@@ -92,7 +92,7 @@ function ForgotPassword({ open, setOpen, router }) {
         >
           Cancel
         </Button>
-        <Button variant="contained" type="submit" id="resetPassword" disabled={isLoading}>
+        <Button variant="contained" type="submit" id="resetPassword" loading={isLoading} loadingPosition="end">
           Reset
         </Button>
       </DialogActions>

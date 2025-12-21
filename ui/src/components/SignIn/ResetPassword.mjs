@@ -150,7 +150,7 @@ function ResetPassword() {
               sx={styles.formTextField}
             />
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" disabled={isLoadingSubmit}>
+          <Button type="submit" fullWidth variant="contained" loading={isLoadingSubmit} loadingPosition="end">
             Reset Password
           </Button>
           <Button
@@ -159,7 +159,8 @@ function ResetPassword() {
             onClick={() => {
               handleResendCode();
             }}
-            disabled={isLoadingResendCode}
+            loading={isLoadingResendCode}
+            loadingPosition="end"
             id="resendCode"
           >
             Resend code

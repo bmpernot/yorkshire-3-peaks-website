@@ -240,7 +240,7 @@ function SignUp() {
             control={<Checkbox value={true} id="notify" color="primary" name="notify" />}
             label="I want to receive updates about current and future events."
           />
-          <Button type="submit" fullWidth variant="contained" disabled={isLoading}>
+          <Button type="submit" fullWidth variant="contained" loading={isLoading} loadingPosition="end">
             Sign up
           </Button>
           <Typography sx={styles.existingAccountTitle}>
