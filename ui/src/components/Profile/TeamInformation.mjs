@@ -43,6 +43,7 @@ function TeamInformation({ team, setTeams, onClose }) {
       const actions = generateActions({ team, updatedTeam, deletingTeam });
       if (actions.length > 0) {
         const response = await updateTeam({ teamId: team.teamId, eventId: team.eventId, actions });
+        // TODO - make an assessment on the usage and price on call to see if we can return the updated team back instead of modifying state locally
         if (response.validationErrors) {
           console.error("Failed to update teams information", { cause: response.validationErrors });
           toast.error("Failed to update teams information");
