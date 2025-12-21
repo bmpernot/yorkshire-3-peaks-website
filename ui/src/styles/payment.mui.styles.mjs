@@ -8,6 +8,10 @@ const paymentBox = {
   alignItems: "center",
   px: 2,
 };
+const paymentResultsBox = {
+  ...paymentBox,
+  textAlign: "center",
+};
 const checkoutFormBox = {
   width: "100%",
   maxWidth: 480,
@@ -16,5 +20,17 @@ const checkoutFormBox = {
   flexDirection: "column",
   gap: 3,
 };
+const profileButton = { px: 4, py: 1.5 };
+const marginBottom4 = { mb: 4 };
+const marginYAxis4 = { my: 4 };
 
-export const styles = { mainTitle, button, paymentBox, checkoutFormBox };
+export const styles = {
+  mainTitle,
+  button,
+  paymentBox,
+  checkoutFormBox,
+  profileButton,
+  marginBottom4,
+  marginYAxis4,
+  paymentResultsBox,
+};

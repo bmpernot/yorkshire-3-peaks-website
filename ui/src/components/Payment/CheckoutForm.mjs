@@ -25,7 +25,7 @@ function CheckoutForm() {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/payment/success`,
+        return_url: `${window.location.origin}/payment/result`,
       },
     });
 
@@ -45,8 +45,9 @@ function CheckoutForm() {
         loadingPosition="end"
         id="save-team-changes"
         sx={styles.button}
+        type="submit"
       >
-        {isProcessing ? "Processing..." : "Pay now"}
+        Pay now
       </Button>
     </Box>
   );

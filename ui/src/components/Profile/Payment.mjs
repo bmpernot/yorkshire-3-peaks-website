@@ -110,7 +110,6 @@ async function handleSubmitPayment({ router, teamId, eventId, paymentAmount, set
   } catch (error) {
     console.error("Failed to initiate payment", { cause: error });
     toast.error("Failed to initiate payment");
-  } finally {
     setIsLoading(false);
   }
 }

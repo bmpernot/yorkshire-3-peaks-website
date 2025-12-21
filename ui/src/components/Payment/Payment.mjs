@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Typography, Box } from "@mui/material";
 import Loading from "../common/Loading.mjs";
 import { styles } from "@/src/styles/payment.mui.styles.mjs";
-import CheckoutForm from "./checkoutForm.mjs";
+import CheckoutForm from "./CheckoutForm.mjs";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
