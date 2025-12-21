@@ -53,7 +53,17 @@ function TeamInformation({ team, setTeams, onClose }) {
           setTeams((teams) => teams.filter((t) => t.teamId !== team.teamId));
           toast.success("Team Deleted");
         } else {
-          setTeams((teams) => teams.map((t) => (t.teamId === team.teamId ? updatedTeam : t)));
+          const numberOfCurrentMembers = team.members.length;
+          const numberOfMembers = updatedTeam.members.length;
+
+          let cost = team.cost;
+
+          if (numberOfCurrentMembers !== numberOfMembers) {
+            const price = team.cost / numberOfCurrentMembers;
+            cost = Math.round(price * numberOfMembers);
+          }
+
+          setTeams((teams) => teams.map((t) => (t.teamId === team.teamId ? { ...updatedTeam, cost } : t)));
           toast.success("Team Updated");
         }
       } else {
@@ -154,14 +164,7 @@ function TeamInformation({ team, setTeams, onClose }) {
             >
               Save Team Changes
             </Button>
-            <Button
-              onClick={() => setDeleteOpen(true)}
-              variant="outlined"
-              color="error"
-              loading={isLoading}
-              loadingPosition="end"
-              id="delete-team"
-            >
+            <Button onClick={() => setDeleteOpen(true)} variant="outlined" color="error" id="delete-team">
               Delete Team
             </Button>
           </>
