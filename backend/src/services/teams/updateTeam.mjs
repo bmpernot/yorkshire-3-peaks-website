@@ -68,7 +68,8 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
   }
 
   const participatingUserIds = await userSearchFunction({ eventId });
-  const team = await getTeamsFunction([teamId], []);
+  const teams = await getTeamsFunction([teamId], []);
+  const team = teams[0];
   const members = team[0].members;
 
   try {
@@ -158,9 +159,7 @@ const updateTeamFunction = async (teamId, eventId, actions) => {
 
     const numberOfCurrentMembers = members.length;
     const membersAdded = actions.filter((a) => a.type === "member" && a.action === "add").length;
-
     const membersDeleted = actions.filter((a) => a.type === "member" && a.action === "delete").length;
-
     const numberOfMembers = numberOfCurrentMembers + membersAdded - membersDeleted;
 
     if (numberOfCurrentMembers !== numberOfMembers) {
