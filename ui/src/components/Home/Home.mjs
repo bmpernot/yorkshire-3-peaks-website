@@ -27,7 +27,7 @@ function Home() {
             <div className="details-text">
               <h3 className="details-heading">The Challenge</h3>
               <p className="details-description">
-                Take on Yorkshire's three highest peaks in a single day: Pen-y-ghent (694m), Whernside (736m), and
+                Take on Yorkshire&apos;s three highest peaks in a single day: Pen-y-ghent (694m), Whernside (736m), and
                 Ingleborough (723m). This 24-mile circular route through the stunning Yorkshire Dales is both
                 challenging and rewarding.
               </p>
@@ -52,7 +52,7 @@ function Home() {
             </div>
             <div className="included-section">
               <div className="included-card">
-                <h4 className="included-title">What's Included</h4>
+                <h4 className="included-title">What&apos;s Included</h4>
                 <div className="included-grid">
                   <div className="included-item">
                     <span className="emoji">🏕️</span>
@@ -92,7 +92,7 @@ function Home() {
       {/* Charities Carousel */}
       <section className="charities-section">
         <div className="charities-container">
-          <h2 className="section-title">Charities We've Supported</h2>
+          <h2 className="section-title">Charities We&apos;ve Supported</h2>
           <p className="charities-subtitle">Over £50,000 raised for amazing causes across Yorkshire and beyond</p>
 
           <div className="carousel-container">
@@ -112,7 +112,7 @@ function Home() {
         <div className="cta-container">
           <h2 className="cta-title">Ready for the Challenge?</h2>
           <p className="cta-subtitle">
-            Join thousands of adventurers taking on Yorkshire's most iconic peaks while raising money for charity
+            Join thousands of adventurers taking on Yorkshire&apos;s most iconic peaks while raising money for charity
           </p>
 
           <div className="stats-card">

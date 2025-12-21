@@ -35,7 +35,6 @@ export default [
       ...eslintJSRecommendedRules,
       ...prettierRecommendedRules,
       "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
-      "react/jsx-uses-react": "error",
       "react/jsx-uses-vars": "error",
       curly: "error",
       "prefer-const": "error",
@@ -75,6 +74,15 @@ export default [
     rules: {
       ...nextRecommendedRules,
       ...reactRecommendedRules,
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
+      // TODO - remove this
+      "react/prop-types": "warn",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
   },
 ];

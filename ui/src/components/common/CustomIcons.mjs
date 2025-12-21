@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Typography } from "@mui/material";
 import { Landscape as LandscapeIcon } from "@mui/icons-material";
 import { styles } from "../../styles/customIcons.mui.styles.mjs";

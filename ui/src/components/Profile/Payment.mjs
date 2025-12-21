@@ -96,7 +96,7 @@ function Payment({ teamId, eventId, cost, paid }) {
 
       {remainingCost <= 0 && (
         <Typography sx={styles.successText}>
-          You've already paid the full amount! However you are welcome to donate more.
+          You&apos;ve already paid the full amount! However you are welcome to donate more.
         </Typography>
       )}
     </Paper>

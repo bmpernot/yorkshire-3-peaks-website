@@ -46,7 +46,7 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
           <Box component="form" onSubmit={handleSubmit}>
             {errors.length > 0
               ? errors.map((error, index) => {
-                  return <ErrorCard error={error} index={index} />;
+                  return <ErrorCard error={error} index={index} key={`error-card-${index}`} />;
                 })
               : null}
             <FormControl fullWidth sx={styles.form}>
