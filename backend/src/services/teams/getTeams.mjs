@@ -96,7 +96,7 @@ const getTeamsFunction = async (teamIds, userRole) => {
     } else {
       const rawUsers = await getUsersFunction(
         "sub,given_name,family_name,email,ice_number,phone_number",
-        uniqueUserIds,
+        uniqueUserIds.map((userId) => userId.userId),
       );
 
       users = rawUsers.map((user) => ({
