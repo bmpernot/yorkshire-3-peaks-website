@@ -11,7 +11,7 @@ function Loading({ message, pulsing }) {
         <div className="ball ball-third" />
       </div>
       {message ? (
-        <p className="text--centre margin-top" style={{ paddingBottom: "63vh" }}>
+        <p className="text--centre margin-top" style={{ paddingBottom: "70vh" }}>
           {message}
         </p>
       ) : null}

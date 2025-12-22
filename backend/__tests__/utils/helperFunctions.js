@@ -87,7 +87,7 @@ function generateHttpApiEvent({
   body,
 }) {
   const event = {
-    queryStringParameters: queryStringParameters || {},
+    queryStringParameters: queryStringParameters,
     requestContext: {
       http: { method },
     },

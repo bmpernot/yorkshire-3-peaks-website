@@ -11,6 +11,7 @@ const RESTRICTED_PAGES = {
   "/event/register": USER_ROLES.USER,
   "/organiser": USER_ROLES.ORGANISER,
   "/admin": USER_ROLES.ADMIN,
+  "/payment": USER_ROLES.USER,
 };
 
 export { USER_ROLES, USER_ROLES_IN_ORDER_OF_PRECEDENCE, RESTRICTED_PAGES };

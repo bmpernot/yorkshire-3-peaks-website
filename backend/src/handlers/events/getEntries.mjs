@@ -8,14 +8,17 @@ const getEntries = async (event) => {
     };
   }
 
-  if (!event.queryStringParameters.eventId) {
+  const queryParams = event.queryStringParameters || {};
+  const { eventId } = queryParams;
+
+  if (!eventId) {
     return {
       statusCode: 400,
       body: `getEntries requires a filter of eventId`,
     };
   }
 
-  if (event.queryStringParameters.eventId.split(",").length > 1) {
+  if (eventId.split(",").length > 1) {
     return {
       statusCode: 400,
       body: `getEntries only accepts one eventId at a time`,
@@ -23,8 +26,6 @@ const getEntries = async (event) => {
   }
 
   try {
-    const eventId = event.queryStringParameters.eventId;
-
     const entries = await getEntriesFunction(eventId);
 
     return {

@@ -113,13 +113,25 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/teams/getTeams.default
-      Description: A function to grab teams' information
+      Description: A function to get teams' information
       Policies:
         - Statement:
             Effect: "Allow"
             Action:
               - "dynamodb:BatchGetItem"
-            Resource: !GetAtt TeamsTable.Arn
+            Resource:
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt EventsTable.Arn
+              - !GetAtt UsersTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !Sub "${EntriesTable.Arn}/index/TeamIdIndex"
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -129,7 +141,61 @@ Resources:
             ApiId: !Ref HttpApiGateway
       Environment:
         Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
           TEAMS_TABLE_NAME: !Ref TeamsTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
+          USERS_TABLE_NAME: !Ref UsersTable
+
+  updateTeams:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/updateTeam.default
+      Description: A function to update a team's information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:BatchGetItem"
+            Resource:
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt EventsTable.Arn
+              - !GetAtt UsersTable.Arn
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Query"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !Sub "${EntriesTable.Arn}/index/TeamIdIndex"
+              - !GetAtt TeamMembersTable.Arn
+              - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
+              - !Sub "${TeamMembersTable.Arn}/index/EventIdIndex"
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:TransactWriteItems"
+              - "dynamodb:PutItem"
+              - "dynamodb:UpdateItem"
+              - "dynamodb:DeleteItem"
+            Resource:
+              - !GetAtt EntriesTable.Arn
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt TeamMembersTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams
+            Method: PATCH
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          TEAMS_TABLE_NAME: !Ref TeamsTable
+          TEAM_MEMBERS_TABLE_NAME: !Ref TeamMembersTable
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          EVENTS_TABLE_NAME: !Ref EventsTable
+          USERS_TABLE_NAME: !Ref UsersTable
 
   getEvents:
     Type: AWS::Serverless::Function
@@ -293,6 +359,48 @@ Resources:
           TEAMS_TABLE_NAME: !Ref TeamsTable
           EVENTS_TABLE_NAME: !Ref EventsTable
 
+  paymentIntent:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/paymentIntent.default
+      Description: A function to update a team's information
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams/paymentIntent
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+
+  paymentSucceeded:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/teams/paymentSucceeded.default
+      Description: A function to update a team's information
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:UpdateItem"
+            Resource: !GetAtt EntriesTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /teams/paymentSucceeded
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+            Auth:
+              Authorizer: NONE
+      Environment:
+        Variables:
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+          STRIPE_SECRET_KEY: !Ref StripeSecretKey
+          STRIPE_WEBHOOK_SECRET_KEY: !Ref StripeWebhookSecretKey
+
   ##### API Resources #####
 
   ##### DB Resources #####
@@ -414,12 +522,10 @@ Resources:
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: false
       EmailConfiguration:
-        SourceArn: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/yorkshirepeaks@gmail.com
-        # manually verified the email via AWS console so we don't have the ARN reference
-        # TODO - create a business email so that it is authed by DKIM so less risk of going into the spam folder - NEO mail
+        SourceArn: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/yorkshirepeaks.co.uk
         ReplyToEmailAddress: yorkshirepeaks@gmail.com
         EmailSendingAccount: DEVELOPER
-        From: The Yorkshire 3 Peaks Team <yorkshirepeaks@gmail.com>
+        From: The Yorkshire 3 Peaks Team <noreply@yorkshirepeaks.co.uk>
       UsernameAttributes:
         - email
       AutoVerifiedAttributes:
@@ -427,19 +533,35 @@ Resources:
       VerificationMessageTemplate:
         DefaultEmailOption: CONFIRM_WITH_CODE
         EmailMessage: |
-          Hello,
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8" />
+              <title>Verification Code</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+              <p>Hello,</p>
 
-          Your Yorkshire Three Peaks verification code is:
+              <p>Your <strong>Yorkshire Three Peaks</strong> verification code is:</p>
 
-          {####}
+              <p style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">
+                {####}
+              </p>
 
-          Enter this code in the app or website to continue.
+              <p>
+                Enter this code in the website to continue.
+              </p>
 
-          If you did not request this code, you can safely ignore this message.
+              <p>
+                If you did not request this code, you can safely ignore this email.
+              </p>
 
-          Thank you,
-
-          The Yorkshire Three Peaks Team
+              <p>
+                Thank you,<br />
+                <strong>The Yorkshire Three Peaks Team</strong>
+              </p>
+            </body>
+          </html>
         EmailSubject: Yorkshire 3 Peaks - Your Verification Code
       UserAttributeUpdateSettings:
         AttributesRequireVerificationBeforeUpdate:
@@ -608,4 +730,15 @@ Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod"
     Value: "https://api.yorkshirepeaks.co.uk/"
+
 ##### API Gateway #####
+
+##### Parameters #####
+Parameters:
+  StripeSecretKey:
+    Type: String
+    NoEcho: true
+  StripeWebhookSecretKey:
+    Type: String
+    NoEcho: true
+##### Parameters #####

@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography, Grid2, Box } from "@mui/material";
+import { Typography, Grid, Box } from "@mui/material";
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
@@ -16,28 +16,28 @@ function EventInformation({ eventInformation }) {
           Event Overview
         </Typography>
 
-        <Grid2 container spacing={{ xs: 3, sm: 4 }}>
-          <Grid2 size={{ xs: 12, sm: 6 }} id="walkers-needed-info">
+        <Grid container spacing={{ xs: 3, sm: 4 }}>
+          <Grid size={{ xs: 12, sm: 6 }} id="walkers-needed-info">
             <CustomPieChart
               title="Walkers Needed"
               required={eventInformation.requiredWalkers}
               current={eventInformation.currentWalkers}
             />
-          </Grid2>
+          </Grid>
 
-          <Grid2 size={{ xs: 12, sm: 6 }} id="volunteers-needed-info">
+          <Grid size={{ xs: 12, sm: 6 }} id="volunteers-needed-info">
             <CustomPieChart
               title="Volunteers Needed"
               required={eventInformation.requiredVolunteers}
               current={eventInformation.currentVolunteers}
             />
-          </Grid2>
+          </Grid>
 
-          <Grid2 size={{ xs: 12, sm: 6 }} id="money-raised-info">
+          <Grid size={{ xs: 12, sm: 6 }} id="money-raised-info">
             <InformationBlock title={"Money Raised"} value={`£${eventInformation.moneyRaised}`} />
-          </Grid2>
+          </Grid>
 
-          <Grid2 size={{ xs: 12, sm: 6 }} id="event-date-info">
+          <Grid size={{ xs: 12, sm: 6 }} id="event-date-info">
             <InformationBlock
               title={"Event Date"}
               value={`${eventStartDate.getDate()} - ${eventEndDate.toLocaleDateString("en-GB", {
@@ -46,8 +46,8 @@ function EventInformation({ eventInformation }) {
                 year: "numeric",
               })}`}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </StyledCard>
     </SignUpContainer>
   );

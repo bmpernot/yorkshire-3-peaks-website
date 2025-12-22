@@ -118,6 +118,12 @@ const noEventsBody = {
   fontSize: { xs: "0.875rem", sm: "1rem" },
   lineHeight: 1.6,
 };
+const divider = { my: 3 };
+const area = {
+  maxWidth: 1100,
+  px: 2,
+  mt: 1,
+};
 
 export const styles = {
   mainTitle,
@@ -145,4 +151,6 @@ export const styles = {
   noEventsBox,
   noEventsTitle,
   noEventsBody,
+  divider,
+  area,
 };

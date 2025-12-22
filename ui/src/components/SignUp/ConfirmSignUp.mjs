@@ -89,9 +89,6 @@ function ConfirmSignUp() {
         <Typography component="h1" variant="h4" sx={styles.signIn.title}>
           Confirm Account
         </Typography>
-        <Typography component="p" variant="p">
-          Check your spam folder
-        </Typography>
         {submissionError ? <ErrorCard error={submissionError} /> : null}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={styles.signIn.form}>
           <FormControl>
@@ -114,7 +111,7 @@ function ConfirmSignUp() {
               sx={styles.signIn.codeInput}
             />
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" disabled={isLoadingSubmit}>
+          <Button type="submit" fullWidth variant="contained" loading={isLoadingSubmit} loadingPosition="end">
             Submit
           </Button>
           <Button
@@ -123,7 +120,8 @@ function ConfirmSignUp() {
             onClick={() => {
               handleResendCode();
             }}
-            disabled={isLoadingResendCode}
+            loading={isLoadingResendCode}
+            loadingPosition="end"
             id="resendCode"
           >
             Resend code

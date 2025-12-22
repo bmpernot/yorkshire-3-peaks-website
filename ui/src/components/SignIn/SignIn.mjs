@@ -104,7 +104,7 @@ function SignIn() {
             />
           </FormControl>
           <ForgotPassword open={isForgotPasswordModelOpen} setOpen={setIsForgotPasswordModelOpen} router={router} />
-          <Button type="submit" fullWidth variant="contained" disabled={isLoading}>
+          <Button type="submit" fullWidth variant="contained" loading={isLoading} loadingPosition="end">
             Sign in
           </Button>
           <Typography sx={styles.signIn.signupTitle}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Grid2 } from "@mui/material";
+import { Grid } from "@mui/material";
 import { StyledCard, StyledContainer } from "../common/CustomComponents.mjs";
 import { LogoTitle } from "../common/CustomIcons.mjs";
 import { useUser } from "@/src/utils/userContext";
@@ -17,7 +17,7 @@ function Account() {
   }
 
   return (
-    <Grid2
+    <Grid
       container
       sx={{
         display: "flex",
@@ -25,23 +25,23 @@ function Account() {
         paddingBottom: "32px",
       }}
     >
-      <Grid2 size={12}>
+      <Grid size={12}>
         <StyledContainer direction="column">
           <StyledCard variant="outlined" sx={{ maxWidth: "none" }}>
             <LogoTitle />
           </StyledCard>
         </StyledContainer>
-      </Grid2>
-      <Grid2 size={{ xs: 12, md: 4 }}>
+      </Grid>
+      <Grid size={{ xs: 12, md: 4 }}>
         <UserDetailsForm user={user} />
-      </Grid2>
-      <Grid2 size={{ xs: 12, md: 4 }}>
+      </Grid>
+      <Grid size={{ xs: 12, md: 4 }}>
         <PasswordForm />
-      </Grid2>
-      <Grid2 size={{ xs: 12, md: 4 }}>
+      </Grid>
+      <Grid size={{ xs: 12, md: 4 }}>
         <DeleteAccountForm email={user.email} updateUser={updateUser} userId={user.id} />
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 }
 

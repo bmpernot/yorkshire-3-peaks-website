@@ -1,4 +1,4 @@
-import Profile from "@/src/components/Account/Profile.mjs";
+import Profile from "@/src/components/Profile/Profile.mjs";
 
 export default function ProfilePage() {
   return <Profile />;

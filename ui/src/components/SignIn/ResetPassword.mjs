@@ -89,9 +89,6 @@ function ResetPassword() {
         <Typography component="h1" variant="h4" sx={styles.signIn.title}>
           Reset Password
         </Typography>
-        <Typography component="p" variant="p">
-          Check your spam folder
-        </Typography>
         {submissionError ? <ErrorCard error={submissionError} /> : null}
         <Box component="form" onSubmit={handleSubmit} sx={styles.signIn.form} method="POST">
           <FormControl>
@@ -150,7 +147,7 @@ function ResetPassword() {
               sx={styles.formTextField}
             />
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" disabled={isLoadingSubmit}>
+          <Button type="submit" fullWidth variant="contained" loading={isLoadingSubmit} loadingPosition="end">
             Reset Password
           </Button>
           <Button
@@ -159,7 +156,8 @@ function ResetPassword() {
             onClick={() => {
               handleResendCode();
             }}
-            disabled={isLoadingResendCode}
+            loading={isLoadingResendCode}
+            loadingPosition="end"
             id="resendCode"
           >
             Resend code

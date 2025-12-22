@@ -83,6 +83,7 @@ describe("Event functions", () => {
 
       const result = await getEntries(event);
 
+      expect(result.statusCode).toEqual(200);
       expect(JSON.parse(result.body)).toEqual(
         mockEntries.map((entry) => ({
           ...entry,

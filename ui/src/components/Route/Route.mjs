@@ -8,7 +8,6 @@ function Route() {
         src="https://www.komoot.com/tour/2347618454/embed?share_token=abRobDn8xesN8Jj3RtC5P68U3jYw6FMGjzt8vofOolEUQTaL32&profile=1"
         width="90%"
         height="850"
-        frameborder="0"
         loading="lazy"
       ></iframe>
       <span className="margin-bottom--2">

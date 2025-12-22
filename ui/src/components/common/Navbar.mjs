@@ -52,7 +52,7 @@ const pages = [
   { label: "Admin", link: "/admin", role: USER_ROLES.ADMIN },
 ];
 
-function Navbar({ children, window: dom }) {
+function Navbar({ window: dom }) {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNavMenu, setAnchorElNavMenu] = useState(null);
   const [anchorElInternalNavMenu, setAnchorElInternalNavMenu] = useState(null);
@@ -84,7 +84,7 @@ function Navbar({ children, window: dom }) {
   }, []);
 
   return (
-    <HideOnScroll children={children} window={dom}>
+    <HideOnScroll window={dom}>
       <AppBar data-cy="navbar">
         <Container maxWidth="xl">
           <Toolbar disableGutters={true}>

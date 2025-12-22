@@ -27,5 +27,13 @@ jobs:
         run: sam build --use-container
         working-directory: backend
       - name: Deploy
-        run: sam deploy --config-file samconfig.toml --config-env prod --no-confirm-changeset --no-fail-on-empty-changeset
+        run: |
+          sam deploy \
+            --config-file samconfig.toml \
+            --config-env prod \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+                StripeSecretKey=${{ secrets.STRIPE_SECRET_KEY }} \
+                StripeWebhookSecretKey=${{ secrets.STRIPE_WEBHOOK_SECRET_KEY }}
         working-directory: backend

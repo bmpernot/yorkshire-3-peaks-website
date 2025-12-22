@@ -26,7 +26,7 @@ function UserDetailsForm({ user }) {
     lname: user.lastName,
     number: user.number,
     iceNumber: user.iceNumber,
-    notify: Boolean(user.notify),
+    notify: user.notify,
   });
 
   const handleInputChange = (e, value) => {
@@ -176,8 +176,8 @@ function UserDetailsForm({ user }) {
             id="updateDetails"
             fullWidth
             variant="contained"
-            disabled={isLoading}
-            loading={String(isLoading)}
+            loading={isLoading}
+            loadingPosition="end"
           >
             Update details
           </Button>

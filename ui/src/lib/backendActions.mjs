@@ -139,3 +139,49 @@ export async function registerVolunteer({ eventId, registrationData }) {
     throw new Error("Error registering team:", { cause: error });
   }
 }
+
+export async function getTeams({ teamIds }) {
+  try {
+    let query = "";
+    if (teamIds) {
+      query = encodeURIComponent(`?teamIds=${teamIds.join(",")}`);
+    }
+    const { response } = get({
+      apiName: "api",
+      path: `teams${query}`,
+      options: { body: { teamIds } },
+    });
+    const { body } = await response;
+    return await body.json();
+  } catch (error) {
+    throw new Error("Error fetching teams:", { cause: error });
+  }
+}
+
+export async function updateTeam({ teamId, eventId, actions }) {
+  try {
+    const { response } = patch({
+      apiName: "api",
+      path: `teams?teamId=${teamId}&eventId=${eventId}`,
+      options: { body: { actions } },
+    });
+    const { body } = await response;
+    return await body.json();
+  } catch (error) {
+    throw new Error("Error updating team:", { cause: error });
+  }
+}
+
+export async function paymentIntent({ teamId, eventId, userId, amount }) {
+  try {
+    const { response } = post({
+      apiName: "api",
+      path: `teams/paymentIntent?teamId=${teamId}&eventId=${eventId}&userId=${userId}`,
+      options: { body: { amount } },
+    });
+    const { body } = await response;
+    return await body.json();
+  } catch (error) {
+    throw new Error("Error fetching teams:", { cause: error });
+  }
+}

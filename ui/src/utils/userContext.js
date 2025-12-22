@@ -32,7 +32,7 @@ export const UserProvider = ({ children }) => {
         lastName: attributes.family_name,
         number: attributes.phone_number,
         iceNumber: attributes["custom:ice_number"],
-        notify: attributes["custom:notify"],
+        notify: attributes["custom:notify"] === "true",
         role: getHighestUserGroup(session.tokens.accessToken.payload["cognito:groups"]) || USER_ROLES.USER,
       };
 

@@ -106,8 +106,8 @@ function PasswordForm() {
             id="updatePassword"
             fullWidth
             variant="contained"
-            disabled={isLoading}
             loading={isLoading}
+            loadingPosition="end"
           >
             Update password
           </Button>
