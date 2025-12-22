@@ -132,6 +132,11 @@ Resources:
               - !Sub "${EntriesTable.Arn}/index/TeamIdIndex"
               - !GetAtt TeamMembersTable.Arn
               - !Sub "${TeamMembersTable.Arn}/index/UserIdIndex"
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "cognito-idp:AdminGetUser"
+            Resource: !GetAtt CognitoUserPool.Arn
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -146,6 +151,7 @@ Resources:
           TEAMS_TABLE_NAME: !Ref TeamsTable
           EVENTS_TABLE_NAME: !Ref EventsTable
           USERS_TABLE_NAME: !Ref UsersTable
+          COGNITO_USER_POOL_NAME: !Ref CognitoUserPool
 
   updateTeams:
     Type: AWS::Serverless::Function
