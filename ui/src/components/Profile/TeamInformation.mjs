@@ -116,6 +116,7 @@ function TeamInformation({ team, setTeams, onClose }) {
             team.members.map((member, index) => {
               return (
                 <TeamMemberLookup
+                  key={index}
                   disabled={!(member.userId === user.id)}
                   formData={updatedTeam}
                   setFormData={setUpdatedTeam}
