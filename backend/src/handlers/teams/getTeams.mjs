@@ -29,6 +29,14 @@ const getTeams = async (event) => {
       teamIds = teams.map((team) => team.teamId);
     }
 
+    if (teamIds.length === 0) {
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([]),
+      };
+    }
+
     const teams = await getTeamsFunction(teamIds, userRole);
 
     return {
