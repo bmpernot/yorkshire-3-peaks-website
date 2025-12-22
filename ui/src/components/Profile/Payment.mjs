@@ -22,7 +22,7 @@ function Payment({ teamId, eventId, cost, paid }) {
     Number(paymentAmount) > 10000 ||
     !Number.isInteger(Number(paymentAmount));
 
-  const progress = (paid / cost) * 100;
+  const progress = (paid / cost) * 100 || 100;
 
   return (
     <Paper

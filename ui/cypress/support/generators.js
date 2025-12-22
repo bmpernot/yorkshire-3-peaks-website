@@ -112,7 +112,7 @@ function generateTeams({ numberOfTeams, overrides = [] }) {
       teamId: index,
       teamName: `teamName-${index}`,
       members,
-      volunteer: false,
+      volunteer: "false",
       cost: numberOfMembers * 40,
       paid: Math.min(numberOfMembers, numberOfMembersPaid) * 40,
       eventId: index,

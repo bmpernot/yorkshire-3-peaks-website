@@ -18,8 +18,10 @@ import { toast } from "react-toastify";
 import generateActions from "./generateActions.mjs";
 import DeleteTeamDialog from "./DeleteTeamDialog.mjs";
 import ErrorCard from "../common/ErrorCard.mjs";
+import { useUser } from "@/src/utils/userContext";
 
 function TeamInformation({ team, setTeams, onClose }) {
+  const { user } = useUser();
   const [updatedTeam, setUpdatedTeam] = useState(team);
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +33,7 @@ function TeamInformation({ team, setTeams, onClose }) {
 
   async function handleSaveTeamChanges({ updatedTeam, deletingTeam = false }) {
     try {
-      if (!deletingTeam) {
+      if (!deletingTeam && !(team.volunteer === "true")) {
         const errorsInFormData = validateFormData(updatedTeam);
         if (errorsInFormData.length > 0) {
           setErrors(errorsInFormData);
@@ -87,7 +89,7 @@ function TeamInformation({ team, setTeams, onClose }) {
             <Typography variant="h6" sx={profileStyles.marginBottom2}>
               Team Management
             </Typography>
-            <TeamRegistrationInformation />
+            {team.volunteer === "false" && <TeamRegistrationInformation />}
           </>
         ) : null}
         <Box component="form">
@@ -99,7 +101,7 @@ function TeamInformation({ team, setTeams, onClose }) {
           <FormControl fullWidth sx={eventStyles.form}>
             <FormLabel sx={eventStyles.formLabel}>Team Name</FormLabel>
             <TextField
-              disabled={!canEdit}
+              disabled={!canEdit || team.volunteer === "true"}
               id="teamName"
               name="teamName"
               value={updatedTeam.teamName}
@@ -110,43 +112,60 @@ function TeamInformation({ team, setTeams, onClose }) {
             />
           </FormControl>
 
-          <TeamMemberLookup
-            disabled={!canEdit}
-            formData={updatedTeam}
-            setFormData={setUpdatedTeam}
-            membersIndex={0}
-            eventId={team.eventId}
-          />
-          <TeamMemberLookup
-            disabled={!canEdit}
-            formData={updatedTeam}
-            setFormData={setUpdatedTeam}
-            membersIndex={1}
-            eventId={team.eventId}
-          />
-          <TeamMemberLookup
-            disabled={!canEdit}
-            formData={updatedTeam}
-            setFormData={setUpdatedTeam}
-            membersIndex={2}
-            eventId={team.eventId}
-          />
-          {updatedTeam.members.length >= 3 && canEdit ? (
-            <TeamMemberLookup
-              formData={updatedTeam}
-              setFormData={setUpdatedTeam}
-              membersIndex={3}
-              eventId={team.eventId}
-            />
-          ) : null}
-          {updatedTeam.members.length >= 4 && canEdit ? (
-            <TeamMemberLookup
-              formData={updatedTeam}
-              setFormData={setUpdatedTeam}
-              membersIndex={4}
-              eventId={team.eventId}
-            />
-          ) : null}
+          {team.volunteer === "true" ? (
+            team.members.map((member, index) => {
+              return (
+                <TeamMemberLookup
+                  key={index}
+                  disabled={!(member.userId === user.id)}
+                  formData={updatedTeam}
+                  setFormData={setUpdatedTeam}
+                  membersIndex={index}
+                  eventId={team.eventId}
+                />
+              );
+            })
+          ) : (
+            <>
+              <TeamMemberLookup
+                disabled={!canEdit}
+                formData={updatedTeam}
+                setFormData={setUpdatedTeam}
+                membersIndex={0}
+                eventId={team.eventId}
+              />
+              <TeamMemberLookup
+                disabled={!canEdit}
+                formData={updatedTeam}
+                setFormData={setUpdatedTeam}
+                membersIndex={1}
+                eventId={team.eventId}
+              />
+              <TeamMemberLookup
+                disabled={!canEdit}
+                formData={updatedTeam}
+                setFormData={setUpdatedTeam}
+                membersIndex={2}
+                eventId={team.eventId}
+              />
+              {updatedTeam.members.length >= 3 && canEdit ? (
+                <TeamMemberLookup
+                  formData={updatedTeam}
+                  setFormData={setUpdatedTeam}
+                  membersIndex={3}
+                  eventId={team.eventId}
+                />
+              ) : null}
+              {updatedTeam.members.length >= 4 && canEdit ? (
+                <TeamMemberLookup
+                  formData={updatedTeam}
+                  setFormData={setUpdatedTeam}
+                  membersIndex={4}
+                  eventId={team.eventId}
+                />
+              ) : null}
+            </>
+          )}
         </Box>
       </DialogContent>
 
@@ -154,7 +173,7 @@ function TeamInformation({ team, setTeams, onClose }) {
         <Button onClick={onClose} variant="outlined">
           Close
         </Button>
-        {canEdit ? (
+        {canEdit && (
           <>
             <Button
               variant="contained"
@@ -165,11 +184,13 @@ function TeamInformation({ team, setTeams, onClose }) {
             >
               Save Team Changes
             </Button>
-            <Button onClick={() => setDeleteOpen(true)} variant="outlined" color="error" id="delete-team">
-              Delete Team
-            </Button>
+            {team.volunteer === "false" && (
+              <Button onClick={() => setDeleteOpen(true)} variant="outlined" color="error" id="delete-team">
+                Delete Team
+              </Button>
+            )}
           </>
-        ) : null}
+        )}
       </DialogActions>
       <DeleteTeamDialog
         open={deleteOpen}
