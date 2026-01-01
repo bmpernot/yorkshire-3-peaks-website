@@ -18,7 +18,7 @@ const Rules = memo(function RulesComponent() {
         <RuleSection key={section.id} section={section} />
       ))}
       <Box sx={styles.downloadButtonBox}>
-        <Button href={PDF_URL} variant="contained" size="large">
+        <Button href={PDF_URL} variant="contained" size="large" download={true}>
           {BUTTON_TEXT}
         </Button>
       </Box>
