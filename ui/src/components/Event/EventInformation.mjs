@@ -3,7 +3,9 @@
 import { Typography, Grid, Box } from "@mui/material";
 import { StyledCard, StyledContainer as SignUpContainer } from "../common/CustomComponents.mjs";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { useDrawingArea } from "@mui/x-charts/hooks";
 import { styles } from "@/src/styles/event.mui.styles.mjs";
+import { styled } from "@mui/material/styles";
 
 function EventInformation({ eventInformation }) {
   const eventStartDate = new Date(eventInformation.startDate);
@@ -82,17 +84,9 @@ function CustomPieChart({ title, required, current }) {
             height={200}
             hideLegend={true}
             colors={["#8dc550", "#dddddd"]}
-          />
-          <Typography
-            variant="h5"
-            component="div"
-            position="absolute"
-            top="50%"
-            left="50%"
-            sx={styles.pieChartPercentage}
           >
-            {percentage}%
-          </Typography>
+            <PieCenterLabel>{percentage}%</PieCenterLabel>
+          </PieChart>
         </Box>
         <Typography variant="h6" sx={styles.pieChartValue}>
           {current} / {required}
@@ -114,5 +108,22 @@ function InformationBlock({ title, value }) {
     </Box>
   );
 }
+
+function PieCenterLabel({ children }) {
+  const { width, height, left, top } = useDrawingArea();
+  return (
+    <StyledText x={left + width / 2} y={top + height / 2}>
+      {children}
+    </StyledText>
+  );
+}
+
+const StyledText = styled("text")(({ theme }) => ({
+  fill: theme.palette.text.primary,
+  fontWeight: 700,
+  textAnchor: "middle",
+  dominantBaseline: "central",
+  fontSize: 18,
+}));
 
 export default EventInformation;

@@ -21,7 +21,10 @@ function Home() {
       <section className="details-section">
         <div className="details-background" />
         <div className="details-container">
-          <h2 className="section-title">Next Event: TBD</h2>
+          <h2 className="section-title">
+            Next Event: <br />
+            12<sup>th</sup> - 14<sup>th</sup> June 2026
+          </h2>
 
           <div className="details-grid">
             <div className="details-text">

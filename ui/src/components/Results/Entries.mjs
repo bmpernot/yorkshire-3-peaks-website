@@ -7,6 +7,13 @@ import generateColumns from "./Columns.mjs";
 import { styles } from "../../styles/results.mui.styles.mjs";
 
 function Entries({ entries, fetchEntries, selectedEvent }) {
+  const columns = generateColumns(entries);
+  const columnVisibilityModel = columns.reduce((model, column) => {
+    const header = column.headerName;
+    model[column.field] = !header.includes(" to ");
+    return model;
+  }, {});
+
   return (
     <Box sx={styles.entriesBox}>
       <Box display="flex" alignItems="center" maxWidth="90vw" maxHeight="70vh" overflow="auto">
@@ -14,8 +21,13 @@ function Entries({ entries, fetchEntries, selectedEvent }) {
           <DataGrid
             id="entries-table"
             rows={entries}
-            columns={generateColumns(entries)}
-            initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
+            columns={columns}
+            initialState={{
+              pagination: { paginationModel: { page: 0, pageSize: 5 } },
+              columns: {
+                columnVisibilityModel,
+              },
+            }}
             pageSizeOptions={entries.length > 5 ? [5, 10] : []}
             getRowId={(entry) => `team-id-${entry.teamId}`}
             sx={styles.dataGrid}

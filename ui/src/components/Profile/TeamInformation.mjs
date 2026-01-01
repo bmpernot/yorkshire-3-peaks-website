@@ -66,7 +66,12 @@ function TeamInformation({ team, setTeams, onClose }) {
             cost = Math.round(price * numberOfMembers);
           }
 
-          setTeams((teams) => teams.map((t) => (t.teamId === team.teamId ? { ...updatedTeam, cost } : t)));
+          if (!updatedTeam.members.map((member) => member.userId).includes(user.id)) {
+            setTeams((teams) => teams.filter((t) => t.teamId !== team.teamId));
+          } else {
+            setTeams((teams) => teams.map((t) => (t.teamId === team.teamId ? { ...updatedTeam, cost } : t)));
+          }
+
           toast.success("Team Updated");
         }
       } else {

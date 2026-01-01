@@ -9,6 +9,7 @@ function Route() {
         width="90%"
         height="850"
         loading="lazy"
+        className="border-none"
       ></iframe>
       <span className="margin-bottom--2">
         <Button href="/documents/Yorkshire3PeaksRoute.gpx" variant="contained" size="large">

@@ -47,11 +47,6 @@ const pieChartValue = {
   fontWeight: 600,
   fontSize: { xs: "1rem", sm: "1.125rem" },
 };
-const pieChartPercentage = {
-  transform: "translate(-50%, -50%)",
-  fontWeight: 700,
-  fontSize: { xs: "1.25rem", sm: "1.5rem" },
-};
 
 const pieChartInnerBox = { width: { xs: 160, sm: 180, md: 200 }, height: { xs: 160, sm: 180, md: 200 } };
 const pieChartOuterBox = { width: { xs: 160, sm: 180, md: 200 } };
@@ -135,7 +130,6 @@ export const styles = {
   pieChart,
   pieChartTitle,
   pieChartValue,
-  pieChartPercentage,
   pieChartInnerBox,
   pieChartOuterBox,
   title,

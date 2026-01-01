@@ -514,6 +514,10 @@ a {
   color: #333;
 }
 
+.border-none {
+  border: 0px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .stats-grid {
