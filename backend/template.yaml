@@ -365,6 +365,34 @@ Resources:
           TEAMS_TABLE_NAME: !Ref TeamsTable
           EVENTS_TABLE_NAME: !Ref EventsTable
 
+  registerEvent:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/events/registerEvent.default
+      Description: A function to register a new event
+      Policies:
+        - Statement:
+            Effect: "Allow"
+            Action:
+              - "dynamodb:TransactWriteItems"
+              - "dynamodb:PutItem"
+            Resource:
+              - !GetAtt EventsTable.Arn
+              - !GetAtt TeamsTable.Arn
+              - !GetAtt EntriesTable.Arn
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /events
+            Method: POST
+            ApiId: !Ref HttpApiGateway
+      Environment:
+        Variables:
+          EVENTS_TABLE_NAME: !Ref EventsTable
+          TEAMS_TABLE_NAME: !Ref TeamsTable
+          ENTRIES_TABLE_NAME: !Ref EntriesTable
+
   paymentIntent:
     Type: AWS::Serverless::Function
     Properties:

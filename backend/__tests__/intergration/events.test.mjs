@@ -3,6 +3,7 @@ import getEvents from "../../src/handlers/events/getEvents.mjs";
 import getEventInformation from "../../src/handlers/events/getEventInformation.mjs";
 import registerTeam from "../../src/handlers/events/registerTeam.mjs";
 import registerVolunteer from "../../src/handlers/events/registerVolunteer.mjs";
+import registerEvent from "../../src/handlers/events/registerEvent.mjs";
 import {
   DynamoDBDocumentClient,
   ScanCommand,
@@ -404,6 +405,79 @@ describe("Event functions", () => {
 
         expect(response.statusCode).toEqual(405);
         expect(response.body).toEqual(`registerVolunteer only accepts POST method, you tried: ${httpMethod}`);
+      },
+    );
+  });
+
+  describe("registerEvent", () => {
+    const validEventData = {
+      startDate: "2024-06-01T09:00:00.000Z",
+      endDate: "2024-06-02T18:00:00.000Z",
+      requiredWalkers: 100,
+      requiredVolunteers: 10,
+      earlyBirdPrice: 25,
+      earlyBirdCutoff: "2024-05-01T23:59:59.000Z",
+      price: 30,
+    };
+
+    it("Should successfully register an event with Admin user", async () => {
+      dynamoDBMock.on(TransactWriteCommand).resolves({});
+
+      const event = generateHttpApiEvent({
+        method: "POST",
+        userRole: ["Admin"],
+        body: validEventData,
+      });
+
+      const response = await registerEvent(event);
+
+      expect(response.statusCode).toEqual(201);
+      const body = JSON.parse(response.body);
+      expect(body).toHaveProperty("eventId");
+      expect(body.message).toBe("Event registered successfully");
+      expect(dynamoDBMock).toHaveReceivedCommandTimes(TransactWriteCommand, 1);
+    });
+
+    it("Should reject non-Admin/Organiser users", async () => {
+      const event = generateHttpApiEvent({
+        method: "POST",
+        userRole: ["User"],
+        body: {},
+      });
+
+      const response = await registerEvent(event);
+
+      expect(response.statusCode).toEqual(403);
+      expect(response.body).toBe("Only Admin or Organiser users can create events");
+    });
+
+    it("Should validate event data", async () => {
+      const event = generateHttpApiEvent({
+        method: "POST",
+        userRole: ["Admin"],
+        body: { startDate: "invalid" },
+      });
+
+      const response = await registerEvent(event);
+
+      expect(response.statusCode).toEqual(400);
+      const body = JSON.parse(response.body);
+      expect(body.errors).toContain("Valid endDate is required");
+    });
+
+    it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "GET", "PATCH", "CONNECT"])(
+      "Should reject incorrect http methods: %s",
+      async (httpMethod) => {
+        const event = generateHttpApiEvent({
+          eventOverrides: {
+            requestContext: { http: { method: httpMethod } },
+          },
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toEqual(405);
+        expect(response.body).toEqual(`registerEvent only accepts POST method, you tried: ${httpMethod}`);
       },
     );
   });
