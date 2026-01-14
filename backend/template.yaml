@@ -375,6 +375,7 @@ Resources:
             Effect: "Allow"
             Action:
               - "dynamodb:TransactWriteItems"
+              - "dynamodb:PutItem"
             Resource:
               - !GetAtt EventsTable.Arn
               - !GetAtt TeamsTable.Arn
