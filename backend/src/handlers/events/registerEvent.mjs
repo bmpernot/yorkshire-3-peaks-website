@@ -9,12 +9,12 @@ const registerEvent = async (event) => {
   }
 
   const claims = event.requestContext.authorizer.jwt.claims;
-  const groups = claims["cognito:groups"] || [];
+  const userRole = claims["cognito:groups"] ?? "User";
 
-  if (!groups.includes("Admin") && !groups.includes("Organiser")) {
+  if (!userRole.includes("Organiser") && !userRole.includes("Admin")) {
     return {
       statusCode: 403,
-      body: "Only Admin or Organiser users can create events",
+      body: "Unauthorized to create events",
     };
   }
 

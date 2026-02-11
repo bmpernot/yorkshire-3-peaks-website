@@ -441,14 +441,13 @@ describe("Event functions", () => {
     it("Should reject non-Admin/Organiser users", async () => {
       const event = generateHttpApiEvent({
         method: "POST",
-        userRole: ["User"],
         body: {},
       });
 
       const response = await registerEvent(event);
 
       expect(response.statusCode).toEqual(403);
-      expect(response.body).toBe("Only Admin or Organiser users can create events");
+      expect(response.body).toBe("Unauthorized to create events");
     });
 
     it("Should validate event data", async () => {
