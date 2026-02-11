@@ -28,24 +28,14 @@ const registerEvent = async (event) => {
   }
 
   try {
-    const result = await registerEventFunction(data, claims.sub);
-
-    console.log("Event created", {
-      eventId: result.eventId,
-      userId: claims.sub,
-      timestamp: new Date().toISOString(),
-    });
+    const result = await registerEventFunction(data);
 
     return {
       statusCode: 201,
       body: JSON.stringify(result),
     };
   } catch (error) {
-    console.error("Failed to create event", {
-      userId: claims.sub,
-      timestamp: new Date().toISOString(),
-      error: error.message,
-    });
+    console.error(error);
 
     return {
       statusCode: 500,

@@ -10,7 +10,7 @@ const eventsTableName = process.env.EVENTS_TABLE_NAME || "EventsTable";
 const teamsTableName = process.env.TEAMS_TABLE_NAME || "TeamsTable";
 const entriesTableName = process.env.ENTRIES_TABLE_NAME || "EntriesTable";
 
-const registerEventFunction = async (eventData, userId) => {
+const registerEventFunction = async (eventData) => {
   const eventId = v4();
   const volunteerTeamId = v4();
 
@@ -30,8 +30,6 @@ const registerEventFunction = async (eventData, userId) => {
                 earlyBirdPrice: eventData.earlyBirdPrice,
                 earlyBirdCutoff: eventData.earlyBirdCutoff,
                 price: eventData.price,
-                createdBy: userId,
-                createdAt: new Date().toISOString(),
               },
             },
           },
@@ -50,7 +48,7 @@ const registerEventFunction = async (eventData, userId) => {
               Item: {
                 eventId,
                 teamId: volunteerTeamId,
-                volunteer: "true",
+                volunteer: String(true),
                 cost: 0,
                 paid: 0,
               },
