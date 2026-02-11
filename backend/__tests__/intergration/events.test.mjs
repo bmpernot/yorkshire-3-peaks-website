@@ -420,12 +420,12 @@ describe("Event functions", () => {
       price: 30,
     };
 
-    it("Should successfully register an event with Admin user", async () => {
+    it.each(["Organiser", "Admin"])("Should successfully register an event  if you are an %s", async (userRole) => {
       dynamoDBMock.on(TransactWriteCommand).resolves({});
 
       const event = generateHttpApiEvent({
         method: "POST",
-        userRole: ["Admin"],
+        userRole,
         body: validEventData,
       });
 
@@ -450,18 +450,128 @@ describe("Event functions", () => {
       expect(response.body).toBe("Unauthorized to create events");
     });
 
-    it("Should validate event data", async () => {
-      const event = generateHttpApiEvent({
-        method: "POST",
-        userRole: ["Admin"],
-        body: { startDate: "invalid" },
+    describe("Validation", () => {
+      it("invalid JSON", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: "invalid json",
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("Invalid JSON in request body");
       });
 
-      const response = await registerEvent(event);
+      it("missing startDate", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: { ...validEventData, startDate: undefined },
+        });
+        const response = await registerEvent(event);
 
-      expect(response.statusCode).toEqual(400);
-      const body = JSON.parse(response.body);
-      expect(body.errors).toContain("Valid endDate is required");
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("Valid startDate is required");
+      });
+
+      it("invalid endDate", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: { ...validEventData, endDate: "invalid-date" },
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("Valid endDate is required");
+      });
+
+      it("endDate is before startDate", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: {
+            ...validEventData,
+            startDate: "2024-06-02T09:00:00.000Z",
+            endDate: "2024-06-01T18:00:00.000Z",
+          },
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("endDate must be after startDate");
+      });
+
+      it("invalid requiredWalkers", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: { ...validEventData, requiredWalkers: -5 },
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("requiredWalkers must be a positive integer");
+      });
+
+      it("invalid requiredVolunteers", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: { ...validEventData, requiredVolunteers: -1 },
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("requiredVolunteers must be a non-negative integer");
+      });
+
+      it("invalid earlyBirdPrice", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: { ...validEventData, earlyBirdPrice: 0 },
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("earlyBirdPrice must be a positive integer");
+      });
+
+      it("invalid price", async () => {
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: { ...validEventData, price: "not-a-number" },
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).errors).toContain("price must be a positive integer");
+      });
+
+      it("registerEventFunction throws an error", async () => {
+        dynamoDBMock.on(TransactWriteCommand).rejects(new Error("Database error"));
+
+        const event = generateHttpApiEvent({
+          method: "POST",
+          userRole: "Organiser",
+          body: validEventData,
+        });
+
+        const response = await registerEvent(event);
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toBe("Failed to register event");
+      });
     });
 
     it.each(["HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "GET", "PATCH", "CONNECT"])(
