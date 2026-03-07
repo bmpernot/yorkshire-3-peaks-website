@@ -2,7 +2,7 @@ import { memo, useMemo } from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import { styles } from "../../styles/rules.mui.styles.mjs";
-import BulletedList from "./BulletedList.jsx";
+import BulletedList from "../common/BulletedList.jsx";
 
 const RuleSection = memo(function RuleSectionComponent({ section }) {
   const ariaControls = useMemo(() => `${section.id}-content`, [section.id]);
