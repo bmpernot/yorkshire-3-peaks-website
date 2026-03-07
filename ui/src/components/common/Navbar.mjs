@@ -229,7 +229,13 @@ const NavMenu = memo(function NavMenu({
           router={router}
         />
       ) : null}
-      <LandscapeIcon sx={styles.navMenu.logo} data-cy="logo" />
+      <LandscapeIcon
+        sx={styles.navMenu.logo}
+        data-cy="logo"
+        onClick={() => {
+          router.push("/");
+        }}
+      />
       <Typography
         data-cy="title"
         variant="h5"
