@@ -77,6 +77,19 @@ const button = {
   fontWeight: 600,
 };
 
+const buttonHollow = {
+  mt: 1,
+  py: 1,
+
+  fontSize: { xs: "1rem", sm: "1.125rem" },
+  fontWeight: 600,
+  backgroundColor: "common.white",
+  color: "text.secondary",
+  "&:hover": {
+    backgroundColor: "grey.100",
+  },
+};
+
 const form = { mb: 3 };
 const formGap = { mb: 2 };
 const formLabel = { mb: 1, fontWeight: 500 };
@@ -136,6 +149,7 @@ export const styles = {
   box,
   description,
   button,
+  buttonHollow,
   form,
   formLabel,
   card,
