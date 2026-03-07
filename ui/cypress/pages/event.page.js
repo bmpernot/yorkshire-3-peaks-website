@@ -34,13 +34,8 @@ export default class resultsPage {
   verifyEventTeamRegistration() {
     cy.get("[id=team-registration-information]")
       .should("contain.text", "• Teams must have 3 - 5 members and must include yourself.")
-      .and(
-        "contain.text",
-        "• Payment is managed on your profile page. Each member can contribute, but your team must meet or exceed the full amount.",
-      )
-      .and("contain.text", "• You can edit your team details anytime from your profile.")
-      .and("contain.text", "• All team members will have access to update the entry.")
-      .and("contain.text", "• Disabled users in the user search are ones that have already signed up to a team.");
+      .and("contain.text", "• All members must have an account.")
+      .and("contain.text", "For more information about the registration process please view our guide:");
     return this;
   }
   verifyEventVolunteerRegistration() {

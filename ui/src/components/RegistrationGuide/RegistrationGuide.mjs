@@ -21,7 +21,7 @@ function RegistrationGuide() {
                   type: "heading",
                 },
 
-                { text: "The team must a <strong>team name.</strong>" },
+                { text: "The team must have a <strong>team name.</strong>" },
                 { text: "Teams must contain <strong>between 3 and 5 members</strong> and must include yourself." },
                 {
                   text: "Every <strong>participant</strong> must have <strong>an account.</strong>",
@@ -73,8 +73,8 @@ function RegistrationGuide() {
               },
               { text: "<strong>Pay</strong> for the team." },
               { text: "<strong>Update</strong> team and member information." },
-              { text: "<strong>Add or remove</strong> members." },
-              { text: "<strong>Delete</strong> the team." },
+              { text: "<strong>Add or remove*</strong> members." },
+              { text: "<strong>Delete*</strong> the team." },
             ]}
           />
           <br />
@@ -89,7 +89,7 @@ function RegistrationGuide() {
                 text: "Each <strong>member</strong> may <strong>specify the amount</strong> they would like to contribute then they will go to a page to <strong>pay</strong> for the amount they specified.",
               },
               {
-                text: "Member could pay for they portion or more if they would like.",
+                text: "Members can pay for their portion or donate more if they would like.",
               },
               {
                 text: "The team will <strong>not be allowed</strong> to participate in the event <strong>until the full amount</strong> has been <strong>paid</strong> for.",
@@ -102,7 +102,7 @@ function RegistrationGuide() {
 
         <Box>
           <Typography variant="h4" gutterBottom>
-            Important: Refunds
+            *Important: Refunds
           </Typography>
 
           <Typography variant="h6" gutterBottom>

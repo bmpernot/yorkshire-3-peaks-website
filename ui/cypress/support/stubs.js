@@ -157,6 +157,22 @@ function stubPaymentIntents({ teamId, eventId, overrides = {} }) {
   ).as(`paymentIntent`);
 }
 
+function stubRegisterEvent({ event, overrides = {} }) {
+  const errorConfig = overrides.errors;
+  let failCount = errorConfig?.times ?? 0;
+  cy.intercept("POST", `${Cypress.env("NEXT_PUBLIC_API_URL")}events`, (req) => {
+    if (failCount > 0) {
+      failCount--;
+      req.reply({
+        statusCode: errorConfig.statusCode ?? 500,
+        body: { message: errorConfig.message ?? "Simulated network error" },
+      });
+    } else {
+      req.reply(event);
+    }
+  }).as(`Register-Event`);
+}
+
 export {
   stubEvents,
   stubEntries,
@@ -167,4 +183,5 @@ export {
   stubTeams,
   stubUpdateTeams,
   stubPaymentIntents,
+  stubRegisterEvent,
 };
