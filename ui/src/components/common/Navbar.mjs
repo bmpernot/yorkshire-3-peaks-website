@@ -236,7 +236,7 @@ const NavMenu = memo(function NavMenu({
         noWrap
         component="span"
         onClick={() => {
-          router.push("home");
+          router.push("/");
         }}
         sx={styles.navMenu.title}
       >
