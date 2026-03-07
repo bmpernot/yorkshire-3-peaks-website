@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import BulletedList from "@/src/components/Rules/BulletedList.jsx";
+import BulletedList from "@/src/components/common/BulletedList.jsx";
 
 describe("BulletedList", () => {
   it("renders text items in a list", () => {

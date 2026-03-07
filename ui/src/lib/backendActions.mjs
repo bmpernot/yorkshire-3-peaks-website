@@ -72,6 +72,18 @@ export async function getEvents() {
   }
 }
 
+export async function registerEvent(formData) {
+  try {
+    return await post({
+      apiName: "api",
+      path: "events",
+      options: { body: formData },
+    }).response;
+  } catch (error) {
+    throw new Error("Error registering event:", { cause: error });
+  }
+}
+
 export async function getEntries({ eventId }) {
   try {
     if (!eventId) {

@@ -41,7 +41,7 @@ function EventSignUpForm({ eventId, router, isLoggedIn, user }) {
         <Typography variant="h4" sx={styles.title}>
           Team Registration
         </Typography>
-        <TeamRegistrationInformation />
+        <TeamRegistrationInformation router={router} />
         {isLoggedIn ? (
           <Box component="form" onSubmit={handleSubmit}>
             {errors.length > 0
